@@ -13,33 +13,28 @@
       --bg: #020408;
       --blue: #7ab8ff;
       --blue-dim: rgba(26,74,138,0.65);
-      --blue-faint: rgba(26,74,138,0.18);
-      --blue-border: rgba(26,74,138,0.25);
       --text: rgba(122,184,255,0.85);
       --text-dim: rgba(60,120,200,0.6);
-      --panel: rgba(10,20,40,0.7);
     }
 
-    body {
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
       background: var(--bg);
-      min-height: 100vh;
       font-family: 'Share Tech Mono', monospace;
       color: var(--blue);
-      overflow: hidden;
     }
 
-    /* STARS */
     .stars { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
     .star { position: absolute; background: white; border-radius: 50%; }
 
-    /* CORNER BRACKETS */
-    .corner { position: fixed; width: 20px; height: 20px; border-color: rgba(26,74,138,0.25); border-style: solid; z-index: 10; }
+    .corner { position: fixed; width: 20px; height: 20px; border-color: rgba(26,74,138,0.25); border-style: solid; z-index: 10; pointer-events: none; }
     .corner-tl { top: 12px; left: 12px; border-width: 1px 0 0 1px; }
     .corner-tr { top: 12px; right: 12px; border-width: 1px 1px 0 0; }
     .corner-bl { bottom: 12px; left: 12px; border-width: 0 0 1px 1px; }
     .corner-br { bottom: 12px; right: 12px; border-width: 0 1px 1px 0; }
 
-    /* TOPBAR */
     .topbar {
       position: fixed;
       top: 0; left: 0; right: 0;
@@ -62,74 +57,56 @@
     }
     .topbar-back:hover { color: var(--blue); }
     .topbar-divider { width: 1px; height: 16px; background: rgba(26,74,138,0.3); }
-    .topbar-title {
-      font-family: 'Cinzel', serif;
-      font-size: 0.7rem;
-      color: var(--blue);
-      letter-spacing: 0.3em;
-    }
+    .topbar-title { font-family: 'Cinzel', serif; font-size: 0.7rem; color: var(--blue); letter-spacing: 0.3em; }
 
-    /* VIEWPORT */
-    .viewport {
-      position: relative;
-      z-index: 1;
-      height: 100vh;
+    /* Clips overflow so only one slide shows */
+    .slider-outer {
+      position: fixed;
+      top: 48px; left: 0; right: 0; bottom: 0;
       overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      z-index: 1;
     }
 
-    /* SLIDE TRACK */
+    /* 200% wide, two 50% slides */
     .slide-track {
       display: flex;
-      width: 300%;
+      width: 200%;
       height: 100%;
       transition: transform 0.55s cubic-bezier(0.77,0,0.18,1);
+      will-change: transform;
     }
 
     .slide {
-      width: calc(100% / 3);
+      width: 50%;
       height: 100%;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 68px 80px 24px;
+      padding: 20px 72px 36px;
       flex-shrink: 0;
     }
 
-    /* SPECIES CARD */
     .species-card {
       width: 100%;
       max-width: 1060px;
-      height: calc(100vh - 92px);
+      height: 100%;
       display: grid;
       grid-template-rows: auto 1fr;
-      gap: 0;
       background: rgba(6,14,34,0.6);
       border: 1px solid rgba(26,74,138,0.25);
       overflow: hidden;
     }
 
-    /* CARD HEADER */
     .card-header {
-      padding: 1.2rem 1.6rem 1rem;
+      padding: 1rem 1.6rem 0.9rem;
       border-bottom: 1px solid rgba(26,74,138,0.18);
       display: flex;
       align-items: baseline;
       gap: 1.5rem;
+      flex-shrink: 0;
     }
-    .species-name {
-      font-family: 'Cinzel', serif;
-      font-size: 1.5rem;
-      color: var(--blue);
-      letter-spacing: 0.3em;
-    }
-    .species-aka {
-      font-size: 0.48rem;
-      color: var(--blue-dim);
-      letter-spacing: 0.2em;
-    }
+    .species-name { font-family: 'Cinzel', serif; font-size: 1.4rem; color: var(--blue); letter-spacing: 0.3em; }
+    .species-aka { font-size: 0.48rem; color: var(--blue-dim); letter-spacing: 0.2em; }
     .species-status {
       margin-left: auto;
       font-size: 0.42rem;
@@ -137,24 +114,24 @@
       letter-spacing: 0.2em;
       border: 1px solid rgba(26,74,138,0.25);
       padding: 3px 10px;
+      white-space: nowrap;
     }
 
-    /* CARD BODY */
     .card-body {
       display: grid;
-      grid-template-columns: 260px 1fr;
+      grid-template-columns: 250px 1fr;
       overflow: hidden;
+      min-height: 0;
     }
 
-    /* LEFT COLUMN */
     .col-left {
       border-right: 1px solid rgba(26,74,138,0.18);
       display: flex;
       flex-direction: column;
       overflow: hidden;
+      min-height: 0;
     }
 
-    /* PORTRAIT */
     .portrait-box {
       width: 100%;
       aspect-ratio: 1 / 1;
@@ -167,189 +144,104 @@
       position: relative;
       overflow: hidden;
     }
-    .portrait-box img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
+    .portrait-box img { width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; }
     .portrait-placeholder {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      width: 100%;
-      height: 100%;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 0.5rem; width: 100%; height: 100%;
     }
     .portrait-placeholder .ph-icon {
-      width: 48px;
-      height: 48px;
+      width: 48px; height: 48px;
       border: 1px solid rgba(26,74,138,0.3);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: rgba(26,74,138,0.4);
-      font-size: 1.2rem;
+      display: flex; align-items: center; justify-content: center;
+      color: rgba(26,74,138,0.4); font-size: 1.2rem;
     }
-    .portrait-placeholder .ph-text {
-      font-size: 0.42rem;
-      color: rgba(26,74,138,0.35);
-      letter-spacing: 0.18em;
-      text-align: center;
-    }
-    .portrait-corner {
-      position: absolute;
-      width: 10px; height: 10px;
-      border-color: rgba(26,74,138,0.4);
-      border-style: solid;
-    }
+    .portrait-placeholder .ph-text { font-size: 0.42rem; color: rgba(26,74,138,0.35); letter-spacing: 0.18em; text-align: center; }
+    .portrait-corner { position: absolute; width: 10px; height: 10px; border-color: rgba(26,74,138,0.4); border-style: solid; pointer-events: none; }
     .portrait-corner.tl { top: 6px; left: 6px; border-width: 1px 0 0 1px; }
     .portrait-corner.tr { top: 6px; right: 6px; border-width: 1px 1px 0 0; }
     .portrait-corner.bl { bottom: 6px; left: 6px; border-width: 0 0 1px 1px; }
     .portrait-corner.br { bottom: 6px; right: 6px; border-width: 0 1px 1px 0; }
 
-    /* QUICK STATS */
     .quick-stats {
       flex: 1;
-      padding: 0.9rem 1rem;
+      padding: 0.8rem 1rem;
       display: flex;
       flex-direction: column;
-      gap: 0;
       overflow-y: auto;
+      min-height: 0;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(26,74,138,0.4) rgba(4,12,30,0.6);
     }
+    .quick-stats::-webkit-scrollbar { width: 4px; }
+    .quick-stats::-webkit-scrollbar-track { background: rgba(4,12,30,0.6); }
+    .quick-stats::-webkit-scrollbar-thumb { background: rgba(26,74,138,0.4); }
+    .quick-stats::-webkit-scrollbar-thumb:hover { background: rgba(58,138,255,0.5); }
+
     .stat-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      padding: 0.38rem 0;
-      border-bottom: 1px solid rgba(26,74,138,0.1);
+      display: flex; justify-content: space-between; align-items: baseline;
+      padding: 0.35rem 0; border-bottom: 1px solid rgba(26,74,138,0.1); gap: 0.5rem;
     }
     .stat-item:last-child { border-bottom: none; }
-    .stat-label {
-      font-size: 0.4rem;
-      color: var(--blue-dim);
-      letter-spacing: 0.15em;
-    }
-    .stat-value {
-      font-size: 0.46rem;
-      color: var(--text);
-      letter-spacing: 0.08em;
-      text-align: right;
-      max-width: 55%;
-    }
+    .stat-label { font-size: 0.4rem; color: var(--blue-dim); letter-spacing: 0.15em; flex-shrink: 0; }
+    .stat-value { font-size: 0.44rem; color: var(--text); letter-spacing: 0.06em; text-align: right; }
 
-    /* RIGHT COLUMN */
     .col-right {
       overflow-y: auto;
       padding: 1.1rem 1.4rem;
       display: flex;
       flex-direction: column;
-      gap: 1.1rem;
+      gap: 1rem;
+      min-height: 0;
       scrollbar-width: thin;
-      scrollbar-color: rgba(26,74,138,0.3) transparent;
+      scrollbar-color: rgba(26,74,138,0.4) rgba(4,12,30,0.6);
     }
-    .col-right::-webkit-scrollbar { width: 3px; }
-    .col-right::-webkit-scrollbar-thumb { background: rgba(26,74,138,0.3); }
+    .col-right::-webkit-scrollbar { width: 4px; }
+    .col-right::-webkit-scrollbar-track { background: rgba(4,12,30,0.6); }
+    .col-right::-webkit-scrollbar-thumb { background: rgba(26,74,138,0.4); }
+    .col-right::-webkit-scrollbar-thumb:hover { background: rgba(58,138,255,0.5); }
 
-    .info-section {}
     .info-section-title {
-      font-size: 0.44rem;
-      color: var(--blue-dim);
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      margin-bottom: 0.55rem;
-      padding-bottom: 0.3rem;
-      border-bottom: 1px solid rgba(26,74,138,0.12);
+      font-size: 0.44rem; color: var(--blue-dim); letter-spacing: 0.22em;
+      text-transform: uppercase; margin-bottom: 0.5rem;
+      padding-bottom: 0.28rem; border-bottom: 1px solid rgba(26,74,138,0.12);
     }
-    .info-text {
-      font-size: 0.5rem;
-      color: var(--text);
-      letter-spacing: 0.04em;
-      line-height: 1.85;
-    }
-    .info-text p { margin-bottom: 0.5rem; }
+    .info-text { font-size: 0.5rem; color: var(--text); letter-spacing: 0.04em; line-height: 1.85; }
+    .info-text p { margin-bottom: 0.45rem; }
     .info-text p:last-child { margin-bottom: 0; }
 
-    /* TRAIT PILLS */
-    .trait-list {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.4rem;
-      margin-top: 0.3rem;
-    }
+    .trait-list { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.2rem; }
     .trait-pill {
-      font-size: 0.4rem;
-      letter-spacing: 0.12em;
-      padding: 3px 10px;
-      border: 1px solid rgba(26,74,138,0.3);
-      color: rgba(100,160,255,0.65);
+      font-size: 0.4rem; letter-spacing: 0.12em; padding: 3px 10px;
+      border: 1px solid rgba(26,74,138,0.3); color: rgba(100,160,255,0.65);
     }
 
-    /* NAV ARROWS */
     .nav-arrow {
-      position: fixed;
-      top: 50%;
-      transform: translateY(-50%);
+      position: fixed; top: 50%; transform: translateY(-50%);
       z-index: 10;
       background: rgba(4,12,30,0.7);
       border: 1px solid rgba(26,74,138,0.25);
-      width: 44px;
-      height: 80px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      width: 40px; height: 72px;
+      display: flex; align-items: center; justify-content: center;
       cursor: pointer;
-      transition: background 0.2s, border-color 0.2s;
+      transition: background 0.2s, border-color 0.2s, opacity 0.2s;
       backdrop-filter: blur(4px);
     }
-    .nav-arrow:hover {
-      background: rgba(10,28,65,0.85);
-      border-color: rgba(58,138,255,0.45);
-    }
-    .nav-arrow.disabled {
-      opacity: 0.2;
-      pointer-events: none;
-    }
-    .nav-arrow.left { left: 18px; }
-    .nav-arrow.right { right: 18px; }
-    .nav-arrow svg {
-      width: 16px; height: 16px;
-      stroke: rgba(100,160,255,0.7);
-      fill: none;
-      stroke-width: 1.5;
-    }
+    .nav-arrow:hover { background: rgba(10,28,65,0.85); border-color: rgba(58,138,255,0.45); }
+    .nav-arrow.disabled { opacity: 0.15; pointer-events: none; }
+    .nav-arrow.left { left: 16px; }
+    .nav-arrow.right { right: 16px; }
+    .nav-arrow svg { width: 14px; height: 14px; stroke: rgba(100,160,255,0.7); fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
 
-    /* PAGE INDICATORS */
     .page-dots {
-      position: fixed;
-      bottom: 22px;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      gap: 8px;
-      z-index: 10;
+      position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%);
+      display: flex; gap: 8px; z-index: 10;
     }
-    .dot {
-      width: 5px; height: 5px;
-      border: 1px solid rgba(26,74,138,0.4);
-      transition: background 0.3s, border-color 0.3s;
-      cursor: pointer;
-    }
-    .dot.active {
-      background: rgba(100,160,255,0.6);
-      border-color: rgba(100,160,255,0.6);
-    }
+    .dot { width: 5px; height: 5px; border: 1px solid rgba(26,74,138,0.4); transition: background 0.3s, border-color 0.3s; cursor: pointer; }
+    .dot.active { background: rgba(100,160,255,0.6); border-color: rgba(100,160,255,0.6); }
 
-    /* SPECIES COUNTER */
     .species-counter {
-      position: fixed;
-      bottom: 22px;
-      right: 36px;
-      font-size: 0.42rem;
-      color: rgba(26,74,138,0.45);
-      letter-spacing: 0.2em;
-      z-index: 10;
+      position: fixed; bottom: 18px; right: 32px;
+      font-size: 0.42rem; color: rgba(26,74,138,0.45); letter-spacing: 0.2em; z-index: 10;
     }
   </style>
 </head>
@@ -369,12 +261,10 @@
   <span class="topbar-title">Species</span>
 </nav>
 
-<div class="viewport">
+<div class="slider-outer">
   <div class="slide-track" id="track">
 
-    <!-- ═══════════════════════════════════════════ -->
-    <!-- SLIDE 1 — AVRIETHRAX                        -->
-    <!-- ═══════════════════════════════════════════ -->
+    <!-- SLIDE 1 — AVRIETHRAX -->
     <div class="slide">
       <div class="species-card">
         <div class="card-header">
@@ -389,10 +279,8 @@
                 <div class="ph-icon">◈</div>
                 <div class="ph-text">PORTRAIT<br>PENDING</div>
               </div>
-              <div class="portrait-corner tl"></div>
-              <div class="portrait-corner tr"></div>
-              <div class="portrait-corner bl"></div>
-              <div class="portrait-corner br"></div>
+              <div class="portrait-corner tl"></div><div class="portrait-corner tr"></div>
+              <div class="portrait-corner bl"></div><div class="portrait-corner br"></div>
             </div>
             <div class="quick-stats">
               <div class="stat-item"><span class="stat-label">Height</span><span class="stat-value">~3ft (0.9m)</span></div>
@@ -404,11 +292,10 @@
               <div class="stat-item"><span class="stat-label">Psionics</span><span class="stat-value">Natural — high variance</span></div>
               <div class="stat-item"><span class="stat-label">Diet</span><span class="stat-value">~1kg/day</span></div>
               <div class="stat-item"><span class="stat-label">Origin</span><span class="stat-value">Apostolos (native)</span></div>
-              <div class="stat-item"><span class="stat-label">Population</span><span class="stat-value">~11 billion (Apostolos)</span></div>
+              <div class="stat-item"><span class="stat-label">Population</span><span class="stat-value">~11 billion</span></div>
             </div>
           </div>
           <div class="col-right">
-
             <div class="info-section">
               <div class="info-section-title">Biology</div>
               <div class="info-text">
@@ -417,7 +304,6 @@
                 <p>Avriethrax possess natural psionic capability, the degree of which varies considerably between individuals. This manifests most commonly as heightened intuition, emotional projection, and limited telekinetic ability, though exceptional individuals — known as Focusers — can achieve far greater output under training.</p>
               </div>
             </div>
-
             <div class="info-section">
               <div class="info-section-title">Psychology & Behaviour</div>
               <div class="info-text">
@@ -425,15 +311,19 @@
                 <p>Their psionic sense makes Avriethrax unusually perceptive of emotional states in others, which contributes to a cultural tendency toward indirect communication and layered speech. What is unsaid is often as significant as what is spoken. This makes them difficult negotiators and effective manipulators.</p>
               </div>
             </div>
-
             <div class="info-section">
               <div class="info-section-title">Society & Role Within the Institute</div>
               <div class="info-text">
                 <p>The Avriethrax are the founding and dominant species of the Pneuma Institute. All seven Archons are Avriethrax, and Avriethrax hold the majority of senior administrative, research, and military command positions. The Institute's governance structure, cultural norms, and religious framework all emerged from Avriethrax society predating the Great Catastrophe.</p>
-                <p>Within Apostolos, Avriethrax occupy the civilian ecumenopolis and upper administrative layers. The species' long lifespan and psionic capability — combined with access to Seraphic organ symbiosis for exceptional individuals — means effective Avriethrax leadership can persist for centuries, producing deep institutional continuity and deep institutional conservatism in equal measure.</p>
+                <p>Within Apostolos, Avriethrax occupy the civilian ecumenopolis and upper administrative layers. The species' long lifespan and psionic capability — combined with access to Seraphic organ symbiosis for exceptional individuals — means effective leadership can persist for centuries, producing deep institutional continuity and deep institutional conservatism in equal measure.</p>
               </div>
             </div>
-
+            <div class="info-section">
+              <div class="info-section-title">Seraphic Symbiosis</div>
+              <div class="info-text">
+                <p>A small number of Avriethrax undergo Seraphic organ symbiosis, a classified procedure in which Seraphic biological material is integrated into the host's physiology. The effects include dramatically extended lifespan, enhanced psionic output, and physiological changes that vary between recipients. The Archon of Breath is believed to be over 200 years old through this process. The full scope of symbiosis effects is known only at Archon level.</p>
+              </div>
+            </div>
             <div class="info-section">
               <div class="info-section-title">Notable Traits</div>
               <div class="trait-list">
@@ -447,22 +337,12 @@
                 <span class="trait-pill">Emotionally Perceptive</span>
               </div>
             </div>
-
-            <div class="info-section">
-              <div class="info-section-title">Seraphic Symbiosis</div>
-              <div class="info-text">
-                <p>A small number of Avriethrax — predominantly senior Archons and high-ranking Institute figures — undergo Seraphic organ symbiosis, a classified procedure in which Seraphic biological material is integrated into the host's physiology. The effects include dramatically extended lifespan, enhanced psionic output, and physiological changes that vary between recipients. The Archon of Breath is believed to be over 200 years old through this process. The full scope of symbiosis effects is known only at Archon level.</p>
-              </div>
-            </div>
-
           </div>
         </div>
       </div>
     </div>
 
-    <!-- ═══════════════════════════════════════════ -->
-    <!-- SLIDE 2 — NOCTIVEX                          -->
-    <!-- ═══════════════════════════════════════════ -->
+    <!-- SLIDE 2 — NOCTIVEX -->
     <div class="slide">
       <div class="species-card">
         <div class="card-header">
@@ -477,10 +357,8 @@
                 <div class="ph-icon">◈</div>
                 <div class="ph-text">PORTRAIT<br>PENDING</div>
               </div>
-              <div class="portrait-corner tl"></div>
-              <div class="portrait-corner tr"></div>
-              <div class="portrait-corner bl"></div>
-              <div class="portrait-corner br"></div>
+              <div class="portrait-corner tl"></div><div class="portrait-corner tr"></div>
+              <div class="portrait-corner bl"></div><div class="portrait-corner br"></div>
             </div>
             <div class="quick-stats">
               <div class="stat-item"><span class="stat-label">Height</span><span class="stat-value">4 — 5ft (1.2—1.5m)</span></div>
@@ -496,7 +374,6 @@
             </div>
           </div>
           <div class="col-right">
-
             <div class="info-section">
               <div class="info-section-title">Origin & Creation</div>
               <div class="info-text">
@@ -504,16 +381,14 @@
                 <p>Their genome is hardcoded with two critical control mechanisms: a psionic kill-switch that can be triggered remotely by Institute systems, and a submission gene that inhibits coordinated resistance behaviour at a neurological level. Neither mechanism is disclosed to the Noctivex population. Their rapid reproduction rate — any two individuals can reproduce through internal fertilisation with no biological sex distinction — was a deliberate design choice to allow fast population scaling.</p>
               </div>
             </div>
-
             <div class="info-section">
               <div class="info-section-title">Biology</div>
               <div class="info-text">
                 <p>Noctivex are taller and lighter than Avriethrax, with a moth and insectoid humanoid body plan. They possess four eyes — two large compound eyes providing wide-field vision and two smaller thermal-sensitive eyes that allow heat-signature detection in low light. Two hearts provide circulatory redundancy. Antennae serve chemosensory and limited psionic detection functions.</p>
-                <p>The most notable biological feature is their wing-dust — a fine particulate shed passively from their wing membranes. This dust contains prion-like compounds that are lethal to most species on contact or inhalation. Avriethrax and Noctivex themselves are immune. This was not an accidental trait. The dust provides a degree of passive deterrence but is also a limiting factor in Noctivex integration with non-Institute species.</p>
-                <p>The Noctivex are hermaphroditic by design — no individual carries a fixed biological sex. Reproduction occurs through internal fertilisation between any two individuals, without distinction. This was chosen to maximise population growth rate and eliminate sex-ratio bottlenecks.</p>
+                <p>The most notable biological feature is their wing-dust — a fine particulate shed passively from their wing membranes. This dust contains prion-like compounds that are lethal to most species on contact or inhalation. Avriethrax and Noctivex themselves are immune. This was not an accidental trait.</p>
+                <p>The Noctivex are hermaphroditic by design — no individual carries a fixed biological sex. Reproduction occurs through internal fertilisation between any two individuals. This was chosen to maximise population growth rate and eliminate sex-ratio bottlenecks.</p>
               </div>
             </div>
-
             <div class="info-section">
               <div class="info-section-title">Psychology & Behaviour</div>
               <div class="info-text">
@@ -521,15 +396,13 @@
                 <p>Noctivex society within Apostolos is densely layered, with strong communal networks, rich oral and artistic traditions, and a deep awareness — largely unspoken — of their created status. Most Noctivex do not know the specifics of the kill-switch or submission gene, but the broad shape of their situation is culturally understood and rarely discussed.</p>
               </div>
             </div>
-
             <div class="info-section">
               <div class="info-section-title">Role Within the Institute</div>
               <div class="info-text">
                 <p>Noctivex comprise the majority of Apostolos's labour population — manufacturing, maintenance, service, and lower administrative functions are predominantly Noctivex roles. Within the Houshin Company, Noctivex make up approximately 41% of employees. Mirror Protocol was founded and is led by a Noctivex individual, representing a rare senior position in a contractor context.</p>
-                <p>The Noctivex are not officially described as engineered or controlled within Institute public documentation. The official narrative frames them as a naturally emerging species that joined the Institute voluntarily in the post-Catastrophe period. This is false.</p>
+                <p>The official Institute narrative frames Noctivex as a naturally emerging species that joined voluntarily in the post-Catastrophe period. This is false.</p>
               </div>
             </div>
-
             <div class="info-section">
               <div class="info-section-title">Notable Traits</div>
               <div class="trait-list">
@@ -544,124 +417,31 @@
                 <span class="trait-pill">PNE-Λ-03 Derived</span>
               </div>
             </div>
-
           </div>
         </div>
       </div>
     </div>
 
-    <!-- ═══════════════════════════════════════════ -->
-    <!-- SLIDE 3 — SERAPHS                           -->
-    <!-- ═══════════════════════════════════════════ -->
-    <div class="slide">
-      <div class="species-card">
-        <div class="card-header">
-          <span class="species-name">Seraphs</span>
-          <span class="species-aka">Greater / Lesser classification</span>
-          <span class="species-status">Extant — Classified</span>
-        </div>
-        <div class="card-body">
-          <div class="col-left">
-            <div class="portrait-box" id="portrait-seraph">
-              <div class="portrait-placeholder">
-                <div class="ph-icon">◈</div>
-                <div class="ph-text">PORTRAIT<br>PENDING</div>
-              </div>
-              <div class="portrait-corner tl"></div>
-              <div class="portrait-corner tr"></div>
-              <div class="portrait-corner bl"></div>
-              <div class="portrait-corner br"></div>
-            </div>
-            <div class="quick-stats">
-              <div class="stat-item"><span class="stat-label">Standard RBU Height</span><span class="stat-value">~100m</span></div>
-              <div class="stat-item"><span class="stat-label">Apostolos Defenders</span><span class="stat-value">120 — 260km</span></div>
-              <div class="stat-item"><span class="stat-label">Classification</span><span class="stat-value">Greater / Lesser</span></div>
-              <div class="stat-item"><span class="stat-label">Origin</span><span class="stat-value">Pre-Catastrophe</span></div>
-              <div class="stat-item"><span class="stat-label">Material</span><span class="stat-value">Seraphic crystallite</span></div>
-              <div class="stat-item"><span class="stat-label">Cognition</span><span class="stat-value">Awakened (Greater only)</span></div>
-              <div class="stat-item"><span class="stat-label">Institute Relation</span><span class="stat-value">Foundation / Controlled</span></div>
-              <div class="stat-item"><span class="stat-label">Status</span><span class="stat-value">Classified — Archon level</span></div>
-              <div class="stat-item"><span class="stat-label">PNE-Λ-03</span><span class="stat-value">Seraph-adjacent mass</span></div>
-              <div class="stat-item"><span class="stat-label">Known Vessels</span><span class="stat-value">Voice of Apostolos</span></div>
-            </div>
-          </div>
-          <div class="col-right">
+  </div>
+</div>
 
-            <div class="info-section">
-              <div class="info-section-title">Nature & Classification</div>
-              <div class="info-text">
-                <p>Seraphs are not a species in the conventional biological sense. They are massive, partially or fully sentient entities of Seraphic crystallite material — a substance not fully understood even by the Institute's senior researchers. They predate the Great Catastrophe and are foundational to the Institute's existence, technology, and theology. The Institute's theocratic framework is built around them.</p>
-                <p>Seraphs are divided into Greater and Lesser classifications. Lesser Seraphs are the source of Replicant Biological Units — the standardised combat and defence constructs grown from First Seraph remains. Greater Seraphs are fully awakened entities with independent cognition and psionic capability that dwarfs anything achievable by conventional means. The Voice of Apostolos is a minor Seraph empowered by Greater Seraphs — the distinction between minor and Greater is one of scale that is difficult to quantify.</p>
-              </div>
-            </div>
-
-            <div class="info-section">
-              <div class="info-section-title">Replicant Biological Units</div>
-              <div class="info-text">
-                <p>RBUs are grown from First Seraph remains — biological-crystallite hybrid constructs used as the Institute's primary heavy defence and combat assets. Standard RBUs stand approximately 100 metres tall. The Apostolos planetary defenders are significantly larger, ranging from 120 to 260 kilometres in height — entities of a scale that render conventional military force effectively irrelevant in direct engagement.</p>
-                <p>RBUs are not independently intelligent in the way Greater Seraphs are. They operate under Institute direction, controlled through Focuser networks and PICS coordination. The degree to which they possess anything resembling awareness is a subject of ongoing theological and scientific debate within the Institute, conducted entirely at classification levels inaccessible to the general population.</p>
-              </div>
-            </div>
-
-            <div class="info-section">
-              <div class="info-section-title">PNE-Λ-03 — The Anabatic Mass</div>
-              <div class="info-text">
-                <p>PNE-Λ-03 is a Seraph-adjacent proliferative biomass contained in a cryo-resonance vault 18 kilometres below Apostolos's surface at -110°C. It is the biological source material from which the Noctivex were engineered. Its precise nature — whether it constitutes a living Seraph, a Seraph remnant, a failed Seraph, or something else entirely — is unknown even to most Institute researchers. Access is restricted to Archon-authorised personnel only.</p>
-                <p>The designation "Seraph-adjacent" indicates that it shares material properties with Seraphic crystallite but does not meet the Institute's internal classification criteria for a true Seraph. Whether this distinction is meaningful or a bureaucratic convenience is unclear.</p>
-              </div>
-            </div>
-
-            <div class="info-section">
-              <div class="info-section-title">Institute Relationship</div>
-              <div class="info-text">
-                <p>The Institute's relationship with Seraphs is its most guarded secret. Publicly, the Institute's theology positions Seraphs as divine or semi-divine entities whose remains and descendants are sacred — this framing justifies the Institute's authority, the existence of RBUs, and the reverence accorded to Focusers and Oracles. The reality is more complex: the Institute does not control Greater Seraphs, but operates under an arrangement whose nature is Archon-level classified.</p>
-                <p>The Voice of Apostolos — an 18.4km living Seraphic capital vessel — is the most visible expression of this relationship and the most classified asset the Institute possesses outside the Allar-Pneuma siege platform.</p>
-              </div>
-            </div>
-
-            <div class="info-section">
-              <div class="info-section-title">Notable Traits</div>
-              <div class="trait-list">
-                <span class="trait-pill">Pre-Catastrophe Origin</span>
-                <span class="trait-pill">Crystallite Material</span>
-                <span class="trait-pill">Massive Scale</span>
-                <span class="trait-pill">Psionic Foundation</span>
-                <span class="trait-pill">Greater / Lesser Split</span>
-                <span class="trait-pill">RBU Source</span>
-                <span class="trait-pill">Institute Theology Basis</span>
-                <span class="trait-pill">Archon-Level Classified</span>
-              </div>
-            </div>
-
-          </div>
-        </div>
-      </div>
-    </div>
-
-  </div><!-- end track -->
-</div><!-- end viewport -->
-
-<!-- NAV ARROWS -->
-<button class="nav-arrow left disabled" id="arrow-left" onclick="navigate(-1)" aria-label="Previous species">
+<button class="nav-arrow left disabled" id="arrow-left" onclick="navigate(-1)" aria-label="Previous">
   <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
 </button>
-<button class="nav-arrow right" id="arrow-right" onclick="navigate(1)" aria-label="Next species">
+<button class="nav-arrow right" id="arrow-right" onclick="navigate(1)" aria-label="Next">
   <svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg>
 </button>
 
-<!-- PAGE DOTS -->
 <div class="page-dots">
   <div class="dot active" onclick="goTo(0)"></div>
   <div class="dot" onclick="goTo(1)"></div>
-  <div class="dot" onclick="goTo(2)"></div>
 </div>
 
-<!-- COUNTER -->
-<div class="species-counter" id="counter">01 / 03</div>
+<div class="species-counter" id="counter">01 / 02</div>
 
 <script>
   let current = 0;
-  const total = 3;
+  const total = 2;
   const track = document.getElementById('track');
   const dots = document.querySelectorAll('.dot');
   const arrowL = document.getElementById('arrow-left');
@@ -670,7 +450,7 @@
 
   function goTo(index) {
     current = Math.max(0, Math.min(total - 1, index));
-    track.style.transform = `translateX(-${current * (100 / total)}%)`;
+    track.style.transform = `translateX(-${current * 50}%)`;
     dots.forEach((d, i) => d.classList.toggle('active', i === current));
     arrowL.classList.toggle('disabled', current === 0);
     arrowR.classList.toggle('disabled', current === total - 1);
@@ -679,13 +459,11 @@
 
   function navigate(dir) { goTo(current + dir); }
 
-  // Keyboard navigation
   document.addEventListener('keydown', e => {
     if (e.key === 'ArrowLeft') navigate(-1);
     if (e.key === 'ArrowRight') navigate(1);
   });
 
-  // Touch/swipe
   let touchX = null;
   document.addEventListener('touchstart', e => { touchX = e.touches[0].clientX; });
   document.addEventListener('touchend', e => {
@@ -695,16 +473,15 @@
     touchX = null;
   });
 
-  // Portrait image injection — call setPortrait(species, src) to set an image
-  // e.g. setPortrait('avriethrax', 'images/avriethrax.png')
+  // To add portraits once images are in the repo:
+  // setPortrait('avriethrax', 'images/avriethrax.png')
+  // setPortrait('noctivex', 'images/noctivex.png')
   function setPortrait(species, src) {
     const box = document.getElementById('portrait-' + species);
     if (!box) return;
     box.innerHTML = `<img src="${src}" alt="${species}">
-      <div class="portrait-corner tl"></div>
-      <div class="portrait-corner tr"></div>
-      <div class="portrait-corner bl"></div>
-      <div class="portrait-corner br"></div>`;
+      <div class="portrait-corner tl"></div><div class="portrait-corner tr"></div>
+      <div class="portrait-corner bl"></div><div class="portrait-corner br"></div>`;
   }
 
   // Stars
@@ -717,6 +494,5 @@
     s.appendChild(el);
   }
 </script>
-
 </body>
 </html>
