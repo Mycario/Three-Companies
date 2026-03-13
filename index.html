@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Three Companies of Apostolos</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Share+Tech+Mono&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #020408;
+      min-height: 100vh;
+      font-family: 'Share Tech Mono', monospace;
+      color: #7ab8ff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow-x: hidden;
+    }
+
+    .stars {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .star {
+      position: absolute;
+      background: white;
+      border-radius: 50%;
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 2rem;
+      max-width: 1100px;
+      width: 100%;
+    }
+
+    .main-title {
+      font-family: 'Cinzel', serif;
+      font-size: 2rem;
+      color: #7ab8ff;
+      letter-spacing: 0.4em;
+      margin-bottom: 0.5rem;
+    }
+
+    .main-sub {
+      font-size: 0.55rem;
+      color: rgba(26,74,138,0.8);
+      letter-spacing: 0.25em;
+      margin-bottom: 4rem;
+    }
+
+    .companies {
+      display: flex;
+      gap: 2rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .company-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem;
+      cursor: pointer;
+      text-decoration: none;
+      transition: transform 0.2s;
+      width: 280px;
+    }
+
+    .company-card:hover {
+      transform: translateY(-6px);
+    }
+
+    .flag-wrap {
+      width: 280px;
+      height: 175px;
+      border: 1px solid rgba(26,74,138,0.3);
+      border-radius: 4px;
+      overflow: hidden;
+      transition: border-color 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .company-card:hover .flag-wrap {
+      border-color: rgba(58,138,255,0.6);
+    }
+
+    .flag-wrap svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .company-name {
+      font-family: 'Cinzel', serif;
+      font-size: 0.75rem;
+      color: #7ab8ff;
+      letter-spacing: 0.3em;
+      text-align: center;
+    }
+
+    .company-desc {
+      font-size: 0.48rem;
+      color: rgba(26,74,138,0.7);
+      letter-spacing: 0.15em;
+      text-align: center;
+    }
+
+    .divider {
+      width: 200px;
+      height: 1px;
+      background: linear-gradient(to right, transparent, rgba(26,74,138,0.4), transparent);
+      margin: 4rem auto 2rem;
+    }
+
+    .footer {
+      font-size: 0.45rem;
+      color: rgba(26,74,138,0.4);
+      letter-spacing: 0.2em;
+    }
+
+    .corner { position: fixed; width: 20px; height: 20px; border-color: rgba(26,74,138,0.25); border-style: solid; z-index: 2; }
+    .corner-tl { top: 12px; left: 12px; border-width: 1px 0 0 1px; }
+    .corner-tr { top: 12px; right: 12px; border-width: 1px 1px 0 0; }
+    .corner-bl { bottom: 12px; left: 12px; border-width: 0 0 1px 1px; }
+    .corner-br { bottom: 12px; right: 12px; border-width: 0 1px 1px 0; }
+  </style>
+</head>
+<body>
+
+<div class="stars" id="stars"></div>
+<div class="corner corner-tl"></div>
+<div class="corner corner-tr"></div>
+<div class="corner corner-bl"></div>
+<div class="corner corner-br"></div>
+
+<div class="container">
+  <h1 class="main-title">The Three Companies of Apostolos</h1>
+  <p class="main-sub">Apostolos — Penrose Shell World — Classified Archive</p>
+
+  <div class="companies">
+
+    <!-- Pneuma Institute -->
+    <a class="company-card" href="pages/pneuma-institute.html">
+      <div class="flag-wrap">
+        <svg viewBox="0 0 280 175" xmlns="http://www.w3.org/2000/svg">
+          <rect width="280" height="175" fill="#050810"/>
+          <circle cx="140" cy="87" r="42" fill="none" stroke="#1a4a8a" stroke-width="1.5"/>
+          <!-- Aperture blades -->
+          <path d="M140 87 L118 52 L128 87 Z" fill="#1a4a8a" opacity="0.9"/>
+          <path d="M140 87 L175 65 L152 90 Z" fill="#1a4a8a" opacity="0.9"/>
+          <path d="M140 87 L168 118 L140 100 Z" fill="#1a4a8a" opacity="0.9"/>
+          <path d="M140 87 L108 112 L128 90 Z" fill="#1a4a8a" opacity="0.9"/>
+          <circle cx="140" cy="87" r="14" fill="#020408"/>
+          <circle cx="140" cy="87" r="8" fill="#1a4a8a" opacity="0.6"/>
+          <!-- 6 outer circles -->
+          <circle cx="140" cy="42" r="8" fill="#1a4a8a"/>
+          <circle cx="178" cy="64" r="8" fill="#1a4a8a"/>
+          <circle cx="178" cy="110" r="8" fill="#1a4a8a"/>
+          <circle cx="140" cy="132" r="8" fill="#1a4a8a"/>
+          <circle cx="102" cy="110" r="8" fill="#1a4a8a"/>
+          <circle cx="102" cy="64" r="8" fill="#1a4a8a"/>
+          <text x="140" y="158" font-family="Cinzel, serif" font-size="7" fill="#3a6aaa" text-anchor="middle" letter-spacing="3">PNEUMA INSTITUTE</text>
+          <text x="140" y="168" font-family="Share Tech Mono, monospace" font-size="5" fill="#1a4a8a" text-anchor="middle" letter-spacing="2">"Researching Your Dreams"</text>
+        </svg>
+      </div>
+      <div>
+        <div class="company-name">Pneuma Institute</div>
+        <div class="company-desc">Authoritarian Research State — Apostolos</div>
+      </div>
+    </a>
+
+    <!-- Houshin Company -->
+    <a class="company-card" href="pages/houshin-company.html">
+      <div class="flag-wrap">
+        <svg viewBox="0 0 280 175" xmlns="http://www.w3.org/2000/svg">
+          <rect width="280" height="175" fill="#0a0800"/>
+          <rect x="4" y="4" width="272" height="167" fill="none" stroke="#c9962a" stroke-width="0.5" opacity="0.4" rx="2"/>
+          <!-- Trade lines -->
+          <line x1="140" y1="87" x2="140" y2="38" stroke="#c9962a" stroke-width="1" opacity="0.5"/>
+          <line x1="140" y1="87" x2="90" y2="87" stroke="#c9962a" stroke-width="1" opacity="0.5"/>
+          <line x1="140" y1="87" x2="190" y2="87" stroke="#c9962a" stroke-width="1" opacity="0.5"/>
+          <!-- Diamonds -->
+          <polygon points="140,30 144,38 140,46 136,38" fill="#c9962a" opacity="0.8"/>
+          <polygon points="82,87 90,83 98,87 90,91" fill="#c9962a" opacity="0.8"/>
+          <polygon points="182,87 190,83 198,87 190,91" fill="#c9962a" opacity="0.8"/>
+          <!-- Outer ring -->
+          <circle cx="140" cy="87" r="38" fill="none" stroke="#c9962a" stroke-width="1.5"/>
+          <!-- H mark -->
+          <rect x="124" y="68" width="8" height="38" fill="#c9962a"/>
+          <rect x="148" y="68" width="8" height="38" fill="#c9962a"/>
+          <rect x="124" y="83" width="32" height="8" fill="#c9962a"/>
+          <text x="140" y="148" font-family="Cinzel, serif" font-size="7" fill="#c9962a" text-anchor="middle" letter-spacing="3">HOUSHIN COMPANY</text>
+          <text x="140" y="159" font-family="Share Tech Mono, monospace" font-size="5" fill="#8a6010" text-anchor="middle" letter-spacing="1">Vel na, Formir sha</text>
+        </svg>
+      </div>
+      <div>
+        <div class="company-name" style="color:#c9962a;">Houshin Company</div>
+        <div class="company-desc">Commercial Conglomerate — Apostolos</div>
+      </div>
+    </a>
+
+    <!-- Mirror Protocol -->
+    <a class="company-card" href="pages/mirror-protocol.html">
+      <div class="flag-wrap">
+        <svg viewBox="0 0 280 175" xmlns="http://www.w3.org/2000/svg">
+          <rect width="280" height="175" fill="#060408"/>
+          <rect x="4" y="4" width="272" height="167" fill="none" stroke="#8060a0" stroke-width="0.5" opacity="0.4" rx="2"/>
+          <!-- Mirror symbol - two facing triangles suggesting reflection -->
+          <polygon points="140,50 110,110 140,95" fill="#8060a0" opacity="0.85"/>
+          <polygon points="140,50 170,110 140,95" fill="#6040808" opacity="0.6"/>
+          <line x1="100" y1="87" x2="180" y2="87" stroke="#8060a0" stroke-width="1" opacity="0.5"/>
+          <circle cx="140" cy="87" r="40" fill="none" stroke="#8060a0" stroke-width="1"/>
+          <circle cx="140" cy="87" r="5" fill="#8060a0" opacity="0.8"/>
+          <text x="140" y="148" font-family="Cinzel, serif" font-size="7" fill="#8060a0" text-anchor="middle" letter-spacing="3">MIRROR PROTOCOL</text>
+          <text x="140" y="159" font-family="Share Tech Mono, monospace" font-size="5" fill="#604080" text-anchor="middle" letter-spacing="1">TBD</text>
+        </svg>
+      </div>
+      <div>
+        <div class="company-name" style="color:#a080c0;">Mirror Protocol</div>
+        <div class="company-desc">Advanced Infantry Systems — Apostolos</div>
+      </div>
+    </a>
+
+  </div>
+
+  <div class="divider"></div>
+  <p class="footer">Apostolos Classified Archive — Pneuma Institute Internal Network — Unauthorised Access Prohibited</p>
+</div>
+
+<script>
+  const s = document.getElementById('stars');
+  for (let i = 0; i < 250; i++) {
+    const el = document.createElement('div');
+    el.className = 'star';
+    const sz = Math.random() * 1.4 + 0.3;
+    el.style.cssText = `width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*100}%;opacity:${Math.random()*0.5+0.1};`;
+    s.appendChild(el);
+  }
+</script>
+
+</body>
+</html>
