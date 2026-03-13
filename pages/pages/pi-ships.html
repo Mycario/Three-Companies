@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PI Ships — Apostolos Archive</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Share+Tech+Mono&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #020408;
+      min-height: 100vh;
+      font-family: 'Share Tech Mono', monospace;
+      color: #7ab8ff;
+    }
+
+    .stars { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+    .star { position: absolute; background: white; border-radius: 50%; }
+
+    .corner { position: fixed; width: 20px; height: 20px; border-color: rgba(26,74,138,0.25); border-style: solid; z-index: 3; }
+    .corner-tl { top: 12px; left: 12px; border-width: 1px 0 0 1px; }
+    .corner-tr { top: 12px; right: 12px; border-width: 1px 1px 0 0; }
+    .corner-bl { bottom: 12px; left: 12px; border-width: 0 0 1px 1px; }
+    .corner-br { bottom: 12px; right: 12px; border-width: 0 1px 1px 0; }
+
+    .topbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 48px;
+      background: rgba(2,4,8,0.92);
+      border-bottom: 1px solid rgba(26,74,138,0.2);
+      display: flex;
+      align-items: center;
+      padding: 0 2rem;
+      gap: 1.5rem;
+      z-index: 2;
+      backdrop-filter: blur(6px);
+    }
+
+    .topbar-back {
+      font-size: 0.5rem;
+      color: rgba(26,74,138,0.7);
+      letter-spacing: 0.2em;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .topbar-back:hover { color: #7ab8ff; }
+
+    .topbar-divider { width: 1px; height: 16px; background: rgba(26,74,138,0.3); }
+
+    .topbar-title {
+      font-family: 'Cinzel', serif;
+      font-size: 0.7rem;
+      color: #7ab8ff;
+      letter-spacing: 0.3em;
+    }
+
+    .main {
+      position: relative;
+      z-index: 1;
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 80px 2rem 4rem;
+    }
+
+    .page-title {
+      font-family: 'Cinzel', serif;
+      font-size: 1.4rem;
+      color: #7ab8ff;
+      letter-spacing: 0.35em;
+      margin-bottom: 0.4rem;
+    }
+
+    .page-sub {
+      font-size: 0.48rem;
+      color: rgba(26,74,138,0.6);
+      letter-spacing: 0.2em;
+      margin-bottom: 2.5rem;
+    }
+
+    .category { margin-bottom: 3rem; }
+
+    .category-title {
+      font-size: 0.5rem;
+      color: rgba(26,74,138,0.8);
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid rgba(26,74,138,0.15);
+    }
+
+    .ship-list { display: flex; flex-direction: column; gap: 0.6rem; }
+
+    .ship-row {
+      background: rgba(10,20,40,0.6);
+      border: 1px solid rgba(26,74,138,0.25);
+      cursor: pointer;
+      transition: border-color 0.2s;
+      overflow: hidden;
+    }
+
+    .ship-row:hover { border-color: rgba(58,138,255,0.45); }
+    .ship-row.open { border-color: rgba(58,138,255,0.5); }
+
+    .ship-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.9rem 1.25rem;
+      gap: 1rem;
+    }
+
+    .ship-header-left { display: flex; align-items: center; gap: 1.5rem; flex: 1; }
+
+    .ship-name {
+      font-family: 'Cinzel', serif;
+      font-size: 0.75rem;
+      color: #7ab8ff;
+      letter-spacing: 0.2em;
+    }
+
+    .ship-class {
+      font-size: 0.44rem;
+      color: rgba(26,74,138,0.65);
+      letter-spacing: 0.15em;
+    }
+
+    .ship-tag {
+      font-size: 0.4rem;
+      letter-spacing: 0.12em;
+      padding: 3px 8px;
+      border: 1px solid rgba(26,74,138,0.3);
+      color: rgba(100,160,255,0.6);
+      white-space: nowrap;
+    }
+
+    .ship-chevron {
+      font-size: 0.5rem;
+      color: rgba(26,74,138,0.5);
+      transition: transform 0.2s;
+      flex-shrink: 0;
+    }
+    .ship-row.open .ship-chevron { transform: rotate(180deg); }
+
+    /* EXPANDED TEMPLATE */
+    .ship-body {
+      display: none;
+      padding: 0 1.25rem 1.25rem;
+      border-top: 1px solid rgba(26,74,138,0.15);
+    }
+    .ship-row.open .ship-body { display: block; }
+
+    .template-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-top: 1.25rem;
+    }
+
+    .template-section { margin-bottom: 1rem; }
+
+    .template-section-title {
+      font-size: 0.42rem;
+      color: rgba(26,74,138,0.7);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 0.6rem;
+      padding-bottom: 0.3rem;
+      border-bottom: 1px solid rgba(26,74,138,0.1);
+    }
+
+    .template-item { margin-bottom: 0.5rem; }
+
+    .template-label {
+      font-size: 0.4rem;
+      color: rgba(26,74,138,0.6);
+      letter-spacing: 0.15em;
+      margin-bottom: 2px;
+    }
+
+    .template-value {
+      font-size: 0.5rem;
+      color: rgba(122,184,255,0.8);
+      letter-spacing: 0.05em;
+      line-height: 1.7;
+    }
+
+    .template-full { grid-column: 1 / -1; }
+
+    .divider {
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(to right, transparent, rgba(26,74,138,0.3), transparent);
+      margin: 2rem 0;
+    }
+  </style>
+</head>
+<body>
+
+<div class="stars" id="stars"></div>
+<div class="corner corner-tl"></div>
+<div class="corner corner-tr"></div>
+<div class="corner corner-bl"></div>
+<div class="corner corner-br"></div>
+
+<nav class="topbar">
+  <a class="topbar-back" href="../index.html">← Home</a>
+  <div class="topbar-divider"></div>
+  <a class="topbar-back" href="pneuma-institute.html">← Pneuma Institute</a>
+  <div class="topbar-divider"></div>
+  <span class="topbar-title">Ships</span>
+</nav>
+
+<div class="main">
+  <h1 class="page-title">Fleet Registry</h1>
+  <p class="page-sub">Pneuma Institute — Vector Operations Command — Classified</p>
+
+  <!-- FLEET -->
+  <div class="category">
+    <div class="category-title">Main Fleet</div>
+    <div class="ship-list">
+
+      <!-- VEL-THRAEN -->
+      <div class="ship-row" onclick="toggle(this)">
+        <div class="ship-header">
+          <div class="ship-header-left">
+            <div>
+              <div class="ship-name">Vel-Thraen</div>
+              <div class="ship-class">Tharek Class Cutter</div>
+            </div>
+            <span class="ship-tag">Trade Enforcement</span>
+            <span class="ship-tag">Patrol</span>
+          </div>
+          <div class="ship-chevron">▼</div>
+        </div>
+        <div class="ship-body">
+          <div class="template-grid">
+            <div>
+              <div class="template-section">
+                <div class="template-section-title">General</div>
+                <div class="template-item"><div class="template-label">Classification</div><div class="template-value">Trade Enforcement / Patrol Vessel</div></div>
+                <div class="template-item"><div class="template-label">Crew</div><div class="template-value">48</div></div>
+              </div>
+              <div class="template-section">
+                <div class="template-section-title">Dimensions</div>
+                <div class="template-item"><div class="template-label">Length</div><div class="template-value">180m</div></div>
+                <div class="template-item"><div class="template-label">Width</div><div class="template-value">60m</div></div>
+                <div class="template-item"><div class="template-label">Height</div><div class="template-value">40m</div></div>
+              </div>
+              <div class="template-section">
+                <div class="template-section-title">Propulsion & Power</div>
+                <div class="template-item"><div class="template-label">Propulsion</div><div class="template-value">Synar-Vel Drive (High Speed Sublight)</div></div>
+                <div class="template-item"><div class="template-label">FTL</div><div class="template-value">Nul-Sha Slingshot</div></div>
+                <div class="template-item"><div class="template-label">Power</div><div class="template-value">SFR-Standard Grade</div></div>
+              </div>
+            </div>
+            <div>
+              <div class="template-section">
+                <div class="template-section-title">Armament</div>
+                <div class="template-item"><div class="template-label">Primary</div><div class="template-value">2x Sten-Vel Lances (Resonance bore emitters)</div></div>
+                <div class="template-item"><div class="template-label">Secondary</div><div class="template-value">2x Kinetic Burst Cannons</div></div>
+                <div class="template-item"><div class="template-label">Point Defence</div><div class="template-value">1x Resonance Flak Array</div></div>
+                <div class="template-item"><div class="template-label">Other</div><div class="template-value">Null Tether Array — range 8km, holds 2 vessels simultaneously</div></div>
+                <div class="template-item"><div class="template-label">Shields</div><div class="template-value">Forma-Vel Grid (Light Grade) — basic six facing coverage, limited redistribution</div></div>
+              </div>
+              <div class="template-section">
+                <div class="template-section-title">Electronics & Systems</div>
+                <div class="template-item"><div class="template-label">Sensors</div><div class="template-value">Vel-Formir Array — active/passive, 1.5 AU</div></div>
+                <div class="template-item"><div class="template-label">Comms</div><div class="template-value">Pneuma-Formir Relay</div></div>
+                <div class="template-item"><div class="template-label">AI</div><div class="template-value">Standard PICS uplink terminal</div></div>
+                <div class="template-item"><div class="template-label">Navigation</div><div class="template-value">Kuar-Himmel Topology Engine</div></div>
+                <div class="template-item"><div class="template-label">Wasteheat</div><div class="template-value">Standard Thermal Venting</div></div>
+              </div>
+            </div>
+            <div class="template-full">
+              <div class="template-section">
+                <div class="template-section-title">Special Features</div>
+                <div class="template-item"><div class="template-value">Null Tether Array — psionic tendril solidifies around target drive systems, broken by psionic counter, weapons fire or power cut. Custodian Boarding Complement (8 Custodians). Institute Registry Transponder (falsified civilian ID). Detention Hold (24 detainees, psionic suppression active).</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- VEL-OSSYN -->
+      <div class="ship-row" onclick="toggle(this)">
+        <div class="ship-header">
+          <div class="ship-header-left">
+            <div>
+              <div class="ship-name">Vel-Ossyn</div>
+              <div class="ship-class">Ossyn Class Frigate</div>
+            </div>
+            <span class="ship-tag">Combat Frigate</span>
+            <span class="ship-tag">System Patrol</span>
+          </div>
+          <div class="ship-chevron">▼</div>
+        </div>
+        <div class="ship-body">
+          <div class="template-grid">
+            <div>
+              <div class="template-section">
+                <div class="template-section-title">General</div>
+                <div class="template-item"><div class="template-label">Classification</div><div class="template-value">Combat Frigate / System Patrol Vessel</div></div>
+                <div class="template-item"><div class="template-label">Crew</div><div class="template-value">120</div></div>
+              </div>
+              <div class="template-section">
+                <div class="template-section-title">Dimensions</div>
+                <div class="template-item"><div class="template-label">Length</div><div class="template-value">600m</div></div>
+                <div class="template-item"><div class="template-label">Width</div><div class="template-value">180m</div></div>
+                <div class="template-item"><div class="template-label">Height</div><div class="template-value">120m</div></div>
+              </div>
+              <div class="template-section">
+                <div class="template-section-title">Propulsion & Power</div>
+                <div class="template-item"><div class="template-label">Propulsion</div><div class="template-value">Synar-Vel Drive</div></div>
+                <div class="template-item"><div class="template-label">FTL</div><div class="template-value">Nul-Sha Slingshot</div></div>
+                <div class="template-item"><div class="template-label">Power</div><div class="template-value">SFR-Standard Grade</div></div>
+              </div>
+            </div>
+            <div>
+              <div class="template-section">
+                <div class="template-section-title">Armament</div>
+                <div class="template-item"><div class="template-label">Primary</div><div class="template-value">4x Sten-Vel Lances</div></div>
+                <div class="template-item"><div class="template-label">Secondary</div><div class="template-value">4x Kinetic Railgun Batteries</div></div>
+                <div class="template-item"><div class="template-label">Point Defence</div><div class="template-value">2x Resonance Flak Arrays</div></div>
+                <div class="template-item"><div class="template-label">Other</div><div class="template-value">Null Tether</div></div>
+                <div class="template-item"><div class="template-label">Shields</div><div class="template-value">Forma-Vel Grid (Standard Grade) — full six facing, moderate redistribution, PICS managed</div></div>
+              </div>
+              <div class="template-section">
+                <div class="template-section-title">Electronics & Systems</div>
+                <div class="template-item"><div class="template-label">Sensors</div><div class="template-value">Vel-Formir Array — active/passive, 2.5 AU</div></div>
+                <div class="template-item"><div class="template-label">Comms</div><div class="template-value">Pneuma-Formir Relay</div></div>
+                <div class="template-item"><div class="template-label">AI</div><div class="template-value">Standard PICS uplink terminal</div></div>
+                <div class="template-item"><div class="template-label">Navigation</div><div class="template-value">Kuar-Himmel Topology Engine</div></div>
+                <div class="template-item"><div class="template-label">Wasteheat</div><div class="template-value">Standard Thermal Venting</div></div>
+              </div>
+            </div>
+            <div class="template-full">
+              <div class="template-section">
+                <div class="template-section-title">Special Features</div>
+                <div class="template-item"><div class="template-value">Oracle Relay Chamber (1 Oracle in stabilized resonance cradle). Rapid Response Complement (12 Custodians). Fleet Coordination Node — local PICS relay for nearby vessels.</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ALLAR-ZURI -->
+      <div class="ship-row" onclick="toggle(this)">
+        <div class="ship-header">
+          <div class="ship-header-left">
+            <div>
+              <div class="ship-name">Allar-Zuri</div>
+              <div class="ship-class">Ossarek Class Battleship</div>
+            </div>
+            <span class="ship-tag">Heavy Combat</span>
+            <span class="ship-tag">Fleet Anchor</span>
+          </div>
+          <div class="ship-chevron">▼</div>
+        </div>
+        <div class="ship-body">
+          <div class="template-grid">
+            <div>
+              <div class="template-section">
+                <div class="template-section-title">General</div>
+                <div class="template-item"><div class="template-label">Classification</div><div class="template-value">Heavy Combat Vessel / Fleet Anchor</div></div>
+                <div class="template-item"><div class="template-label">Crew</div><div class="template-value">1,840</div></div>
+              </div>
+              <div class="template-section">
+                <div class="template-section-title">Dimensions</div>
+                <div class="template-item"><div class="template-label">Length</div><div class="template-value">2.4km</div></div>
+                <div class="template-item"><div class="template-label">Width</div><div class="template-value">680m</div></div>
+                <div class="template-item"><div class="template-label">Height</div><div class="template-value">420m</div></div>
+              </div>
+              <div class="template-section">
+                <div class="template-section-title">Propulsion & Power</div>
+                <div class="template-item"><div class="template-label">Propulsion</div><div class="template-value">Synar-Vel Drive (Heavy Grade)</div></div>
+                <div class="template-item"><div class="template-label">FTL</div><div class="template-value">Nul-Sha Slingshot (Heavy Grade)</div></div>
+                <div class="template-item"><div class="template-label">Power</div><div class="template-value">SFR-Heavy Grade</div></div>
+              </div>
+            </div>
+            <div>
+              <div class="template-section">
+                <div class="template-section-title">Armament</div>
+                <div class="template-item"><div class="template-label">Primary</div><div class="template-value">4x Sten-Vel Lances (Heavy Grade) — full traverse turret mounted</div></div>
+                <div class="template-item"><div class="template-label">Secondary</div><div class="template-value">8x Kinetic Railgun Batteries</div></div>
+                <div class="template-item"><div class="template-label">Point Defence</div><div class="template-value">6x Resonance Flak Arrays</div></div>
+                <div class="template-item"><div class="template-label">Other</div><div class="template-value">2x Seraphic Bore Torpedo Batteries (12 torpedoes each)</div></div>
+                <div class="template-item"><div class="template-label">Shields</div><div class="template-value">Forma-Vel Grid (Heavy Grade) — reinforced multi-emitter, rapid redistribution, Oracle assisted</div></div>
+              </div>
+              <div class="template-section">
+                <div class="template-section-title">Electronics & Systems</div>
+                <div class="template-item"><div class="template-label">Sensors</div><div class="template-value">Vel-Formir Array (Heavy Grade) — 4 AU</div></div>
+                <div class="template-item"><div class="template-label">Comms</div><div class="template-value">Pneuma-Formir Relay (Heavy Grade)</div></div>
+                <div class="template-item"><div class="template-label">AI</div><div class="template-value">Standard PICS uplink terminal (enhanced combat processing)</div></div>
+                <div class="template-item"><div class="template-label">Navigation</div><div class="template-value">Kuar-Himmel Topology Engine (Heavy Grade)</div></div>
+                <div class="template-item"><div class="template-label">Wasteheat</div><div class="template-value">Standard Thermal Venting (Heavy Grade)</div></div>
+              </div>
+            </div>
+            <div class="template-full">
+              <div class="template-section">
+                <div class="template-section-title">Special Features</div>
+                <div class="template-item"><div class="template-value">Oracle Combat Station (2 Oracles — shield redistribution and psionic threat detection). Custodian Boarding Battalion (60 Custodians). Seraphic Torpedo Magazine (48 torpedoes, hardened, blast isolated). Fleet Anchor Role — thick armour, built to absorb punishment rather than avoid it.</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- VEL-ORNEN -->
+      <div class="ship-row" onclick="toggle(this)">
+        <div class="ship-header">
+          <div class="ship-header-left">
+            <div>
+              <div class="ship-name">Vel-Ornen</div>
+              <div class="ship-class">Orneval Class Carrier</div>
+            </div>
+            <span class="ship-tag">Fleet Carrier</span>
+            <span class="ship-tag">Fighter Deployment</span>
+          </div>
+          <div class="ship-chevron">▼</div>
+        </div>
+        <div class="ship-body">
+          <div class="template-grid">
+            <div>
+              <div class="template-section">
+                <div class="template-section-title">General</div>
+                <div class="template-item"><div class="template-label">Classification</div><div class="template-value">Fleet Carrier / Fighter Deployment Platform</div></div>
+                <div class="template-item"><div class="template-label">Crew</div><div class="template-value">3,200 including 480 pilots and flight crew</div></div>
+              </div>
+              <div class="template-section">
+                <div class="template-section-title">Dimensions</div>
+                <div class="template-item"><div class="template-label">Length</div><div class="template-value">3.8km</div></div>
+                <div class="template-item"><div class="template-label">Width</div><div class="template-value">1.2km</div></div>
+                <div class="template-item"><div class="template-label">Height</div><div class="template-value">600m</div></div>
+              </div>
+              <div class="template-section">
+                <div class="template-section-title">Propulsion & Power</div>
+                <div class="template-item"><div class="template-label">Propulsion</div><div class="template-value">Synar-Vel Drive (Carrier Grade)</div></div>
+                <div class="template-item"><div class="template-label">FTL</div><div class="template-value">Nul-Sha Slingshot (Carrier Grade)</div></div>
+                <div class="template-item"><div class="template-label">Power</div><div class="template-value">SFR-Carrier Grade</div></div>
+              </div>
+            </div>
+            <div>
+              <div class="template-section">
+                <div class="template-section-title">Armament</div>
+                <div class="template-item"><div class="template-label">Primary</div><div class="template-value">4x Kinetic Railgun Batteries (last resort self defence)</div></div>
+                <div class="template-item"><div class="template-label">Point Defence</div><div class="template-value">12x Resonance Flak Arrays — heaviest PD complement in the fleet</div></div>
+                <div class="template-item"><div class="template-label">Shields</div><div class="template-value">Forma-Vel Grid (Carrier Grade) — power weighted to fore and dorsal facings during launch operations</div></div>
+              </div>
+              <div class="template-section">
+                <div class="template-section-title">Electronics & Systems</div>
+                <div class="template-item"><div class="template-label">Sensors</div><div class="template-value">Vel-Formir Array (Carrier Grade) — 5 AU, full complement IFF tracking</div></div>
+                <div class="template-item"><div class="template-label">Comms</div><div class="template-value">Pneuma-Formir Relay (Carrier Grade) — manages 240 craft simultaneously</div></div>
+                <div class="template-item"><div class="template-label">AI</div><div class="template-value">PICS Flight Coordination Node</div></div>
+                <div class="template-item"><div class="template-label">Navigation</div><div class="template-value">Kuar-Himmel Topology Engine (Carrier Grade)</div></div>
+                <div class="template-item"><div class="template-label">Wasteheat</div><div class="template-value">Standard Thermal Venting (Carrier Grade)</div></div>
+              </div>
+            </div>
+            <div class="template-full">
+              <div class="template-section">
+                <div class="template-section-title">Carried Complement (240 craft across 8 bays)</div>
+                <div class="template-item"><div class="template-value">80x Vel-Sorrath Interceptors — anti-fighter, 2x Resonance Lance emitters, 4x void-spike micro-missiles. 60x Vel-Kaethor Fighter-Bombers — twin pilot, Seraphic Bore micro-torpedoes, capital ship strikes. 60x Vel-Draveth Gunships — 4x heavy Resonance Cannons, 2x kinetic autocannons, heavily armoured. 40x Vel-Thraen Enforcement Cutters — boarding operations, Null Tether equipped, crew of 12.</div></div>
+              </div>
+              <div class="template-section">
+                <div class="template-section-title">Special Features</div>
+                <div class="template-item"><div class="template-value">Oracle Flight Control (1 Oracle). Repair and Rearm Bays per launch bay. Doctrine — never enters main engagement, holds at maximum launch range, withdraws if screen breaks.</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ALLAR-KAEDRYN -->
+      <div class="ship-row" onclick="toggle(this)">
+        <div class="ship-header">
+          <div class="ship-header-left">
+            <div>
+              <div class="ship-name">Allar-Kaedryn</div>
+              <div class="ship-class">Kaedryn Class Fleet Flagship</div>
+            </div>
+            <span class="ship-tag">Fleet Flagship</span>
+            <span class="ship-tag">Artillery Command</span>
+          </div>
+          <div class="ship-chevron">▼</div>
+        </div>
+        <div class="ship-body">
+          <div class="template-grid">
+            <div>
+              <div class="template-section">
+                <div class="template-section-title">General</div>
+                <div class="template-item"><div class="template-label">Classification</div><div class="template-value">Fleet Flagship / Artillery Command Vessel</div></div>
+                <div class="template-item"><div class="template-label">Crew</div><div class="template-value">6,200</div></div>
+              </div>
+              <div class="template-section">
+                <div class="template-section-title">Dimensions</div>
+                <div class="template-item"><div class="template-label">Length</div><div class="template-value">4.6km</div></div>
+                <div class="template-item"><div class="template-label">Width</div><div class="template-value">1.4km</div></div>
+                <div class="template-item"><div class="template-label">Height</div><div class="template-value">900m</div></div>
+              </div>
+              <div class="template-section">
+                <div class="template-section-title">Propulsion & Power</div>
+                <div class="template-item"><div class="template-label">Propulsion</div><div class="template-value">Synar-Vel Drive (Flagship Grade)</div></div>
+                <div class="template-item"><div class="template-label">FTL</div><div class="template-value">Nul-Sha Slingshot (Flagship Grade) — 14hr cooldown</div></div>
+                <div class="template-item"><div class="template-label">Power</div><div class="template-value">Stellar Ignition Reactor (SIR-Kaedryn Grade) — artificial stellar fusion core, 800m containment chamber, 200 reactor engineers required</div></div>
+              </div>
+            </div>
+            <div>
+              <div class="template-section">
+                <div class="template-section-title">Armament</div>
+                <div class="template-item"><div class="template-label">Primary</div><div class="template-value">Vel-Allar Spine — 3.2km spinal railgun, Tungsten-Iridium/planetary alloy slugs with nuclear warhead core, 0.06-0.07c muzzle velocity, 1 shot per 4-6 minutes, ship must hold heading to fire</div></div>
+                <div class="template-item"><div class="template-label">Secondary</div><div class="template-value">2x Vel-Spine (Secondary) — 800m parallel spinal guns, 0.03-0.05c, 1 shot per 90 seconds, 15 degree traverse</div></div>
+                <div class="template-item"><div class="template-label">Tertiary</div><div class="template-value">8x Sten-Vel Lances (Flagship Grade)</div></div>
+                <div class="template-item"><div class="template-label">Point Defence</div><div class="template-value">10x Resonance Flak Arrays</div></div>
+                <div class="template-item"><div class="template-label">Other</div><div class="template-value">2x Seraphic Bore Torpedo Batteries (12 torpedoes each)</div></div>
+                <div class="template-item"><div class="template-label">Shields</div><div class="template-value">Forma-Vel Grid (Flagship Grade) — capital grade multi-layer, Oracle assisted, highest output of any non-Seraphic vessel</div></div>
+              </div>
+              <div class="template-section">
+                <div class="template-section-title">Electronics & Systems</div>
+                <div class="template-item"><div class="template-label">Sensors</div><div class="template-value">Allar-Vel Array (Flagship Grade) — 6 AU, long range targeting for spinal gun fire solutions</div></div>
+                <div class="template-item"><div class="template-label">Comms</div><div class="template-value">Pneuma-Formir Relay (Flagship Grade) — full fleet coordination, direct Archon channel</div></div>
+                <div class="template-item"><div class="template-label">AI</div><div class="template-value">PICS Fleet Command Node</div></div>
+                <div class="template-item"><div class="template-label">Navigation</div><div class="template-value">Kuar-Himmel Topology Engine (Flagship Grade)</div></div>
+                <div class="template-item"><div class="template-label">Wasteheat</div><div class="template-value">Active Stellar Heat Redistribution — radiator fins glow visibly at max output</div></div>
+              </div>
+            </div>
+            <div class="template-full">
+              <div class="template-section">
+                <div class="template-section-title">Special Features</div>
+                <div class="template-item"><div class="template-value">Fleet Command Infrastructure (4 dedicated decks, holographic displays, Archon terminals). Oracle Command Council (4 Oracles). Custodian Garrison (120 Custodians). Spinal Gun Crew (340 specialist gunners, targeting officers and reactor liaison engineers). Doctrine — holds at extreme range, never intended to brawl directly.</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- STEALTH -->
+  <div class="category">
+    <div class="category-title">Stealth Fleet</div>
+    <div class="ship-list">
+
+      <!-- VAETHOS-NUL -->
+      <div class="ship-row" onclick="toggle(this)">
+        <div class="ship-header">
+          <div class="ship-header-left">
+            <div>
+              <div class="ship-name">Vaethos-Nul</div>
+              <div class="ship-class">SIL Class Infiltrator</div>
+            </div>
+            <span class="ship-tag">Stealth Recon</span>
+            <span class="ship-tag">Autonomous</span>
+          </div>
+          <div class="ship-chevron">▼</div>
+        </div>
+        <div class="ship-body">
+          <div class="template-grid">
+            <div>
+              <div class="template-section">
+                <div class="template-section-title">General</div>
+                <div class="template-item"><div class="template-label">Classification</div><div class="template-value">Stealth Reconnaissance / Operations Vessel</div></div>
+                <div class="template-item"><div class="template-label">Crew</div><div class="template-value">0 — fully autonomous (PICS sub-node Vel-Enar)</div></div>
+              </div>
+              <div class="template-section">
+                <div class="template-section-title">Dimensions</div>
+                <div class="template-item"><div class="template-label">Length</div><div class="template-value">100m</div></div>
+                <div class="template-item"><div class="template-label">Width</div><div class="template-value">50m</div></div>
+                <div class="template-item"><div class="template-label">Height</div><div class="template-value">30m</div></div>
+              </div>
+              <div class="template-section">
+                <div class="template-section-title">Propulsion & Power</div>
+                <div class="template-item"><div class="template-label">Propulsion</div><div class="template-value">Vel-Synar Silent Drive (near-zero emission sublight)</div></div>
+                <div class="template-item"><div class="template-label">FTL</div><div class="template-value">Nul-Sha Slingshot — masked entry via stellar/gas giant mass, then goes dark</div></div>
+                <div class="template-item"><div class="template-label">Power</div><div class="template-value">SFR-Nul Grade (Null Radiance Shell encased)</div></div>
+              </div>
+            </div>
+            <div>
+              <div class="template-section">
+                <div class="template-section-title">Armament</div>
+                <div class="template-item"><div class="template-label">Weapons</div><div class="template-value">None</div></div>
+                <div class="template-item"><div class="template-label">Shields</div><div class="template-value">None — stealth profile must be maintained</div></div>
+              </div>
+              <div class="template-section">
+                <div class="template-section-title">Electronics & Systems</div>
+                <div class="template-item"><div class="template-label">Sensors</div><div class="template-value">Allar-Vel Array — fully passive, 4 AU, gravitational/thermal/psionic/signal</div></div>
+                <div class="template-item"><div class="template-label">Comms</div><div class="template-value">Pneuma-Formir Relay — psionic burst transmissions behind stellar objects</div></div>
+                <div class="template-item"><div class="template-label">AI</div><div class="template-value">PICS Sub-Node Vel-Enar — fully autonomous</div></div>
+                <div class="template-item"><div class="template-label">Navigation</div><div class="template-value">Kuar-Himmel Topology Engine — routes through stellar mass and gas clouds</div></div>
+                <div class="template-item"><div class="template-label">Wasteheat</div><div class="template-value">Silent Thermal Cycling — absorbed into hull lattice, re-radiated below sensor threshold, 72hr storage</div></div>
+              </div>
+            </div>
+            <div class="template-full">
+              <div class="template-section">
+                <div class="template-section-title">Special Features</div>
+                <div class="template-item"><div class="template-value">Null Shroud Field — psionic suppression, near-zero resonance signature. 12x Vel-Drones (30cm Nullskin recon/intrusion drones). SIL Mission Package (3 configs: Vel=intel, Silent=erasure/amnestic, Formir=disinformation). Allar-Nul self-termination — SFR cascade, full atomization in 11 seconds.</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- UNIQUE -->
+  <div class="category">
+    <div class="category-title">Unique Vessels</div>
+    <div class="ship-list">
+
+      <!-- ALLAR-PNEUMA -->
+      <div class="ship-row" onclick="toggle(this)">
+        <div class="ship-header">
+          <div class="ship-header-left">
+            <div>
+              <div class="ship-name">Allar-Pneuma</div>
+              <div class="ship-class">Vaekoryn Class Planetary Siege Platform</div>
+            </div>
+            <span class="ship-tag">Planetary Siege</span>
+            <span class="ship-tag">Unique</span>
+          </div>
+          <div class="ship-chevron">▼</div>
+        </div>
+        <div class="ship-body">
+          <div class="template-grid">
+            <div>
+              <div class="template-section">
+                <div class="template-section-title">General</div>
+                <div class="template-item"><div class="template-label">Classification</div><div class="template-value">Planetary Siege Platform (unique)</div></div>
+                <div class="template-item"><div class="template-label">Crew</div><div class="template-value">~8,400 including 600 Focusers</div></div>
+              </div>
+              <div class="template-section">
+                <div class="template-section-title">Dimensions</div>
+                <div class="template-item"><div class="template-label">Length</div><div class="template-value">38km</div></div>
+                <div class="template-item"><div class="template-label">Width</div><div class="template-value">4.2km</div></div>
+                <div class="template-item"><div class="template-label">Height</div><div class="template-value">3.1km</div></div>
+                <div class="template-item"><div class="template-label">Dry Mass</div><div class="template-value">~420 billion tons</div></div>
+              </div>
+              <div class="template-section">
+                <div class="template-section-title">Propulsion & Power</div>
+                <div class="template-item"><div class="template-label">Propulsion</div><div class="template-value">Synar-Vel Drive (Siege Grade — slow)</div></div>
+                <div class="template-item"><div class="template-label">FTL</div><div class="template-value">Nul-Sha Slingshot (Siege Grade) — 24hr cooldown, large detectable signature, never jumps alone</div></div>
+                <div class="template-item"><div class="template-label">Power</div><div class="template-value">SSR-Vaekoryn Grade — scaled Project Infinity derivative, near-singularity pressure Seraphic core, 12km containment length, constant Focuser input required</div></div>
+              </div>
+            </div>
+            <div>
+              <div class="template-section">
+                <div class="template-section-title">Armament</div>
+                <div class="template-item"><div class="template-label">Primary</div><div class="template-value">Vel-Allar Lance — hull splits full 38km, Seraphic crystallite emitter along dorsal spine, 4-8hr charge, single catastrophic psionic pulse, ~4,000km wide x 11km deep crater per shot, 6-8 shots to render Earth-sized planet uninhabitable, 72hr cooldown, requires 4/7 Archon authorization per shot</div></div>
+                <div class="template-item"><div class="template-label">Secondary</div><div class="template-value">None — entirely defenseless, relies on escort fleet</div></div>
+                <div class="template-item"><div class="template-label">Shields</div><div class="template-value">Forma-Vel Grid (Siege Grade) — goes completely offline during Lance charge cycle</div></div>
+              </div>
+              <div class="template-section">
+                <div class="template-section-title">Electronics & Systems</div>
+                <div class="template-item"><div class="template-label">Sensors</div><div class="template-value">Allar-Vel Array (Siege Grade) — 8 AU, planetary core mapping</div></div>
+                <div class="template-item"><div class="template-label">Comms</div><div class="template-value">Pneuma-Formir Relay (Siege Grade) — direct Archon channel</div></div>
+                <div class="template-item"><div class="template-label">AI</div><div class="template-value">Dedicated PICS Command Node — most capable sub-node outside Apostolos</div></div>
+                <div class="template-item"><div class="template-label">Wasteheat</div><div class="template-value">Active Seraphic Heat Redistribution — overheating is primary catastrophic failure risk</div></div>
+              </div>
+            </div>
+            <div class="template-full">
+              <div class="template-section">
+                <div class="template-section-title">Special Features</div>
+                <div class="template-item"><div class="template-value">Focuser Corps (600, min 480 active to initiate charge, rotating shifts, permanent neurological damage risk). Archon Authorization System (hardwired psionic verification, tampering = automatic reactor shutdown). Oracle Council Chamber (3 Oracles). Escort Complement (12 interceptors, 200 Custodians). Never fired in combat. Existence deliberately leaked as deterrence. Lost 2 prototypes during testing.</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- VOICE OF APOSTOLOS -->
+      <div class="ship-row" onclick="toggle(this)">
+        <div class="ship-header">
+          <div class="ship-header-left">
+            <div>
+              <div class="ship-name">Voice of Apostolos</div>
+              <div class="ship-class">Emergence Class Capital Vessel</div>
+            </div>
+            <span class="ship-tag">Living Vessel</span>
+            <span class="ship-tag">Unique</span>
+          </div>
+          <div class="ship-chevron">▼</div>
+        </div>
+        <div class="ship-body">
+          <div class="template-grid">
+            <div>
+              <div class="template-section">
+                <div class="template-section-title">General</div>
+                <div class="template-item"><div class="template-label">Classification</div><div class="template-value">Seraphic Capital Vessel</div></div>
+                <div class="template-item"><div class="template-label">Crew</div><div class="template-value">~120,000</div></div>
+                <div class="template-item"><div class="template-label">Note</div><div class="template-value">Grown, not built. A minor Seraph empowered by Greater Seraphs. The ship itself is the intelligence.</div></div>
+              </div>
+              <div class="template-section">
+                <div class="template-section-title">Dimensions</div>
+                <div class="template-item"><div class="template-label">Length</div><div class="template-value">18.4km</div></div>
+              </div>
+              <div class="template-section">
+                <div class="template-section-title">Propulsion & Power</div>
+                <div class="template-item"><div class="template-label">FTL</div><div class="template-value">4th Plane Translation — folds into non-physical 4D state, undetectable mid-transit, slow dangerous exit, long cooldown, massive psionic input required</div></div>
+                <div class="template-item"><div class="template-label">Power</div><div class="template-value">Focuser-powered Seraphic metabolism</div></div>
+              </div>
+            </div>
+            <div>
+              <div class="template-section">
+                <div class="template-section-title">Key Systems</div>
+                <div class="template-item"><div class="template-label">Intelligence</div><div class="template-value">Awakened Seraphic Cognition Node — the ship IS the intelligence</div></div>
+                <div class="template-item"><div class="template-label">Hull</div><div class="template-value">Living Seraphic vessel — grown from Seraphic material</div></div>
+                <div class="template-item"><div class="template-label">Shields</div><div class="template-value">Seraphic equivalent — not a standard Forma-Vel Grid</div></div>
+              </div>
+            </div>
+            <div class="template-full">
+              <div class="template-section">
+                <div class="template-section-title">Notes</div>
+                <div class="template-item"><div class="template-value">Full documentation classified at Archon level. The Voice of Apostolos is not a ship in any conventional sense. It predates the current fleet doctrine entirely and operates outside standard Vector Operations Command protocols.</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- CIVILIAN -->
+  <div class="category">
+    <div class="category-title">Civilian & Industrial</div>
+    <div class="ship-list">
+
+      <!-- VEL-STEN -->
+      <div class="ship-row" onclick="toggle(this)">
+        <div class="ship-header">
+          <div class="ship-header-left">
+            <div>
+              <div class="ship-name">Vel-Sten</div>
+              <div class="ship-class">Stenvar Class Automated Mining Vessel</div>
+            </div>
+            <span class="ship-tag">Automated</span>
+            <span class="ship-tag">Resource Extraction</span>
+          </div>
+          <div class="ship-chevron">▼</div>
+        </div>
+        <div class="ship-body">
+          <div class="template-grid">
+            <div>
+              <div class="template-section">
+                <div class="template-section-title">General</div>
+                <div class="template-item"><div class="template-label">Classification</div><div class="template-value">Automated Resource Extraction Vessel</div></div>
+                <div class="template-item"><div class="template-label">Crew</div><div class="template-value">0 — controlled by station PICS node Sten-Enar</div></div>
+              </div>
+              <div class="template-section">
+                <div class="template-section-title">Dimensions</div>
+                <div class="template-item"><div class="template-label">Length</div><div class="template-value">45m</div></div>
+                <div class="template-item"><div class="template-label">Width</div><div class="template-value">20m</div></div>
+                <div class="template-item"><div class="template-label">Height</div><div class="template-value">15m</div></div>
+              </div>
+              <div class="template-section">
+                <div class="template-section-title">Propulsion & Power</div>
+                <div class="template-item"><div class="template-label">Propulsion</div><div class="template-value">Synar-Vel Drive (Mining Grade) — optimized for precise positional maneuvering</div></div>
+                <div class="template-item"><div class="template-label">FTL</div><div class="template-value">None — operates within assigned system only</div></div>
+                <div class="template-item"><div class="template-label">Power</div><div class="template-value">Standard Fusion Reactor (Mining Grade) — no Seraphic material, vessel is expendable</div></div>
+              </div>
+            </div>
+            <div>
+              <div class="template-section">
+                <div class="template-section-title">Systems</div>
+                <div class="template-item"><div class="template-label">Primary Tool</div><div class="template-value">Vel-Sten Drilling Warhead — nuclear warhead on deployable drill lance, embeds before detonating, yield scaled to target mass</div></div>
+                <div class="template-item"><div class="template-label">Cutting</div><div class="template-value">4x Plasma Cutters (articulated arms) — sections large fragments, 8m cutting depth per pass</div></div>
+                <div class="template-item"><div class="template-label">Collection</div><div class="template-value">12x Sten-Drones — ferry cut fragments to internal staging container (800 cubic meters, magnetic containment)</div></div>
+                <div class="template-item"><div class="template-label">Sensors</div><div class="template-value">Sten-Vel Array — passive, obstacle detection, fragment tracking, material composition scanning</div></div>
+                <div class="template-item"><div class="template-label">AI</div><div class="template-value">Minimal onboard — collision avoidance only, all decisions by Sten-Enar at station</div></div>
+              </div>
+            </div>
+            <div class="template-full">
+              <div class="template-section">
+                <div class="template-section-title">Operational Notes</div>
+                <div class="template-item"><div class="template-value">Expendability doctrine — replacement produced in ~6 days, damaged vessels not recovered. Planetary operations coordinate up to 100 simultaneous detonations across calculated fracture points within milliseconds. Full system harvest (Sol equivalent) takes 200-300 years with single station, 50-80 years with 4-5 stations. Station produces replacement vessels from locally sourced materials and is self sustaining.</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+  function toggle(el) {
+    el.classList.toggle('open');
+  }
+
+  const s = document.getElementById('stars');
+  for (let i = 0; i < 250; i++) {
+    const el = document.createElement('div');
+    el.className = 'star';
+    const sz = Math.random() * 1.4 + 0.3;
+    el.style.cssText = `width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*100}%;opacity:${Math.random()*0.5+0.1};`;
+    s.appendChild(el);
+  }
+</script>
+
+</body>
+</html>
