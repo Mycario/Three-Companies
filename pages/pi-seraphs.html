@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PI Seraphs — Apostolos Archive</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Share+Tech+Mono&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #020408;
+      --blue: #7ab8ff;
+      --blue-bright: #a8d0ff;
+      --blue-dim: rgba(26,74,138,0.65);
+      --blue-border: rgba(26,74,138,0.22);
+      --text: rgba(122,184,255,0.85);
+      --text-dim: rgba(60,120,200,0.6);
+      --panel: rgba(6,14,34,0.7);
+    }
+
+    html, body {
+      min-height: 100vh;
+      background: var(--bg);
+      font-family: 'Share Tech Mono', monospace;
+      color: var(--blue);
+      overflow-x: hidden;
+    }
+
+    .stars { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+    .star { position: absolute; background: white; border-radius: 50%; }
+
+    .corner { position: fixed; width: 20px; height: 20px; border-color: rgba(26,74,138,0.25); border-style: solid; z-index: 10; pointer-events: none; }
+    .corner-tl { top: 12px; left: 12px; border-width: 1px 0 0 1px; }
+    .corner-tr { top: 12px; right: 12px; border-width: 1px 1px 0 0; }
+    .corner-bl { bottom: 12px; left: 12px; border-width: 0 0 1px 1px; }
+    .corner-br { bottom: 12px; right: 12px; border-width: 0 1px 1px 0; }
+
+    .topbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 48px;
+      background: rgba(2,4,8,0.92);
+      border-bottom: 1px solid rgba(26,74,138,0.2);
+      display: flex;
+      align-items: center;
+      padding: 0 2rem;
+      gap: 1.5rem;
+      z-index: 10;
+      backdrop-filter: blur(6px);
+    }
+    .topbar-back { font-size: 0.5rem; color: rgba(26,74,138,0.7); letter-spacing: 0.2em; text-decoration: none; transition: color 0.2s; cursor: pointer; background: none; border: none; }
+    .topbar-back:hover { color: var(--blue); }
+    .topbar-divider { width: 1px; height: 16px; background: rgba(26,74,138,0.3); }
+    .topbar-title { font-family: 'Cinzel', serif; font-size: 0.7rem; color: var(--blue); letter-spacing: 0.3em; }
+    .topbar-crumb { font-size: 0.5rem; color: rgba(26,74,138,0.5); letter-spacing: 0.2em; }
+
+    /* ── GRID VIEW ─────────────────────────────── */
+    .main {
+      position: relative;
+      z-index: 1;
+      max-width: 1060px;
+      margin: 0 auto;
+      padding: 80px 2rem 4rem;
+    }
+
+    .page-title {
+      font-family: 'Cinzel', serif;
+      font-size: 1.4rem;
+      color: var(--blue);
+      letter-spacing: 0.35em;
+      margin-bottom: 0.4rem;
+    }
+
+    .page-sub {
+      font-size: 0.48rem;
+      color: var(--blue-dim);
+      letter-spacing: 0.2em;
+      margin-bottom: 0.8rem;
+    }
+
+    .class-banner {
+      font-size: 0.42rem;
+      color: rgba(26,74,138,0.4);
+      letter-spacing: 0.22em;
+      padding: 0.5rem 0;
+      border-top: 1px solid rgba(26,74,138,0.1);
+      border-bottom: 1px solid rgba(26,74,138,0.1);
+      margin-bottom: 2.5rem;
+    }
+
+    .seraph-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.2rem;
+    }
+
+    .seraph-card {
+      background: var(--panel);
+      border: 1px solid var(--blue-border);
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      overflow: hidden;
+    }
+    .seraph-card:hover { border-color: rgba(58,138,255,0.5); background: rgba(8,18,44,0.8); }
+
+    .portrait-box {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      background: rgba(2,6,18,0.9);
+      border-bottom: 1px solid rgba(26,74,138,0.15);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .portrait-box img { width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; }
+    .portrait-placeholder {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 0.5rem; width: 100%; height: 100%;
+    }
+    .portrait-placeholder .ph-icon {
+      width: 52px; height: 52px;
+      border: 1px solid rgba(26,74,138,0.25);
+      display: flex; align-items: center; justify-content: center;
+      color: rgba(26,74,138,0.35); font-size: 1.4rem;
+    }
+    .portrait-placeholder .ph-text { font-size: 0.4rem; color: rgba(26,74,138,0.3); letter-spacing: 0.18em; text-align: center; }
+
+    .portrait-corner { position: absolute; width: 10px; height: 10px; border-color: rgba(26,74,138,0.35); border-style: solid; pointer-events: none; }
+    .portrait-corner.tl { top: 6px; left: 6px; border-width: 1px 0 0 1px; }
+    .portrait-corner.tr { top: 6px; right: 6px; border-width: 1px 1px 0 0; }
+    .portrait-corner.bl { bottom: 6px; left: 6px; border-width: 0 0 1px 1px; }
+    .portrait-corner.br { bottom: 6px; right: 6px; border-width: 0 1px 1px 0; }
+
+    /* Classification colour coding */
+    .class-stripe {
+      height: 2px;
+      width: 100%;
+    }
+    .class-foundational { background: rgba(80,160,255,0.6); }
+    .class-dormant { background: rgba(80,200,120,0.6); }
+    .class-ascendant { background: rgba(220,80,80,0.6); }
+    .class-awakened { background: rgba(180,60,255,0.6); }
+
+    .card-info { padding: 0.9rem 1rem; }
+
+    .card-designation {
+      font-family: 'Cinzel', serif;
+      font-size: 0.7rem;
+      color: var(--blue-bright);
+      letter-spacing: 0.2em;
+      margin-bottom: 0.2rem;
+    }
+
+    .card-name {
+      font-size: 0.48rem;
+      color: var(--text-dim);
+      letter-spacing: 0.15em;
+      margin-bottom: 0.6rem;
+    }
+
+    .card-tags { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+
+    .card-tag {
+      font-size: 0.38rem;
+      letter-spacing: 0.12em;
+      padding: 2px 8px;
+      border: 1px solid rgba(26,74,138,0.25);
+      color: rgba(100,160,255,0.6);
+    }
+    .card-tag.foundational { border-color: rgba(80,160,255,0.35); color: rgba(120,190,255,0.8); }
+    .card-tag.dormant { border-color: rgba(80,200,120,0.35); color: rgba(100,220,140,0.8); }
+    .card-tag.ascendant { border-color: rgba(220,80,80,0.35); color: rgba(255,120,120,0.8); }
+    .card-tag.awakened { border-color: rgba(180,60,255,0.35); color: rgba(200,120,255,0.8); }
+
+    /* ── DOCUMENT VIEW ─────────────────────────── */
+    #docView {
+      display: none;
+      position: relative;
+      z-index: 1;
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 80px 2rem 4rem;
+    }
+
+    .doc-header {
+      border: 1px solid rgba(26,74,138,0.25);
+      background: var(--panel);
+      margin-bottom: 0;
+    }
+
+    .doc-header-top {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      min-height: 220px;
+    }
+
+    .doc-portrait {
+      width: 220px;
+      min-height: 220px;
+      background: rgba(2,6,18,0.9);
+      border-right: 1px solid rgba(26,74,138,0.15);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .doc-portrait img { width: 100%; height: 100%; object-fit: cover; object-position: center; }
+    .doc-portrait .portrait-placeholder { width: 100%; height: 100%; }
+
+    .doc-header-info { padding: 1.4rem 1.6rem; display: flex; flex-direction: column; justify-content: space-between; }
+
+    .doc-designation {
+      font-family: 'Cinzel', serif;
+      font-size: 1.2rem;
+      color: var(--blue-bright);
+      letter-spacing: 0.3em;
+      margin-bottom: 0.2rem;
+    }
+
+    .doc-common-name {
+      font-size: 0.48rem;
+      color: var(--blue-dim);
+      letter-spacing: 0.2em;
+      margin-bottom: 1.2rem;
+    }
+
+    .doc-stat-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.6rem;
+    }
+
+
+    .doc-stat-label { font-size: 0.38rem; color: var(--text-dim); letter-spacing: 0.15em; margin-bottom: 2px; }
+    .doc-stat-value { font-size: 0.46rem; color: var(--text); letter-spacing: 0.08em; }
+
+    .doc-class-stripe { height: 2px; width: 100%; }
+
+    /* Document body */
+    
+
+    .doc-section {
+      border: 1px solid rgba(26,74,138,0.2);
+      border-top: none;
+      background: rgba(4,10,26,0.6);
+    }
+
+    .doc-section-header {
+      padding: 0.6rem 1.2rem;
+      border-bottom: 1px solid rgba(26,74,138,0.15);
+      background: rgba(6,16,40,0.6);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .doc-section-number {
+      font-size: 0.4rem;
+      color: var(--blue-dim);
+      letter-spacing: 0.2em;
+    }
+
+    .doc-section-title {
+      font-size: 0.44rem;
+      color: var(--blue);
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+    }
+
+    .doc-section-body {
+      padding: 1.1rem 1.2rem;
+    }
+
+    .doc-text {
+      font-size: 0.5rem;
+      color: var(--text);
+      letter-spacing: 0.04em;
+      line-height: 1.9;
+    }
+
+    .doc-text p { margin-bottom: 0.6rem; }
+    .doc-text p:last-child { margin-bottom: 0; }
+
+    /* Addenda / incident logs */
+    .doc-addendum {
+      border: 1px solid rgba(26,74,138,0.15);
+      margin-bottom: 0.6rem;
+      background: rgba(2,6,18,0.5);
+    }
+    .doc-addendum:last-child { margin-bottom: 0; }
+
+    .doc-addendum-header {
+      padding: 0.5rem 1rem;
+      border-bottom: 1px solid rgba(26,74,138,0.12);
+      background: rgba(4,10,26,0.6);
+      font-size: 0.4rem;
+      color: var(--blue-dim);
+      letter-spacing: 0.18em;
+    }
+
+    .doc-addendum-body {
+      padding: 0.8rem 1rem;
+      font-size: 0.48rem;
+      color: var(--text);
+      letter-spacing: 0.04em;
+      line-height: 1.85;
+    }
+
+    /* Redaction */
+    .redacted {
+      background: rgba(122,184,255,0.15);
+      color: transparent;
+      user-select: none;
+      letter-spacing: 0;
+      padding: 0 4px;
+      border-radius: 2px;
+    }
+
+    .doc-footer {
+      border: 1px solid rgba(26,74,138,0.15);
+      border-top: none;
+      padding: 0.6rem 1.2rem;
+      display: flex;
+      justify-content: space-between;
+      background: rgba(2,6,18,0.6);
+    }
+
+    .doc-footer-text { font-size: 0.38rem; color: rgba(26,74,138,0.35); letter-spacing: 0.15em; }
+
+    .divider { width: 100%; height: 1px; background: linear-gradient(to right, transparent, rgba(26,74,138,0.25), transparent); margin: 2rem 0; }
+  </style>
+</head>
+<body>
+
+<div class="stars" id="stars"></div>
+<div class="corner corner-tl"></div>
+<div class="corner corner-tr"></div>
+<div class="corner corner-bl"></div>
+<div class="corner corner-br"></div>
+
+<nav class="topbar">
+  <a class="topbar-back" href="../index.html">← Home</a>
+  <div class="topbar-divider"></div>
+  <a class="topbar-back" href="pneuma-institute.html">← Pneuma Institute</a>
+  <div class="topbar-divider"></div>
+  <span class="topbar-title" id="topbarTitle">Seraphs</span>
+  <div class="topbar-divider" id="crumbDivider" style="display:none;"></div>
+  <span class="topbar-crumb" id="topbarCrumb"></span>
+</nav>
+
+<!-- ════════════════════════════════════════════ -->
+<!-- GRID VIEW                                    -->
+<!-- ════════════════════════════════════════════ -->
+<div class="main" id="gridView">
+  <h1 class="page-title">Seraph Registry</h1>
+  <p class="page-sub">Pneuma Institute — First Choir Containment Directive — Classified</p>
+  <div class="class-banner">
+    Classification Key &nbsp;|&nbsp;
+    <span style="color:rgba(120,190,255,0.8);">■ Foundational</span> &nbsp;
+    <span style="color:rgba(100,220,140,0.8);">■ Dormant</span> &nbsp;
+    <span style="color:rgba(255,120,120,0.8);">■ Ascendant</span> &nbsp;
+    <span style="color:rgba(200,120,255,0.8);">■ Awakened</span>
+  </div>
+
+  <!-- TRUE SERAPHS -->
+  <div style="font-size:0.44rem;color:var(--blue-dim);letter-spacing:0.22em;text-transform:uppercase;margin-bottom:0.8rem;padding-bottom:0.4rem;border-bottom:1px solid rgba(26,74,138,0.12);">True Seraphs</div>
+  <div class="seraph-grid" style="margin-bottom:2.5rem;">
+
+    <!-- SERAPH PRIME -->
+    <div class="seraph-card" onclick="openDoc('seraph-prime')">
+      <div class="portrait-box" id="grid-portrait-seraph-prime">
+        <div class="portrait-placeholder">
+          <div class="ph-icon">◈</div>
+          <div class="ph-text">PORTRAIT<br>PENDING</div>
+        </div>
+        <div class="portrait-corner tl"></div>
+        <div class="portrait-corner tr"></div>
+        <div class="portrait-corner bl"></div>
+        <div class="portrait-corner br"></div>
+      </div>
+      <div class="class-stripe class-foundational"></div>
+      <div class="card-info">
+        <div class="card-designation">Seraph Prime</div>
+        <div class="card-name">"The First" — True Seraph</div>
+        <div class="card-tags">
+          <span class="card-tag foundational">Foundational</span>
+          <span class="card-tag">Collapsed</span>
+          <span class="card-tag">Pre-Catastrophe</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- PNE SERIES -->
+  <div style="font-size:0.44rem;color:var(--blue-dim);letter-spacing:0.22em;text-transform:uppercase;margin-bottom:0.4rem;padding-bottom:0.4rem;border-bottom:1px solid rgba(26,74,138,0.12);">PNE Series — Seraph-Adjacent Entities</div>
+  <div style="font-size:0.4rem;color:rgba(26,74,138,0.4);letter-spacing:0.15em;margin-bottom:0.9rem;">Entities sharing Seraphic properties that do not meet formal Seraph classification criteria. Officially designated Seraph-Adjacent by the First Choir.</div>
+  <div class="seraph-grid">
+
+    <!-- PNE-Λ-03 -->
+    <div class="seraph-card" onclick="openDoc('pne-03')">
+      <div class="portrait-box" id="grid-portrait-pne-03">
+        <div class="portrait-placeholder">
+          <div class="ph-icon">◈</div>
+          <div class="ph-text">PORTRAIT<br>PENDING</div>
+        </div>
+        <div class="portrait-corner tl"></div>
+        <div class="portrait-corner tr"></div>
+        <div class="portrait-corner bl"></div>
+        <div class="portrait-corner br"></div>
+      </div>
+      <div class="class-stripe class-dormant"></div>
+      <div class="card-info">
+        <div class="card-designation">PNE-Λ-03</div>
+        <div class="card-name">The Anabatic Mass</div>
+        <div class="card-tags">
+          <span class="card-tag dormant">Dormant</span>
+          <span class="card-tag">Contained</span>
+          <span class="card-tag">Seraph-Adjacent</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════ -->
+<!-- DOCUMENT VIEW                               -->
+<!-- ════════════════════════════════════════════ -->
+<div id="docView">
+
+  <!-- SERAPH PRIME DOC -->
+  <div id="doc-seraph-prime" style="display:none;">
+
+    <div class="doc-header">
+      <div class="doc-header-top">
+        <div class="doc-portrait" id="doc-portrait-seraph-prime">
+          <div class="portrait-placeholder">
+            <div class="ph-icon">◈</div>
+            <div class="ph-text">PORTRAIT<br>PENDING</div>
+          </div>
+          <div class="portrait-corner tl"></div>
+          <div class="portrait-corner tr"></div>
+          <div class="portrait-corner bl"></div>
+          <div class="portrait-corner br"></div>
+        </div>
+        <div class="doc-header-info">
+          <div>
+            <div class="doc-designation">Seraph Prime</div>
+            <div class="doc-common-name">True Seraph — "The First" — Internal designation: The Prism</div>
+          </div>
+          <div class="doc-stat-grid">
+            <div class="doc-stat">
+              <div class="doc-stat-label">Classification</div>
+              <div class="doc-stat-value" style="color:rgba(120,190,255,0.9);">Foundational</div>
+            </div>
+            <div class="doc-stat">
+              <div class="doc-stat-label">Containment Status</div>
+              <div class="doc-stat-value">Collapsed — Remains In Situ</div>
+            </div>
+            <div class="doc-stat">
+              <div class="doc-stat-label">Discovery Date</div>
+              <div class="doc-stat-value">Pre-Catastrophe — AGS Survey Year 3</div>
+            </div>
+            <div class="doc-stat">
+              <div class="doc-stat-label">Current Location</div>
+              <div class="doc-stat-value">26km below Apostolos mantle faultline</div>
+            </div>
+            <div class="doc-stat">
+              <div class="doc-stat-label">Estimated Mass</div>
+              <div class="doc-stat-value"><span class="redacted">XXXXXXXXXXXXXXXXX</span></div>
+            </div>
+            <div class="doc-stat">
+              <div class="doc-stat-label">Psionic Output</div>
+              <div class="doc-stat-value">Residual — Stable — Monitored</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="doc-class-stripe class-foundational"></div>
+    </div>
+
+    <div class="doc-body">
+
+      <div class="doc-section">
+        <div class="doc-section-header">
+          <span class="doc-section-number">§ 01</span>
+          <span class="doc-section-title">Containment Procedures</span>
+        </div>
+        <div class="doc-section-body">
+          <div class="doc-text">
+            <p>Seraph Prime currently exists in a collapsed state following the Great Awakening event. The remains occupy a crystalline chamber approximately 26 kilometres below the Apostolos mantle faultline, within a pressure-stable region designated the Cruciform Vault. The Vault is maintained under continuous First Choir observation via a network of 847 psionic resonance monitoring nodes embedded in the surrounding rock formations.</p>
+            <p>Access to the Cruciform Vault requires Archon-level authorisation from a minimum of three of the seven Archons. No material may be removed from the Vault without written authorisation from the Archon of Flesh and the Archon of Breath. Physical contact with any Seraph Prime remains is prohibited without Class-IV psionic suppression equipment and full biological isolation protocols.</p>
+            <p>The remains of Seraph Prime are to be considered the foundational material resource of the Pneuma Institute. Controlled harvesting of Seraphic osteoderm, crystallite lattice, and resonance-active tissue is authorised under Third Choir direction for approved research and production purposes. Uncontrolled harvesting is a Class-I offence punishable by permanent cognitive restructuring.</p>
+            <p>In the event of anomalous psionic activity originating from Seraph Prime remains exceeding threshold level 4, the Cruciform Vault is to be sealed and the Archon of Breath notified immediately. All personnel are to evacuate to minimum safe distance of 800 metres. Protocol SILENCE-PRIME is to be initiated within four minutes of threshold breach.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="doc-section">
+        <div class="doc-section-header">
+          <span class="doc-section-number">§ 02</span>
+          <span class="doc-section-title">Description</span>
+        </div>
+        <div class="doc-section-body">
+          <div class="doc-text">
+            <p>Seraph Prime, designated Seraph Prime, is the first Seraphic entity discovered by the Pneuma Institute and the foundational basis upon which the Institute's research, technology, and theological framework is built. It is the largest Seraphic entity currently known to the Institute, though pre-collapse dimensional estimates place its true scale as significantly greater than the physical remains presently observable.</p>
+            <p>Seraph Prime was discovered during Year 3 of the Astral Geoscience Survey, buried within a crystalline pressure-stable chamber 26 kilometres below the Apostolos mantle faultline. The AGS had been investigating a series of anomalous psionic events across the planet's surface for several years prior — mass hallucinations, geological harmonic resonance, shared dreaming events — all now understood to be passive projections from Seraph Prime in its dormant state.</p>
+            <p>On the 17th day of direct excavation, AGS researcher <span class="redacted">XXXXXXXXXX</span> made physical contact with the entity's core structure. Seraph Prime achieved full consciousness in an event lasting approximately 0.3 seconds. The resulting energy discharge was not a directed attack but a passive consequence of consciousness activation at the entity's scale. The event vaporized a 122,000 kilometre region, imploded a continent-sized landmass into a compressed glowing sphere, buckled spacetime in the surrounding region, and triggered global catastrophe. This event is designated the Great Awakening in Institute records and the Great Catastrophe in civilian historical documentation.</p>
+            <p>Seraph Prime subsequently collapsed into its current state approximately <span class="redacted">XXXXXXXX</span> hours after the Awakening event. The precise mechanism of collapse is not fully understood. Current leading hypothesis within the Fourth Choir posits that the entity's consciousness briefly extended into a dimensional layer inaccessible to Institute instrumentation and that what remains in the Cruciform Vault is a physical anchor rather than the totality of the entity. This hypothesis has not been confirmed or denied by the Archon of Breath.</p>
+            <p>The physical remains of Seraph Prime consist of Seraphic crystallite lattice of extraordinary density and psionic activity, osteoderm structures of a hardness exceeding any naturally occurring material known to Institute science, and several partially intact organ-analogous structures whose function remains a subject of active Third Choir research. The remains emit a continuous low-level psionic resonance consistent with residual consciousness activity. Whether this constitutes awareness is classified at Archon level.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="doc-section">
+        <div class="doc-section-header">
+          <span class="doc-section-number">§ 03</span>
+          <span class="doc-section-title">Research Notes</span>
+        </div>
+        <div class="doc-section-body">
+          <div class="doc-text">
+            <p>Seraph Prime remains are the source material for the Institute's entire Seraphic technology programme. Harvested crystallite lattice forms the basis of Seraphic Bore torpedo warheads, RBU armour composite, the Voice of Apostolos hull material, and the psionic resonance emitter nodes used in Forma-Vel Grid shield systems. The osteoderm structures are processed into Vel-Thraen Blade components used by MPC-WF Warframe units.</p>
+            <p>The Institute's public theological framework — which positions Seraphs as divine or semi-divine entities and frames the Institute's authority as stewardship of their remains — was constructed deliberately around Seraph Prime in the early post-Catastrophe consolidation period. The theological framing is not held internally. Seraph Prime is classified as a research and resource asset.</p>
+            <p>Note: The question of whether Seraph Prime is genuinely deceased or merely dormant in a form the Institute cannot detect remains open. All personnel interacting with Vault materials are reminded that this question is above their clearance level and is not to be discussed outside formally sanctioned research contexts.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="doc-section">
+        <div class="doc-section-header">
+          <span class="doc-section-number">§ 04</span>
+          <span class="doc-section-title">Incident Log</span>
+        </div>
+        <div class="doc-section-body">
+
+          <div class="doc-addendum">
+            <div class="doc-addendum-header">INCIDENT LOG — Seraph Prime — REF: <span class="redacted">XXXXXXXX</span> — YEAR <span class="redacted">XXXX</span></div>
+            <div class="doc-addendum-body">At 03:14 local Apostolos time, monitoring node cluster 7-C recorded a psionic resonance spike originating from Seraph Prime core remains reaching threshold level 3.7. Spike duration: 11 seconds. No physical anomaly observed. All Vault personnel reported simultaneous auditory hallucinations described as "breathing." Vault sealed per standard protocol. Archon of Breath notified. Spike did not recur. Cause: <span class="redacted">XXXXXXXXXXXXXXXXXXXXXXXX</span>. Incident classified. Personnel debriefed and cleared for return to duty.</div>
+          </div>
+
+          <div class="doc-addendum">
+            <div class="doc-addendum-header">INCIDENT LOG — Seraph Prime — REF: <span class="redacted">XXXXXXXX</span> — YEAR <span class="redacted">XXXX</span></div>
+            <div class="doc-addendum-body">Third Choir research team <span class="redacted">XXXXXX</span> reported that harvested osteoderm sample batch <span class="redacted">XXXXX</span> had partially reconstituted overnight in sealed storage. Sample mass increased by approximately 4% over a 14-hour period. Growth ceased upon removal from the Vault proximity zone. Samples were incinerated. Third Choir Director notified. Additional monitoring protocols implemented for all harvested material held within 200 metres of the Vault. Full report: <span class="redacted">CLASSIFIED — ARCHON EYES ONLY</span>.</div>
+          </div>
+
+          <div class="doc-addendum">
+            <div class="doc-addendum-header">ADDENDUM — ARCHON OF BREATH — STANDING ORDER — PERPETUAL</div>
+            <div class="doc-addendum-body">All Institute personnel are reminded that Seraph Prime is to be referred to in all official documentation as "collapsed" rather than "deceased." This distinction is not semantic. Further clarification will not be provided. — Archon of Breath</div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <div class="doc-footer">
+      <span class="doc-footer-text">Seraph Prime — First Choir Containment Directive</span>
+      <span class="doc-footer-text">Classification: Foundational — Archon Eyes Only</span>
+      <span class="doc-footer-text">Unauthorised access is a Class-I offence</span>
+    </div>
+
+  </div>
+
+  <!-- PNE-Λ-03 DOC -->
+  <div id="doc-pne-03" style="display:none;">
+
+    <div class="doc-header">
+      <div class="doc-header-top">
+        <div class="doc-portrait" id="doc-portrait-pne-03">
+          <div class="portrait-placeholder">
+            <div class="ph-icon">◈</div>
+            <div class="ph-text">PORTRAIT<br>PENDING</div>
+          </div>
+          <div class="portrait-corner tl"></div>
+          <div class="portrait-corner tr"></div>
+          <div class="portrait-corner bl"></div>
+          <div class="portrait-corner br"></div>
+        </div>
+        <div class="doc-header-info">
+          <div>
+            <div class="doc-designation">PNE-Λ-03</div>
+            <div class="doc-common-name">The Anabatic Mass — Internal designation: The Sleeper</div>
+          </div>
+          <div class="doc-stat-grid">
+            <div class="doc-stat">
+              <div class="doc-stat-label">Classification</div>
+              <div class="doc-stat-value" style="color:rgba(100,220,140,0.9);">Dormant</div>
+            </div>
+            <div class="doc-stat">
+              <div class="doc-stat-label">Containment Status</div>
+              <div class="doc-stat-value">Contained — Stable</div>
+            </div>
+            <div class="doc-stat">
+              <div class="doc-stat-label">Containment Location</div>
+              <div class="doc-stat-value">18km below Apostolos surface — Cryo-Resonance Vault</div>
+            </div>
+            <div class="doc-stat">
+              <div class="doc-stat-label">Containment Temperature</div>
+              <div class="doc-stat-value">-110°C — Cryo-Resonance Suppression Active</div>
+            </div>
+            <div class="doc-stat">
+              <div class="doc-stat-label">Nature</div>
+              <div class="doc-stat-value">Seraph-Adjacent — Classification Disputed</div>
+            </div>
+            <div class="doc-stat">
+              <div class="doc-stat-label">Psionic Output</div>
+              <div class="doc-stat-value">Suppressed — Baseline Residual</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="doc-class-stripe class-dormant"></div>
+    </div>
+
+    <div class="doc-body">
+
+      <div class="doc-section">
+        <div class="doc-section-header">
+          <span class="doc-section-number">§ 01</span>
+          <span class="doc-section-title">Containment Procedures</span>
+        </div>
+        <div class="doc-section-body">
+          <div class="doc-text">
+            <p>PNE-Λ-03 is to be maintained at or below -110°C within the Cryo-Resonance Vault located 18 kilometres below Apostolos's surface. The Cryo-Resonance Vault is a sealed chamber with continuous temperature monitoring, automated cryo-suppression systems with triple redundancy, and a psionic dampening field maintained by a rotating complement of six Focusers at all times. No single point of failure in the cryo-suppression system is acceptable — any system fault is to be treated as a containment emergency and escalated to First Choir Director level immediately.</p>
+            <p>Physical access to PNE-Λ-03 requires Archon of Flesh authorisation and a minimum of two additional Archon countersignatures. No material is to be removed from the entity without Third Choir Director oversight and a full biohazard containment team present. Personnel interacting with PNE-Λ-03 material must be tested for prion exposure within 24 hours of contact and monitored for a minimum of 30 days thereafter.</p>
+            <p>In the event of temperature exceeding -90°C for any reason, Protocol ANABATIC-HOLD is to be initiated immediately. All non-essential personnel are to evacuate the surrounding 2-kilometre zone. The Archon of Breath is to be notified within 90 seconds. Under no circumstances is the cryo-suppression system to be allowed to fail completely. The consequences of a full thermal event involving PNE-Λ-03 are classified but are considered an extinction-level containment failure by the First Choir.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="doc-section">
+        <div class="doc-section-header">
+          <span class="doc-section-number">§ 02</span>
+          <span class="doc-section-title">Description</span>
+        </div>
+        <div class="doc-section-body">
+          <div class="doc-text">
+            <p>PNE-Λ-03 is a proliferative biomass of indeterminate origin discovered <span class="redacted">XXXXXXXXXX</span> years after the Great Awakening during deep subsurface survey operations conducted by the Third Choir. It shares material properties with Seraphic crystallite, exhibits biological behaviour consistent with living tissue, and responds to psionic stimuli in ways that suggest awareness. It does not, however, meet the Institute's formal classification criteria for a true Seraph. The designation "Seraph-Adjacent" reflects this ambiguity. Whether the distinction is meaningful is not resolved.</p>
+            <p>In its contained state at -110°C, PNE-Λ-03 exhibits minimal activity. Cellular-level processes continue at a greatly suppressed rate. The mass does not grow measurably at containment temperature. Psionic output is reduced to a baseline residual level that is non-hazardous with standard suppression protocols active. It does not communicate, respond to external stimuli, or exhibit any behaviour that would constitute evidence of active consciousness at containment temperature.</p>
+            <p>At temperatures above approximately -60°C, PNE-Λ-03 becomes significantly more active. Growth rate accelerates markedly. Psionic output increases. At temperatures above -20°C, the mass has demonstrated the ability to generate and shed biological material that constitutes a severe biohazard to non-immune species — a prion-analogue compound present in all shed matter that causes progressive fatal neurological degradation in any species without the specific genetic resistance profile found in Avriethrax and Noctivex populations. Notably, the Noctivex genetic immunity to this compound is a consequence of their origin: they were engineered from PNE-Λ-03 material combined with Avriethrax genetic stock, inheriting resistance from both parent sources.</p>
+            <p>PNE-Λ-03 is the biological source material from which the Noctivex species was engineered by the Third Choir. The precise nature of the entity — whether it constitutes a living Seraph, a dormant Seraph, a Seraph remnant, a failed Seraph, or something without precedent in Institute classification — is a matter of active internal debate that has not been resolved in <span class="redacted">XXXX</span> years of research. Access to this debate's conclusions is restricted to Archon level.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="doc-section">
+        <div class="doc-section-header">
+          <span class="doc-section-number">§ 03</span>
+          <span class="doc-section-title">Research Notes</span>
+        </div>
+        <div class="doc-section-body">
+          <div class="doc-text">
+            <p>PNE-Λ-03 is the most significant biological resource the Institute possesses that does not derive from Seraph Prime. Its use as the foundation material for the Noctivex engineering programme represents the Institute's most ambitious application of Seraphic-adjacent biology to date, producing a species that now constitutes approximately 45% of Apostolos's total population.</p>
+            <p>Ongoing research questions include: the origin of PNE-Λ-03 and its relationship to Seraph Prime; whether the entity has kinship with any of the other Seraphic entities detected throughout the solar system; whether it is capable of the kind of awakening event exhibited by Seraph Prime; and whether the Noctivex species, as biological derivatives of PNE-Λ-03, have any form of psionic connection to it that is not detectable by current Institute instrumentation.</p>
+            <p>The last question in particular is considered sensitive. Research into this area is restricted to the Third Choir's inner directorate and requires Archon of Flesh sign-off for any new investigation. <span class="redacted">XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX</span>.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="doc-section">
+        <div class="doc-section-header">
+          <span class="doc-section-number">§ 04</span>
+          <span class="doc-section-title">Incident Log</span>
+        </div>
+        <div class="doc-section-body">
+
+          <div class="doc-addendum">
+            <div class="doc-addendum-header">INCIDENT LOG — PNE-Λ-03 — REF: <span class="redacted">XXXXXXXX</span> — YEAR <span class="redacted">XXXX</span></div>
+            <div class="doc-addendum-body">Cryo-suppression system Node 4 experienced a 7-minute fault resulting in localised temperature increase to -74°C within a 3-metre radius of the fault node. PNE-Λ-03 responded with measurable mass increase of 0.003% over the fault period. Growth ceased immediately upon system restoration. One Focuser on rotation duty reported a sustained intrusive mental image described as "an open field seen from underground." Focuser has been relieved of Vault duty pending psychological evaluation. Node 4 replaced. No further anomaly recorded.</div>
+          </div>
+
+          <div class="doc-addendum">
+            <div class="doc-addendum-header">INCIDENT LOG — PNE-Λ-03 — REF: <span class="redacted">XXXXXXXX</span> — YEAR <span class="redacted">XXXX</span></div>
+            <div class="doc-addendum-body">Third Choir research team submitted a formal query regarding the feasibility of a controlled thermal event to study PNE-Λ-03 behaviour at temperatures above -20°C under laboratory conditions using an isolated sample. Query denied by Archon of Flesh. No isolated sample sufficient for meaningful study can be removed without risk of biohazard containment failure at the transfer point. Request reclassified as prohibited research direction. Research team lead <span class="redacted">XXXXXXXX</span> has been reassigned.</div>
+          </div>
+
+          <div class="doc-addendum">
+            <div class="doc-addendum-header">ADDENDUM — CLASSIFICATION NOTE — FIRST CHOIR DIRECTOR</div>
+            <div class="doc-addendum-body">For the avoidance of doubt: PNE-Λ-03's classification as Dormant reflects its current behavioural state under containment conditions, not a permanent assessment of its nature or potential. Personnel are reminded that "Dormant" is not equivalent to "safe." It is equivalent to "not currently active." These are different things. Act accordingly. — First Choir Director</div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <div class="doc-footer">
+      <span class="doc-footer-text">PNE-Λ-03 — The Anabatic Mass — First Choir Containment Directive</span>
+      <span class="doc-footer-text">Classification: Dormant — Third Choir / Archon Access</span>
+      <span class="doc-footer-text">Unauthorised access is a Class-I offence</span>
+    </div>
+
+  </div>
+
+</div><!-- end docView -->
+
+<script>
+  let currentDoc = null;
+
+  function openDoc(id) {
+    // Hide grid
+    document.getElementById('gridView').style.display = 'none';
+    // Show doc view
+    document.getElementById('docView').style.display = 'block';
+    // Hide any previously open doc
+    if (currentDoc) document.getElementById('doc-' + currentDoc).style.display = 'none';
+    // Show selected doc
+    document.getElementById('doc-' + id).style.display = 'block';
+    currentDoc = id;
+    // Update topbar
+    const names = {
+      'seraph-prime': 'Seraph Prime — Seraph Prime',
+      'pne-03': 'PNE-Λ-03 — The Anabatic Mass'
+    };
+    document.getElementById('topbarCrumb').textContent = names[id] || '';
+    document.getElementById('crumbDivider').style.display = '';
+    // Scroll to top
+    window.scrollTo(0, 0);
+  }
+
+  function closeDoc() {
+    document.getElementById('docView').style.display = 'none';
+    if (currentDoc) document.getElementById('doc-' + currentDoc).style.display = 'none';
+    document.getElementById('gridView').style.display = 'block';
+    document.getElementById('topbarCrumb').textContent = '';
+    document.getElementById('crumbDivider').style.display = 'none';
+    currentDoc = null;
+    window.scrollTo(0, 0);
+  }
+
+  // Make the PI breadcrumb go back to grid if a doc is open
+  document.querySelectorAll('.topbar-back').forEach(el => {
+    const href = el.getAttribute('href');
+    if (!href) {
+      el.addEventListener('click', () => {
+        if (currentDoc) { closeDoc(); }
+      });
+    }
+  });
+
+  // Override the Seraphs topbar entry to act as back button when in doc view
+  document.getElementById('topbarTitle').style.cursor = 'pointer';
+  document.getElementById('topbarTitle').addEventListener('click', () => {
+    if (currentDoc) closeDoc();
+  });
+
+  // Portrait injection helper
+  // setSeraphPortrait('seraph-prime', 'images/seraph-prime.png')
+  // setSeraphPortrait('pne-03', 'images/pne-03.png')
+  function setSeraphPortrait(id, src) {
+    const corners = `
+      <div class="portrait-corner tl"></div>
+      <div class="portrait-corner tr"></div>
+      <div class="portrait-corner bl"></div>
+      <div class="portrait-corner br"></div>`;
+    const img = `<img src="${src}" alt="${id}">${corners}`;
+    const grid = document.getElementById('grid-portrait-' + id);
+    const doc = document.getElementById('doc-portrait-' + id);
+    if (grid) grid.innerHTML = img;
+    if (doc) doc.innerHTML = img;
+  }
+
+  // Stars
+  const s = document.getElementById('stars');
+  for (let i = 0; i < 220; i++) {
+    const el = document.createElement('div');
+    el.className = 'star';
+    const sz = Math.random() * 1.4 + 0.3;
+    el.style.cssText = `width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*100}%;opacity:${Math.random()*0.5+0.1};`;
+    s.appendChild(el);
+  }
+</script>
+
+</body>
+</html>
