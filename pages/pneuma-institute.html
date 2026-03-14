@@ -9,25 +9,34 @@
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
-    body {
-      background: #020408;
-      min-height: 100vh;
-      font-family: 'Share Tech Mono', monospace;
-      color: #7ab8ff;
+    :root {
+      --bg: #020408;
+      --blue: #7ab8ff;
+      --blue-bright: #a8d0ff;
+      --blue-dim: rgba(26,74,138,0.65);
+      --blue-border: rgba(26,74,138,0.22);
+      --text: rgba(122,184,255,0.85);
+      --text-dim: rgba(60,120,200,0.65);
+      --panel: rgba(10,20,40,0.75);
     }
 
-    /* STARS */
+    html, body {
+      min-height: 100vh;
+      background: var(--bg);
+      font-family: 'Share Tech Mono', monospace;
+      color: var(--blue);
+      overflow-x: hidden;
+    }
+
     .stars { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
     .star { position: absolute; background: white; border-radius: 50%; }
 
-    /* CORNERS */
-    .corner { position: fixed; width: 20px; height: 20px; border-color: rgba(26,74,138,0.25); border-style: solid; z-index: 3; }
+    .corner { position: fixed; width: 20px; height: 20px; border-color: rgba(26,74,138,0.25); border-style: solid; z-index: 10; pointer-events: none; }
     .corner-tl { top: 12px; left: 12px; border-width: 1px 0 0 1px; }
     .corner-tr { top: 12px; right: 12px; border-width: 1px 1px 0 0; }
     .corner-bl { bottom: 12px; left: 12px; border-width: 0 0 1px 1px; }
     .corner-br { bottom: 12px; right: 12px; border-width: 0 1px 1px 0; }
 
-    /* TOP BAR */
     .topbar {
       position: fixed;
       top: 0; left: 0; right: 0;
@@ -38,182 +47,116 @@
       align-items: center;
       padding: 0 2rem;
       gap: 1.5rem;
-      z-index: 2;
+      z-index: 10;
       backdrop-filter: blur(6px);
     }
+    .topbar-back { font-size: 0.5rem; color: rgba(26,74,138,0.7); letter-spacing: 0.2em; text-decoration: none; transition: color 0.2s; }
+    .topbar-back:hover { color: var(--blue); }
+    .topbar-divider { width: 1px; height: 16px; background: rgba(26,74,138,0.3); }
+    .topbar-title { font-family: 'Cinzel', serif; font-size: 0.7rem; color: var(--blue); letter-spacing: 0.3em; }
 
-    .topbar-back {
-      font-size: 0.5rem;
-      color: rgba(26,74,138,0.7);
-      letter-spacing: 0.2em;
-      text-decoration: none;
-      transition: color 0.2s;
-    }
-    .topbar-back:hover { color: #7ab8ff; }
-
-    .topbar-divider {
-      width: 1px;
-      height: 16px;
-      background: rgba(26,74,138,0.3);
-    }
-
-    .topbar-title {
-      font-family: 'Cinzel', serif;
-      font-size: 0.7rem;
-      color: #7ab8ff;
-      letter-spacing: 0.3em;
-    }
-
-    /* MAIN LAYOUT */
     .main {
       position: relative;
       z-index: 1;
-      max-width: 1000px;
+      max-width: 1060px;
       margin: 0 auto;
       padding: 80px 2rem 4rem;
     }
 
     /* HEADER */
-    .header {
+    .company-header {
+      display: grid;
+      grid-template-columns: 180px 1fr;
+      gap: 2rem;
+      margin-bottom: 2.5rem;
+      align-items: start;
+    }
+
+    .flag-container {
+      aspect-ratio: 3 / 2;
+      background: #020408;
+      border: 1px solid var(--blue-border);
+      position: relative;
+      overflow: hidden;
       display: flex;
       align-items: center;
-      gap: 3rem;
-      margin-bottom: 3rem;
-      padding-bottom: 2rem;
-      border-bottom: 1px solid rgba(26,74,138,0.2);
+      justify-content: center;
     }
+    .flag-container svg { width: 100%; height: 100%; display: block; }
+    .flag-corner { position: absolute; width: 8px; height: 8px; border-color: rgba(26,74,138,0.5); border-style: solid; pointer-events: none; }
+    .flag-corner.tl { top: 4px; left: 4px; border-width: 1px 0 0 1px; }
+    .flag-corner.tr { top: 4px; right: 4px; border-width: 1px 1px 0 0; }
+    .flag-corner.bl { bottom: 4px; left: 4px; border-width: 0 0 1px 1px; }
+    .flag-corner.br { bottom: 4px; right: 4px; border-width: 0 1px 1px 0; }
 
-    .flag-block svg {
-      width: 200px;
-      height: 125px;
-      border: 1px solid rgba(26,74,138,0.3);
-      border-radius: 3px;
+    .company-name { font-family: 'Cinzel', serif; font-size: 2rem; color: var(--blue-bright); letter-spacing: 0.35em; margin-bottom: 0.3rem; }
+    .company-subtitle { font-size: 0.5rem; color: var(--blue-dim); letter-spacing: 0.22em; margin-bottom: 1rem; }
+    .company-motto {
+      font-size: 0.52rem; color: var(--text); letter-spacing: 0.1em; font-style: italic;
+      margin-bottom: 1.2rem; padding-left: 0.8rem; border-left: 1px solid rgba(26,74,138,0.35);
     }
+    .company-motto span { display: block; font-size: 0.42rem; color: var(--text-dim); letter-spacing: 0.15em; margin-top: 0.2rem; font-style: normal; }
 
-    .header-text { flex: 1; }
+    .quick-facts { display: flex; gap: 1.5rem; flex-wrap: wrap; }
+    .fact-label { font-size: 0.38rem; color: var(--text-dim); letter-spacing: 0.15em; margin-bottom: 2px; }
+    .fact-value { font-size: 0.46rem; color: var(--text); letter-spacing: 0.08em; }
 
-    .header-title {
-      font-family: 'Cinzel', serif;
-      font-size: 1.8rem;
-      color: #7ab8ff;
-      letter-spacing: 0.3em;
-      margin-bottom: 0.5rem;
+    .divider { width: 100%; height: 1px; background: linear-gradient(to right, transparent, rgba(26,74,138,0.25), transparent); margin: 2rem 0; }
+
+    .overview {
+      background: rgba(6,14,34,0.6);
+      border: 1px solid var(--blue-border);
+      padding: 1.4rem 1.6rem;
+      margin-bottom: 2rem;
     }
-
-    .header-class {
-      font-size: 0.5rem;
-      color: rgba(26,74,138,0.7);
-      letter-spacing: 0.2em;
-      margin-bottom: 1.5rem;
-    }
-
-    .header-tags {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .tag {
-      font-size: 0.45rem;
-      letter-spacing: 0.15em;
-      padding: 4px 10px;
-      border: 1px solid rgba(26,74,138,0.4);
-      color: rgba(100,160,255,0.7);
-    }
-
-    /* OVERVIEW */
-    .section { margin-bottom: 2.5rem; }
-
-    .section-title {
-      font-size: 0.5rem;
-      color: rgba(26,74,138,0.8);
-      letter-spacing: 0.25em;
-      text-transform: uppercase;
-      margin-bottom: 1rem;
-      padding-bottom: 0.5rem;
-      border-bottom: 1px solid rgba(26,74,138,0.15);
-    }
-
-    .overview-text {
-      font-size: 0.6rem;
-      color: rgba(122,184,255,0.75);
-      line-height: 2;
-      letter-spacing: 0.05em;
-    }
-
-    .overview-text p { margin-bottom: 0.75rem; }
+    .overview-title { font-size: 0.44rem; color: var(--blue-dim); letter-spacing: 0.25em; text-transform: uppercase; margin-bottom: 0.9rem; padding-bottom: 0.4rem; border-bottom: 1px solid rgba(26,74,138,0.12); }
+    .overview-text { font-size: 0.5rem; color: var(--text); letter-spacing: 0.04em; line-height: 1.9; }
+    .overview-text p { margin-bottom: 0.6rem; }
     .overview-text p:last-child { margin-bottom: 0; }
 
-    /* NAV GRID */
-    .nav-grid {
+    .nav-cards-title { font-size: 0.44rem; color: var(--blue-dim); letter-spacing: 0.25em; text-transform: uppercase; margin-bottom: 1rem; }
+
+    .divisions {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-      gap: 1rem;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 0.6rem;
+      margin-bottom: 2rem;
     }
+    .division-item { background: rgba(6,14,34,0.6); border: 1px solid rgba(26,74,138,0.15); padding: 0.8rem 1rem; }
+    .division-name { font-size: 0.44rem; color: var(--blue); letter-spacing: 0.15em; margin-bottom: 0.3rem; }
+    .division-desc { font-size: 0.4rem; color: var(--text-dim); letter-spacing: 0.08em; line-height: 1.6; }
 
+    .nav-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem;
+      margin-bottom: 2rem;
+    }
     .nav-card {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  padding: 1.25rem;
-  border: 1px solid rgba(26,74,138,0.35);
-  text-decoration: none;
-  transition: all 0.2s;
-  position: relative;
-  overflow: hidden;
-  background: rgba(10,20,40,0.6);
-}
-
+      background: rgba(10,20,40,0.7);
+      border: 1px solid rgba(26,74,138,0.25);
+      padding: 1.1rem 1.2rem;
+      text-decoration: none;
+      transition: border-color 0.2s, background 0.2s;
+      display: block;
+      position: relative;
+      overflow: hidden;
+    }
     .nav-card::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: rgba(26,74,138,0.1);
-  opacity: 0;
-  transition: opacity 0.2s;
-}
-
-    .nav-card:hover::before { opacity: 1; }
-    .nav-card:hover { border-color: rgba(58,138,255,0.45); }
-
-    .nav-card-title {
-      font-family: 'Cinzel', serif;
-      font-size: 0.7rem;
-      color: #7ab8ff;
-      letter-spacing: 0.2em;
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(26,74,138,0.06) 0%, transparent 60%);
+      pointer-events: none;
     }
+    .nav-card:hover { border-color: rgba(58,138,255,0.5); background: rgba(10,24,50,0.85); }
+    .nav-card-title { font-family: 'Cinzel', serif; font-size: 0.65rem; color: var(--blue-bright); letter-spacing: 0.2em; margin-bottom: 0.4rem; }
+    .nav-card-sub { font-size: 0.4rem; color: var(--text-dim); letter-spacing: 0.15em; margin-bottom: 0.7rem; line-height: 1.6; }
+    .nav-card-arrow { font-size: 0.42rem; color: rgba(26,74,138,0.4); letter-spacing: 0.1em; transition: color 0.2s; }
+    .nav-card:hover .nav-card-arrow { color: var(--blue); }
 
-    .nav-card-desc {
-      font-size: 0.44rem;
-      color: rgba(26,74,138,0.7);
-      letter-spacing: 0.1em;
-      line-height: 1.6;
-    }
-
-    .nav-card-count {
-      font-size: 0.42rem;
-      color: rgba(26,74,138,0.5);
-      letter-spacing: 0.15em;
-      margin-top: auto;
-    }
-
-    /* CLASSIFICATION BANNER */
-    .class-banner {
-      text-align: center;
-      padding: 0.6rem;
-      border: 1px solid rgba(26,74,138,0.2);
-      margin-bottom: 3rem;
-      font-size: 0.45rem;
-      letter-spacing: 0.3em;
-      color: rgba(26,74,138,0.5);
-    }
-
-    .divider {
-      width: 100%;
-      height: 1px;
-      background: linear-gradient(to right, transparent, rgba(26,74,138,0.3), transparent);
-      margin: 2rem 0;
-    }
+    .footer-line { display: flex; justify-content: space-between; align-items: center; padding-top: 1rem; border-top: 1px solid rgba(26,74,138,0.1); }
+    .footer-text { font-size: 0.4rem; color: rgba(26,74,138,0.35); letter-spacing: 0.18em; }
   </style>
 </head>
 <body>
@@ -232,95 +175,168 @@
 
 <div class="main">
 
-  <div class="class-banner">Apostolos Classified Archive — Clearance Level: Archon — Unauthorised Access Prohibited</div>
-
   <!-- HEADER -->
-  <div class="header">
-    <div class="flag-block">
+  <div class="company-header">
+    <div class="flag-container">
       <svg viewBox="0 0 280 175" xmlns="http://www.w3.org/2000/svg">
         <rect width="280" height="175" fill="#050810"/>
-        <circle cx="140" cy="87" r="42" fill="none" stroke="#1a4a8a" stroke-width="1.5"/>
-        <path d="M140 87 L118 52 L128 87 Z" fill="#1a4a8a" opacity="0.9"/>
-        <path d="M140 87 L175 65 L152 90 Z" fill="#1a4a8a" opacity="0.9"/>
-        <path d="M140 87 L168 118 L140 100 Z" fill="#1a4a8a" opacity="0.9"/>
-        <path d="M140 87 L108 112 L128 90 Z" fill="#1a4a8a" opacity="0.9"/>
-        <circle cx="140" cy="87" r="14" fill="#020408"/>
-        <circle cx="140" cy="87" r="8" fill="#1a4a8a" opacity="0.6"/>
-        <circle cx="140" cy="42" r="8" fill="#1a4a8a"/>
-        <circle cx="178" cy="64" r="8" fill="#1a4a8a"/>
-        <circle cx="178" cy="110" r="8" fill="#1a4a8a"/>
-        <circle cx="140" cy="132" r="8" fill="#1a4a8a"/>
-        <circle cx="102" cy="110" r="8" fill="#1a4a8a"/>
-        <circle cx="102" cy="64" r="8" fill="#1a4a8a"/>
-        <text x="140" y="158" font-family="Cinzel, serif" font-size="7" fill="#3a6aaa" text-anchor="middle" letter-spacing="3">PNEUMA INSTITUTE</text>
-        <text x="140" y="168" font-family="Share Tech Mono, monospace" font-size="5" fill="#1a4a8a" text-anchor="middle" letter-spacing="2">"Researching Your Dreams"</text>
+        <!-- Subtle grid -->
+        <line x1="0" y1="87" x2="280" y2="87" stroke="rgba(26,74,138,0.1)" stroke-width="0.5"/>
+        <line x1="140" y1="0" x2="140" y2="175" stroke="rgba(26,74,138,0.1)" stroke-width="0.5"/>
+        <!-- Outer ring -->
+        <circle cx="140" cy="87" r="52" fill="none" stroke="rgba(26,74,138,0.35)" stroke-width="1"/>
+        <circle cx="140" cy="87" r="44" fill="none" stroke="rgba(26,74,138,0.2)" stroke-width="0.5"/>
+        <!-- Spokes -->
+        <line x1="140" y1="87" x2="120" y2="40" stroke="rgba(26,74,138,0.55)" stroke-width="1"/>
+        <line x1="140" y1="87" x2="178" y2="62" stroke="rgba(26,74,138,0.55)" stroke-width="1"/>
+        <line x1="140" y1="87" x2="172" y2="118" stroke="rgba(26,74,138,0.55)" stroke-width="1"/>
+        <line x1="140" y1="87" x2="140" y2="134" stroke="rgba(26,74,138,0.55)" stroke-width="1"/>
+        <line x1="140" y1="87" x2="108" y2="118" stroke="rgba(26,74,138,0.55)" stroke-width="1"/>
+        <line x1="140" y1="87" x2="102" y2="62" stroke="rgba(26,74,138,0.55)" stroke-width="1"/>
+        <!-- Outer nodes -->
+        <circle cx="120" cy="40" r="7" fill="#1a4a8a" opacity="0.9"/>
+        <circle cx="178" cy="62" r="7" fill="#1a4a8a" opacity="0.9"/>
+        <circle cx="172" cy="118" r="7" fill="#1a4a8a" opacity="0.9"/>
+        <circle cx="140" cy="134" r="7" fill="#1a4a8a" opacity="0.9"/>
+        <circle cx="108" cy="118" r="7" fill="#1a4a8a" opacity="0.9"/>
+        <circle cx="102" cy="62" r="7" fill="#1a4a8a" opacity="0.9"/>
+        <!-- Core -->
+        <circle cx="140" cy="87" r="16" fill="#020408"/>
+        <circle cx="140" cy="87" r="10" fill="#1a4a8a" opacity="0.7"/>
+        <circle cx="140" cy="87" r="4" fill="#7ab8ff" opacity="0.5"/>
+        <!-- Label -->
+        <text x="140" y="162" font-family="Cinzel, serif" font-size="7" fill="rgba(26,74,138,0.6)" text-anchor="middle" letter-spacing="3">PNEUMA INSTITUTE</text>
       </svg>
+      <div class="flag-corner tl"></div>
+      <div class="flag-corner tr"></div>
+      <div class="flag-corner bl"></div>
+      <div class="flag-corner br"></div>
     </div>
-    <div class="header-text">
-      <h1 class="header-title">Pneuma Institute</h1>
-      <p class="header-class">Planetary Esoteric Directorate — Apostolos</p>
-      <div class="header-tags">
-        <span class="tag">Authoritarian Research State</span>
-        <span class="tag">Pseudo-Religious Technocracy</span>
-        <span class="tag">Containment Authority</span>
-        <span class="tag">Independent</span>
-      </div>
-    </div>
-  </div>
 
-  <!-- OVERVIEW -->
-  <div class="section">
-    <div class="section-title">Overview</div>
-    <div class="overview-text">
-      <p></p>The Pneuma Institute, the largest, oldest and strongest company on Apostolos, owning most of it's industry, standing space fleet, army, technology and people.
-      
+    <div class="header-text">
+      <div class="company-name">Pneuma Institute</div>
+      <div class="company-subtitle">Planetary Esoteric Directorate — Authoritarian Research State — Apostolos</div>
+      <div class="company-motto">
+        "Researching Your Dreams"
+        <span>— Official public motto. Meaning classified at Archon level.</span>
+      </div>
+      <div class="quick-facts">
+        <div class="fact-item">
+          <div class="fact-label">Classification</div>
+          <div class="fact-value">Pseudo-Religious Technocracy</div>
+        </div>
+        <div class="fact-item">
+          <div class="fact-label">Leader</div>
+          <div class="fact-value">Archon of Breath (identity classified)</div>
+        </div>
+        <div class="fact-item">
+          <div class="fact-label">Base</div>
+          <div class="fact-value">Apostolos — Penrose Shell World</div>
+        </div>
+        <div class="fact-item">
+          <div class="fact-label">Population</div>
+          <div class="fact-value">~11 billion</div>
+        </div>
+        <div class="fact-item">
+          <div class="fact-label">Demographics</div>
+          <div class="fact-value">54% Avriethrax — 45% Noctivex — 1% Other</div>
+        </div>
+        <div class="fact-item">
+          <div class="fact-label">Allegiance</div>
+          <div class="fact-value">Independent — no known allies</div>
+        </div>
+        <div class="fact-item">
+          <div class="fact-label">Public Status</div>
+          <div class="fact-value">Private xenobiological research institute</div>
+        </div>
+        <div class="fact-item">
+          <div class="fact-label">True Status</div>
+          <div class="fact-value">Absolute planetary authority — classified</div>
+        </div>
+      </div>
     </div>
   </div>
 
   <div class="divider"></div>
 
-  <!-- NAVIGATION -->
-  <div class="section">
-    <div class="section-title">Archive Sections</div>
-    <div class="nav-grid">
-
-      <a class="nav-card" href="pi-ships.html">
-        <div class="nav-card-title">Ships</div>
-        <div class="nav-card-desc">Fleet vessels, stealth craft, siege platforms and the Voice of Apostolos.</div>
-        <div class="nav-card-count">Fleet · Stealth · Civilian</div>
-      </a>
-
-      <a class="nav-card" href="pi-species.html">
-        <div class="nav-card-title">Species</div>
-        <div class="nav-card-desc">Avriethrax and Noctivex — the two species of Apostolos.</div>
-        <div class="nav-card-count">2 Species</div>
-      </a>
-
-      <a class="nav-card" href="pi-characters.html">
-        <div class="nav-card-title">Characters</div>
-        <div class="nav-card-desc">The Archons, Oracles and key figures within the Institute hierarchy.</div>
-        <div class="nav-card-count">Archons · Operatives</div>
-      </a>
-
-      <a class="nav-card" href="pi-technology.html">
-        <div class="nav-card-title">Technology</div>
-        <div class="nav-card-desc">Seraphic reactors, psionic systems, FTL drives and PICS infrastructure.</div>
-        <div class="nav-card-count">Weapons · Systems · Reactors</div>
-      </a>
-
-      <a class="nav-card" href="pi-lore.html">
-        <div class="nav-card-title">Lore & Events</div>
-        <div class="nav-card-desc">The Great Awakening, the Catastrophe, the Great Consolidation and beyond.</div>
-        <div class="nav-card-count">Origins · History · Events</div>
-      </a>
-
-      <a class="nav-card" href="pi-seraphs.html">
-        <div class="nav-card-title">Seraphs</div>
-        <div class="nav-card-desc">Seraph Prime, the Anabatic Mass, Greater Seraphs and RBU documentation.</div>
-        <div class="nav-card-count">Entities · RBUs · Containment</div>
-      </a>
-
+  <!-- OVERVIEW -->
+  <div class="overview">
+    <div class="overview-title">Overview</div>
+    <div class="overview-text">
+      <p>The Pneuma Institute is the oldest and most powerful organisation on Apostolos. Publicly it presents itself as a private xenobiological research institute. In reality it is the planet's absolute governing authority — a secretive theocratic technocracy built around the study, containment, and exploitation of Seraphic entities discovered beneath Apostolos's crust. Elected governments exist, borders exist, political parties exist. All of them are puppets. Their advisors are Institute agents, their intelligence reports are Institute-controlled, their policies are Institute-selected. The world lives under masters it does not know exist.</p>
+      <p>The Institute's origins trace to the Astral Geoscience Survey — a pre-Catastrophe research body established to investigate the strange psionic anomalies that had afflicted Apostolos for decades: mass hallucinations, inexplicable seismic vibrations, geological structures humming at non-natural frequencies, and dreams shared by thousands simultaneously. Most governments ignored these as side effects of their naturally psionic species. A few did not. Those few formed the AGS. On its 17th day excavating a deep crystalline chamber beneath the mantle faultline, an AGS researcher touched the core of what would later be designated Seraph Prime. It woke up.</p>
+      <p>This event is known as the Great Awakening. The resulting release of energy — not an attack, simply the act of waking — vaporized a 122,000km region, imploded a continent-sized landmass into a glowing sphere, buckled spacetime around the epicentre, and triggered global catastrophe. Waves reached 300km. Nuclear exchanges followed between panicked nations. A ring of blown rock formed around the planet. And then, across the ruins, millions heard psionic signals — visions of a grand obsidian throne, a feeling of pure agony spreading through every conscious mind. Seraph Prime projecting itself.</p>
+      <p>In the aftermath, the AGS and surviving national remnants formed the Pneuma Institute as a crisis management body. Within a year it controlled all Seraphic research, global psionic monitoring, and access to the Awakening zone. The first Archons ordered the dissection of the collapsed Seraph Prime, creating the Five Choirs, the Oracle programme, and the Resonant units grown from the First Seraph's remains. False reports were filed. Governments were told the situation was under control and the research was proceeding safely. It was not. The Institute had found something far larger — Seraph Prime was not alone. Multiple Seraphs existed beneath Apostolos and throughout the solar system. The Institute told no one.</p>
+      <p>Over the following generations the Institute quietly absorbed all genuine governing authority on Apostolos. Politicians believed they were autonomous. They were not. The civilian population knew of the Institute as a research body. They still do. The Pneuma Institute is now the de facto government of Apostolos in every meaningful sense — and its true nature remains one of the most carefully maintained secrets in the known galaxy.</p>
     </div>
+  </div>
+
+  <!-- CHOIRS -->
+  <div class="nav-cards-title">The Five Choirs</div>
+  <div class="divisions">
+    <div class="division-item">
+      <div class="division-name">First Choir</div>
+      <div class="division-desc">Containment Directive — Seraphic entities, anomalies, breaches and secured zones.</div>
+    </div>
+    <div class="division-item">
+      <div class="division-name">Second Choir</div>
+      <div class="division-desc">Psionic Resonance Bureau — Oracles, Telepaths and astral frequency analysis.</div>
+    </div>
+    <div class="division-item">
+      <div class="division-name">Third Choir</div>
+      <div class="division-desc">Bio Divine Engineering — Creators of Resonant units, Seraphic material grafting.</div>
+    </div>
+    <div class="division-item">
+      <div class="division-name">Fourth Choir</div>
+      <div class="division-desc">Astral Cartography — Maps the Angelic realm and studies Seraph-space topology.</div>
+    </div>
+    <div class="division-item">
+      <div class="division-name">Fifth Choir</div>
+      <div class="division-desc">Vector Operations Command — Military arm. Resonant deployment, field ops, fleet.</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- NAV CARDS -->
+  <div class="nav-cards-title">Archive Sections</div>
+  <div class="nav-cards">
+    <a class="nav-card" href="pi-ships.html">
+      <div class="nav-card-title">Ships</div>
+      <div class="nav-card-sub">Fleet vessels, stealth craft, siege platforms and the Voice of Apostolos</div>
+      <div class="nav-card-arrow">Access →</div>
+    </a>
+    <a class="nav-card" href="pi-species.html">
+      <div class="nav-card-title">Species</div>
+      <div class="nav-card-sub">Avriethrax and Noctivex — the two species of Apostolos</div>
+      <div class="nav-card-arrow">Access →</div>
+    </a>
+    <a class="nav-card" href="pi-characters.html">
+      <div class="nav-card-title">Characters</div>
+      <div class="nav-card-sub">The Archons, Oracles and key figures within the Institute hierarchy</div>
+      <div class="nav-card-arrow">Access →</div>
+    </a>
+    <a class="nav-card" href="pi-technology.html">
+      <div class="nav-card-title">Technology</div>
+      <div class="nav-card-sub">Seraphic reactors, psionic systems, FTL drives and PICS infrastructure</div>
+      <div class="nav-card-arrow">Access →</div>
+    </a>
+    <a class="nav-card" href="pi-lore.html">
+      <div class="nav-card-title">Lore & Events</div>
+      <div class="nav-card-sub">The Great Awakening, the Catastrophe, the Consolidation and beyond</div>
+      <div class="nav-card-arrow">Access →</div>
+    </a>
+    <a class="nav-card" href="pi-seraphs.html">
+      <div class="nav-card-title">Seraphs</div>
+      <div class="nav-card-sub">Seraph Prime, the Anabatic Mass, Greater Seraphs and RBU documentation</div>
+      <div class="nav-card-arrow">Access →</div>
+    </a>
+  </div>
+
+  <div class="footer-line">
+    <span class="footer-text">Pneuma Institute — Apostolos Archive</span>
+    <span class="footer-text">Clearance: Archon Level</span>
+    <span class="footer-text">Classification: Absolute</span>
   </div>
 
 </div>
