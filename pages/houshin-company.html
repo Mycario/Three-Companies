@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Houshin Company — Apostolos Archive</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Share+Tech+Mono&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #080600;
+      --gold: #c9a84c;
+      --gold-bright: #e8c96a;
+      --gold-dim: rgba(180,140,50,0.6);
+      --gold-faint: rgba(180,140,50,0.12);
+      --gold-border: rgba(180,140,50,0.22);
+      --text: rgba(220,185,100,0.85);
+      --text-dim: rgba(150,115,45,0.65);
+      --panel: rgba(20,15,5,0.75);
+    }
+
+    html, body {
+      min-height: 100vh;
+      background: var(--bg);
+      font-family: 'Share Tech Mono', monospace;
+      color: var(--gold);
+      overflow-x: hidden;
+    }
+
+    /* STARS */
+    .stars { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+    .star { position: absolute; background: #c9a84c; border-radius: 50%; }
+
+    /* CORNER BRACKETS */
+    .corner { position: fixed; width: 20px; height: 20px; border-color: rgba(180,140,50,0.2); border-style: solid; z-index: 10; pointer-events: none; }
+    .corner-tl { top: 12px; left: 12px; border-width: 1px 0 0 1px; }
+    .corner-tr { top: 12px; right: 12px; border-width: 1px 1px 0 0; }
+    .corner-bl { bottom: 12px; left: 12px; border-width: 0 0 1px 1px; }
+    .corner-br { bottom: 12px; right: 12px; border-width: 0 1px 1px 0; }
+
+    /* TOPBAR */
+    .topbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 48px;
+      background: rgba(8,6,0,0.92);
+      border-bottom: 1px solid rgba(180,140,50,0.18);
+      display: flex;
+      align-items: center;
+      padding: 0 2rem;
+      gap: 1.5rem;
+      z-index: 10;
+      backdrop-filter: blur(6px);
+    }
+    .topbar-back {
+      font-size: 0.5rem;
+      color: rgba(150,115,45,0.65);
+      letter-spacing: 0.2em;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .topbar-back:hover { color: var(--gold); }
+    .topbar-divider { width: 1px; height: 16px; background: rgba(180,140,50,0.25); }
+    .topbar-title { font-family: 'Cinzel', serif; font-size: 0.7rem; color: var(--gold); letter-spacing: 0.3em; }
+
+    /* MAIN */
+    .main {
+      position: relative;
+      z-index: 1;
+      max-width: 1060px;
+      margin: 0 auto;
+      padding: 80px 2rem 4rem;
+    }
+
+    /* FLAG + HEADER BLOCK */
+    .company-header {
+      display: grid;
+      grid-template-columns: 180px 1fr;
+      gap: 2rem;
+      margin-bottom: 2.5rem;
+      align-items: start;
+    }
+
+    /* FLAG */
+    .flag-container {
+      aspect-ratio: 3 / 2;
+      background: #0a0800;
+      border: 1px solid var(--gold-border);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .flag-container canvas { width: 100%; height: 100%; display: block; }
+    .flag-corner { position: absolute; width: 8px; height: 8px; border-color: rgba(180,140,50,0.5); border-style: solid; pointer-events: none; }
+    .flag-corner.tl { top: 4px; left: 4px; border-width: 1px 0 0 1px; }
+    .flag-corner.tr { top: 4px; right: 4px; border-width: 1px 1px 0 0; }
+    .flag-corner.bl { bottom: 4px; left: 4px; border-width: 0 0 1px 1px; }
+    .flag-corner.br { bottom: 4px; right: 4px; border-width: 0 1px 1px 0; }
+
+    /* HEADER TEXT */
+    .company-name {
+      font-family: 'Cinzel', serif;
+      font-size: 2rem;
+      color: var(--gold-bright);
+      letter-spacing: 0.35em;
+      margin-bottom: 0.3rem;
+    }
+    .company-subtitle {
+      font-size: 0.5rem;
+      color: var(--gold-dim);
+      letter-spacing: 0.22em;
+      margin-bottom: 1rem;
+    }
+    .company-motto {
+      font-size: 0.52rem;
+      color: var(--text);
+      letter-spacing: 0.1em;
+      font-style: italic;
+      margin-bottom: 1.2rem;
+      padding-left: 0.8rem;
+      border-left: 1px solid rgba(180,140,50,0.3);
+    }
+    .company-motto span {
+      display: block;
+      font-size: 0.42rem;
+      color: var(--text-dim);
+      letter-spacing: 0.15em;
+      margin-top: 0.2rem;
+      font-style: normal;
+    }
+
+    /* QUICK FACTS ROW */
+    .quick-facts {
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .fact-label { font-size: 0.38rem; color: var(--text-dim); letter-spacing: 0.15em; margin-bottom: 2px; }
+    .fact-value { font-size: 0.46rem; color: var(--text); letter-spacing: 0.08em; }
+
+    /* DIVIDER */
+    .divider {
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(to right, transparent, rgba(180,140,50,0.25), transparent);
+      margin: 2rem 0;
+    }
+
+    /* OVERVIEW */
+    .overview {
+      background: rgba(15,10,2,0.6);
+      border: 1px solid var(--gold-border);
+      padding: 1.4rem 1.6rem;
+      margin-bottom: 2rem;
+    }
+    .overview-title {
+      font-size: 0.44rem;
+      color: var(--gold-dim);
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      margin-bottom: 0.9rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 1px solid rgba(180,140,50,0.12);
+    }
+    .overview-text {
+      font-size: 0.5rem;
+      color: var(--text);
+      letter-spacing: 0.04em;
+      line-height: 1.9;
+    }
+    .overview-text p { margin-bottom: 0.6rem; }
+    .overview-text p:last-child { margin-bottom: 0; }
+
+    /* NAV CARDS */
+    .nav-cards-title {
+      font-size: 0.44rem;
+      color: var(--gold-dim);
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+    .nav-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem;
+      margin-bottom: 2rem;
+    }
+    .nav-card {
+      background: rgba(20,14,2,0.7);
+      border: 1px solid rgba(180,140,50,0.22);
+      padding: 1.1rem 1.2rem;
+      text-decoration: none;
+      transition: border-color 0.2s, background 0.2s;
+      display: block;
+      position: relative;
+      overflow: hidden;
+    }
+    .nav-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(180,140,50,0.04) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .nav-card:hover {
+      border-color: rgba(220,175,70,0.5);
+      background: rgba(25,18,3,0.85);
+    }
+    .nav-card-title {
+      font-family: 'Cinzel', serif;
+      font-size: 0.65rem;
+      color: var(--gold-bright);
+      letter-spacing: 0.2em;
+      margin-bottom: 0.4rem;
+    }
+    .nav-card-sub {
+      font-size: 0.4rem;
+      color: var(--text-dim);
+      letter-spacing: 0.15em;
+      margin-bottom: 0.7rem;
+      line-height: 1.6;
+    }
+    .nav-card-arrow {
+      font-size: 0.42rem;
+      color: rgba(180,140,50,0.4);
+      letter-spacing: 0.1em;
+      transition: color 0.2s;
+    }
+    .nav-card:hover .nav-card-arrow { color: var(--gold); }
+
+    /* DIVISIONS STRIP */
+    .divisions {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.6rem;
+      margin-bottom: 2rem;
+    }
+    .division-item {
+      background: rgba(15,10,2,0.6);
+      border: 1px solid rgba(180,140,50,0.15);
+      padding: 0.8rem 1rem;
+    }
+    .division-name {
+      font-size: 0.44rem;
+      color: var(--gold);
+      letter-spacing: 0.15em;
+      margin-bottom: 0.3rem;
+    }
+    .division-desc {
+      font-size: 0.4rem;
+      color: var(--text-dim);
+      letter-spacing: 0.08em;
+      line-height: 1.6;
+    }
+
+    /* FOOTER LINE */
+    .footer-line {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(180,140,50,0.1);
+    }
+    .footer-text { font-size: 0.4rem; color: rgba(150,115,45,0.35); letter-spacing: 0.18em; }
+  </style>
+</head>
+<body>
+
+<div class="stars" id="stars"></div>
+<div class="corner corner-tl"></div>
+<div class="corner corner-tr"></div>
+<div class="corner corner-bl"></div>
+<div class="corner corner-br"></div>
+
+<nav class="topbar">
+  <a class="topbar-back" href="index.html">← Home</a>
+  <div class="topbar-divider"></div>
+  <span class="topbar-title">Houshin Company</span>
+</nav>
+
+<div class="main">
+
+  <!-- HEADER -->
+  <div class="company-header">
+    <div class="flag-container">
+      <canvas id="flag" width="270" height="180"></canvas>
+      <div class="flag-corner tl"></div>
+      <div class="flag-corner tr"></div>
+      <div class="flag-corner bl"></div>
+      <div class="flag-corner br"></div>
+    </div>
+    <div class="header-text">
+      <div class="company-name">Houshin</div>
+      <div class="company-subtitle">Commercial Conglomerate — Private Military Contractor — Institute Aligned</div>
+      <div class="company-motto">
+        "Vel na, Formir sha"
+        <span>— "See the present, build the future"</span>
+      </div>
+      <div class="quick-facts">
+        <div class="fact-item">
+          <div class="fact-label">Founded</div>
+          <div class="fact-value">Post-Catastrophe</div>
+        </div>
+        <div class="fact-item">
+          <div class="fact-label">Founder</div>
+          <div class="fact-value">Souren Houshin (Noctivex)</div>
+        </div>
+        <div class="fact-item">
+          <div class="fact-label">Current Leader</div>
+          <div class="fact-value">Vaen Houshin — Merchant Sovereign</div>
+        </div>
+        <div class="fact-item">
+          <div class="fact-label">Headquarters</div>
+          <div class="fact-value">Apostolos — Houshin District (340km)</div>
+        </div>
+        <div class="fact-item">
+          <div class="fact-label">Population</div>
+          <div class="fact-value">~400,000 employees</div>
+        </div>
+        <div class="fact-item">
+          <div class="fact-label">Demographics</div>
+          <div class="fact-value">52% Avriethrax — 41% Noctivex — 7% Other</div>
+        </div>
+        <div class="fact-item">
+          <div class="fact-label">Allegiance</div>
+          <div class="fact-value">Nominally Independent — Institute Aligned</div>
+        </div>
+        <div class="fact-item">
+          <div class="fact-label">Operational Zone</div>
+          <div class="fact-value">Pneuma Institute space only (current)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- OVERVIEW -->
+  <div class="overview">
+    <div class="overview-title">Overview</div>
+    <div class="overview-text">
+      <p>The Houshin Company is the largest commercial and private military entity operating within Pneuma Institute space. Founded in the aftermath of the Great Catastrophe by Noctivex merchant Souren Houshin, the Company grew from a trading operation into a sprawling conglomerate spanning commercial logistics, military contracting, intelligence brokering, and advanced manufacturing. The name Houshin is an institutional title granted on appointment to the Company's leader — it is not hereditary.</p>
+      <p>The Company operates under a posture of nominal independence while maintaining deep alignment with the Institute. This arrangement suits both parties: the Institute gains a capable, deniable PMC and intelligence network without direct institutional exposure, while the Houshin Company gains access to Institute contracts, infrastructure, and protection. The relationship is transactional at its core, managed through mutual benefit rather than loyalty.</p>
+      <p>Under Vaen Houshin — the youngest Merchant Sovereign in the Company's history — the long-term strategic goal is interstellar expansion. The Company currently operates exclusively within Institute space, but Vaen's inner circle is actively building the diplomatic and military groundwork for operations beyond it.</p>
+    </div>
+  </div>
+
+  <!-- DIVISIONS -->
+  <div class="nav-cards-title">Divisions</div>
+  <div class="divisions">
+    <div class="division-item">
+      <div class="division-name">Trade</div>
+      <div class="division-desc">Commercial fleet operations within Institute space. Logistics, freight, and licensed merchant activity.</div>
+    </div>
+    <div class="division-item">
+      <div class="division-name">Intelligence</div>
+      <div class="division-desc">Information network and brokering. The Company's most profitable and most classified division.</div>
+    </div>
+    <div class="division-item">
+      <div class="division-name">Manufacturing</div>
+      <div class="division-desc">Production arm spanning weapons systems to civilian goods. Supplies both internal and external clients.</div>
+    </div>
+    <div class="division-item">
+      <div class="division-name">The Architects</div>
+      <div class="division-desc">The Company's private military force. Large, well-equipped, and entirely loyal to the Merchant Sovereign.</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- NAV CARDS -->
+  <div class="nav-cards-title">Archive Sections</div>
+  <div class="nav-cards">
+    <a class="nav-card" href="houshin-characters.html">
+      <div class="nav-card-title">Characters</div>
+      <div class="nav-card-sub">Vaen Houshin and key members of the inner circle</div>
+      <div class="nav-card-arrow">Access →</div>
+    </a>
+    <a class="nav-card" href="houshin-ships.html">
+      <div class="nav-card-title">Ships & Fleet</div>
+      <div class="nav-card-sub">Commercial and military vessel registry</div>
+      <div class="nav-card-arrow">Access →</div>
+    </a>
+    <a class="nav-card" href="houshin-architects.html">
+      <div class="nav-card-title">The Architects</div>
+      <div class="nav-card-sub">Private military force — doctrine, equipment, structure</div>
+      <div class="nav-card-arrow">Access →</div>
+    </a>
+    <a class="nav-card" href="houshin-intelligence.html">
+      <div class="nav-card-title">Intelligence Division</div>
+      <div class="nav-card-sub">Network structure, operations, and known assets</div>
+      <div class="nav-card-arrow">Access →</div>
+    </a>
+    <a class="nav-card" href="houshin-lore.html">
+      <div class="nav-card-title">Lore & History</div>
+      <div class="nav-card-sub">Company origins, key events, and political history</div>
+      <div class="nav-card-arrow">Access →</div>
+    </a>
+  </div>
+
+  <div class="footer-line">
+    <span class="footer-text">Houshin Company — Apostolos Archive</span>
+    <span class="footer-text">"Vel na, Formir sha"</span>
+    <span class="footer-text">Classification: Restricted</span>
+  </div>
+
+</div>
+
+<script>
+// ── FLAG CANVAS ──────────────────────────────────
+const fc = document.getElementById('flag');
+const fctx = fc.getContext('2d');
+const FW = fc.width, FH = fc.height;
+
+// Background
+fctx.fillStyle = '#0a0800';
+fctx.fillRect(0, 0, FW, FH);
+
+// Subtle grid
+fctx.strokeStyle = 'rgba(180,140,50,0.06)';
+fctx.lineWidth = 0.5;
+for (let x = 0; x < FW; x += 18) { fctx.beginPath(); fctx.moveTo(x,0); fctx.lineTo(x,FH); fctx.stroke(); }
+for (let y = 0; y < FH; y += 18) { fctx.beginPath(); fctx.moveTo(0,y); fctx.lineTo(FW,y); fctx.stroke(); }
+
+// Outer border
+fctx.strokeStyle = 'rgba(180,140,50,0.35)';
+fctx.lineWidth = 1;
+fctx.strokeRect(4, 4, FW-8, FH-8);
+
+// Inner ring
+const cx = FW/2, cy = FH/2;
+const R = Math.min(FW,FH) * 0.3;
+
+fctx.beginPath();
+fctx.arc(cx, cy, R, 0, Math.PI*2);
+fctx.strokeStyle = 'rgba(180,140,50,0.5)';
+fctx.lineWidth = 1;
+fctx.stroke();
+
+fctx.beginPath();
+fctx.arc(cx, cy, R * 0.82, 0, Math.PI*2);
+fctx.strokeStyle = 'rgba(180,140,50,0.25)';
+fctx.lineWidth = 0.5;
+fctx.stroke();
+
+// H mark
+const hs = R * 0.42;
+fctx.strokeStyle = 'rgba(210,170,70,0.9)';
+fctx.lineWidth = 2.5;
+fctx.lineCap = 'square';
+// left vertical
+fctx.beginPath(); fctx.moveTo(cx-hs, cy-hs); fctx.lineTo(cx-hs, cy+hs); fctx.stroke();
+// right vertical
+fctx.beginPath(); fctx.moveTo(cx+hs, cy-hs); fctx.lineTo(cx+hs, cy+hs); fctx.stroke();
+// crossbar
+fctx.beginPath(); fctx.moveTo(cx-hs, cy); fctx.lineTo(cx+hs, cy); fctx.stroke();
+
+// 3 diamond trade lines — top, left, right
+const dpos = [
+  [cx, cy - R * 1.22],
+  [cx - R * 1.22, cy],
+  [cx + R * 1.22, cy],
+];
+dpos.forEach(([dx, dy]) => {
+  const ds = 7;
+  fctx.beginPath();
+  fctx.moveTo(dx, dy - ds);
+  fctx.lineTo(dx + ds, dy);
+  fctx.lineTo(dx, dy + ds);
+  fctx.lineTo(dx - ds, dy);
+  fctx.closePath();
+  fctx.fillStyle = 'rgba(210,170,70,0.85)';
+  fctx.fill();
+  fctx.strokeStyle = 'rgba(180,140,50,0.4)';
+  fctx.lineWidth = 0.5;
+  fctx.stroke();
+});
+
+// Corner accents
+[[8,8],[FW-8,8],[8,FH-8],[FW-8,FH-8]].forEach(([ax,ay]) => {
+  fctx.beginPath();
+  fctx.arc(ax, ay, 2, 0, Math.PI*2);
+  fctx.fillStyle = 'rgba(180,140,50,0.4)';
+  fctx.fill();
+});
+
+// ── STARS ───────────────────────────────────────
+const s = document.getElementById('stars');
+for (let i = 0; i < 200; i++) {
+  const el = document.createElement('div');
+  el.className = 'star';
+  const sz = Math.random() * 1.2 + 0.2;
+  el.style.cssText = `width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*100}%;opacity:${Math.random()*0.3+0.05};`;
+  s.appendChild(el);
+}
+</script>
+
+</body>
+</html>
