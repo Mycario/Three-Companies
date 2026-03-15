@@ -76,5 +76,11 @@
     "e": "animal",
     "p": "KHIMN-ALV",
     "c": "custom"
+  },
+  {
+    "v": "kagrak",
+    "e": "tooth",
+    "p": "KAGR-AK",
+    "c": "custom"
   }
 ]
