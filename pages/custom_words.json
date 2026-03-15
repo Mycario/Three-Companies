@@ -40,5 +40,11 @@
     "e": "leg",
     "p": "LVEGR",
     "c": "noun"
+  },
+  {
+    "v": "stenmn",
+    "e": "arm",
+    "p": "STENMN",
+    "c": "noun"
   }
 ]
