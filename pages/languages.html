@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vaellish — Language Archive</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Share+Tech+Mono&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #020408;
+      --blue: #7ab8ff;
+      --blue-bright: #a8d0ff;
+      --blue-dim: rgba(26,74,138,0.65);
+      --blue-border: rgba(26,74,138,0.22);
+      --text: rgba(122,184,255,0.85);
+      --text-dim: rgba(60,120,200,0.6);
+      --panel: rgba(6,14,34,0.7);
+    }
+
+    html, body { min-height: 100vh; background: var(--bg); font-family: 'Share Tech Mono', monospace; color: var(--blue); overflow-x: hidden; }
+
+    .stars { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+    .star { position: absolute; background: white; border-radius: 50%; }
+
+    .corner { position: fixed; width: 20px; height: 20px; border-color: rgba(26,74,138,0.25); border-style: solid; z-index: 10; pointer-events: none; }
+    .corner-tl { top: 12px; left: 12px; border-width: 1px 0 0 1px; }
+    .corner-tr { top: 12px; right: 12px; border-width: 1px 1px 0 0; }
+    .corner-bl { bottom: 12px; left: 12px; border-width: 0 0 1px 1px; }
+    .corner-br { bottom: 12px; right: 12px; border-width: 0 1px 1px 0; }
+
+    .topbar {
+      position: fixed; top: 0; left: 0; right: 0; height: 48px;
+      background: rgba(2,4,8,0.92); border-bottom: 1px solid rgba(26,74,138,0.2);
+      display: flex; align-items: center; padding: 0 2rem; z-index: 10; backdrop-filter: blur(6px);
+    }
+    .topbar-left { display: flex; align-items: center; gap: 1.5rem; flex: 1; }
+    .topbar-back { font-size: 0.5rem; color: rgba(26,74,138,0.7); letter-spacing: 0.2em; text-decoration: none; transition: color 0.2s; }
+    .topbar-back:hover { color: var(--blue); }
+    .topbar-divider { width: 1px; height: 16px; background: rgba(26,74,138,0.3); }
+    .topbar-title { font-family: 'Cinzel', serif; font-size: 0.7rem; color: var(--blue); letter-spacing: 0.3em; }
+    .section-nav { display: flex; align-items: center; height: 100%; }
+    .section-btn {
+      height: 100%; padding: 0 1.2rem;
+      font-family: 'Share Tech Mono', monospace; font-size: 0.46rem;
+      color: rgba(26,74,138,0.6); letter-spacing: 0.18em;
+      background: none; border: none; border-left: 1px solid rgba(26,74,138,0.15);
+      cursor: pointer; transition: color 0.2s, background 0.2s; text-transform: uppercase;
+    }
+    .section-btn:hover { color: var(--blue); background: rgba(26,74,138,0.06); }
+    .section-btn.active { color: var(--blue); background: rgba(26,74,138,0.1); border-bottom: 2px solid rgba(58,138,255,0.5); }
+
+    .main { position: relative; z-index: 1; max-width: 1060px; margin: 0 auto; padding: 72px 2rem 4rem; }
+    .section-view { display: none; }
+    .section-view.active { display: block; }
+    .page-title { font-family: 'Cinzel', serif; font-size: 1.4rem; color: var(--blue); letter-spacing: 0.35em; margin-bottom: 0.3rem; padding-top: 1.5rem; }
+    .page-sub { font-size: 0.48rem; color: var(--blue-dim); letter-spacing: 0.2em; margin-bottom: 2rem; }
+    .divider { width: 100%; height: 1px; background: linear-gradient(to right, transparent, rgba(26,74,138,0.25), transparent); margin: 2rem 0; }
+
+    /* DICTIONARY */
+    .dict-controls { display: flex; gap: 0.75rem; margin-bottom: 1.5rem; align-items: center; flex-wrap: wrap; }
+    .dict-search { flex: 1; min-width: 200px; background: rgba(6,14,34,0.8); border: 1px solid rgba(26,74,138,0.25); color: var(--blue); font-family: 'Share Tech Mono', monospace; font-size: 0.5rem; letter-spacing: 0.1em; padding: 0.5rem 0.8rem; outline: none; transition: border-color 0.2s; }
+    .dict-search::placeholder { color: rgba(26,74,138,0.4); }
+    .dict-search:focus { border-color: rgba(58,138,255,0.4); }
+    .dict-filter { background: rgba(6,14,34,0.8); border: 1px solid rgba(26,74,138,0.25); color: var(--blue); font-family: 'Share Tech Mono', monospace; font-size: 0.46rem; letter-spacing: 0.1em; padding: 0.5rem 0.8rem; outline: none; cursor: pointer; }
+    .dict-filter option { background: #020408; }
+    .dict-count { font-size: 0.42rem; color: var(--text-dim); letter-spacing: 0.15em; white-space: nowrap; }
+    .dict-table { width: 100%; border-collapse: collapse; }
+    .dict-table thead tr { background: rgba(6,14,34,0.9); border-bottom: 1px solid rgba(26,74,138,0.25); }
+    .dict-table th { font-size: 0.4rem; color: var(--blue-dim); letter-spacing: 0.2em; text-transform: uppercase; padding: 0.6rem 1rem; text-align: left; font-weight: normal; }
+    .dict-table td { padding: 0.55rem 1rem; font-size: 0.48rem; border-bottom: 1px solid rgba(26,74,138,0.08); vertical-align: middle; }
+    .dict-table tr:hover td { background: rgba(26,74,138,0.05); }
+    .td-vaellish { font-family: 'Cinzel', serif; color: var(--blue-bright); letter-spacing: 0.1em; }
+    .td-english { color: var(--text); }
+    .td-pronunciation { color: var(--text-dim); font-style: italic; }
+    .td-class { font-size: 0.38rem; letter-spacing: 0.12em; padding: 2px 8px; border: 1px solid rgba(26,74,138,0.2); color: rgba(100,160,255,0.55); white-space: nowrap; display: inline-block; }
+    .td-class.noun { border-color: rgba(80,160,255,0.3); color: rgba(120,190,255,0.7); }
+    .td-class.verb { border-color: rgba(80,200,120,0.3); color: rgba(100,220,140,0.7); }
+    .td-class.pronoun { border-color: rgba(180,140,255,0.3); color: rgba(180,150,255,0.7); }
+    .td-class.number { border-color: rgba(255,180,60,0.3); color: rgba(255,200,80,0.7); }
+    .td-class.particle { border-color: rgba(255,120,80,0.3); color: rgba(255,140,100,0.7); }
+    .td-class.adjective { border-color: rgba(100,220,220,0.3); color: rgba(120,220,220,0.7); }
+    .td-class.custom { border-color: rgba(200,160,255,0.3); color: rgba(200,170,255,0.7); }
+    .td-delete { cursor: pointer; font-size: 0.4rem; color: rgba(26,74,138,0.3); transition: color 0.2s; background: none; border: none; padding: 2px 6px; font-family: 'Share Tech Mono', monospace; }
+    .td-delete:hover { color: rgba(255,80,80,0.7); }
+
+    /* ADD WORD PANEL */
+    .add-word-section { margin-top: 2rem; }
+    .add-word-lock { background: var(--panel); border: 1px solid var(--blue-border); padding: 1.2rem 1.4rem; display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+    .add-word-lock-label { font-size: 0.44rem; color: var(--blue-dim); letter-spacing: 0.18em; flex: 1; }
+    .add-word-lock-input { background: rgba(2,6,18,0.8); border: 1px solid rgba(26,74,138,0.25); color: var(--blue); font-family: 'Share Tech Mono', monospace; font-size: 0.46rem; letter-spacing: 0.1em; padding: 0.4rem 0.7rem; outline: none; width: 180px; transition: border-color 0.2s; }
+    .add-word-lock-input:focus { border-color: rgba(58,138,255,0.4); }
+    .add-word-lock-btn { background: rgba(26,74,138,0.15); border: 1px solid rgba(26,74,138,0.3); color: var(--blue); font-family: 'Share Tech Mono', monospace; font-size: 0.44rem; letter-spacing: 0.15em; padding: 0.4rem 1rem; cursor: pointer; transition: background 0.2s; }
+    .add-word-lock-btn:hover { background: rgba(26,74,138,0.28); }
+    .lock-error { font-size: 0.4rem; color: rgba(255,80,80,0.7); letter-spacing: 0.12em; }
+
+    .add-word-panel { background: var(--panel); border: 1px solid rgba(58,138,255,0.3); padding: 1.2rem 1.4rem; display: none; }
+    .add-word-panel.unlocked { display: block; }
+    .add-word-title { font-size: 0.44rem; color: var(--blue-dim); letter-spacing: 0.22em; text-transform: uppercase; margin-bottom: 1rem; padding-bottom: 0.4rem; border-bottom: 1px solid rgba(26,74,138,0.12); display: flex; align-items: center; justify-content: space-between; }
+    .add-word-unlock-badge { font-size: 0.38rem; color: rgba(80,200,120,0.7); letter-spacing: 0.15em; }
+
+    .gen-row { display: flex; gap: 0.6rem; margin-bottom: 0.8rem; align-items: flex-end; flex-wrap: wrap; }
+    .gen-field { display: flex; flex-direction: column; gap: 0.3rem; flex: 1; min-width: 160px; }
+    .add-word-label { font-size: 0.38rem; color: var(--text-dim); letter-spacing: 0.15em; }
+    .add-word-input { background: rgba(2,6,18,0.8); border: 1px solid rgba(26,74,138,0.25); color: var(--blue); font-family: 'Share Tech Mono', monospace; font-size: 0.46rem; letter-spacing: 0.08em; padding: 0.45rem 0.7rem; outline: none; transition: border-color 0.2s; width: 100%; }
+    .add-word-input:focus { border-color: rgba(58,138,255,0.4); }
+    .add-word-select { background: rgba(2,6,18,0.8); border: 1px solid rgba(26,74,138,0.25); color: var(--blue); font-family: 'Share Tech Mono', monospace; font-size: 0.44rem; padding: 0.45rem 0.7rem; outline: none; cursor: pointer; width: 100%; }
+    .add-word-select option { background: #020408; }
+    .gen-btn { background: rgba(26,74,138,0.15); border: 1px solid rgba(26,74,138,0.3); color: var(--blue); font-family: 'Share Tech Mono', monospace; font-size: 0.44rem; letter-spacing: 0.15em; padding: 0.45rem 1rem; cursor: pointer; transition: background 0.2s; white-space: nowrap; height: fit-content; align-self: flex-end; }
+    .gen-btn:hover { background: rgba(26,74,138,0.28); }
+    .gen-btn.primary { border-color: rgba(58,138,255,0.4); color: var(--blue-bright); }
+    .gen-btn.primary:hover { background: rgba(26,74,138,0.35); }
+
+    .gen-suggestions { display: flex; gap: 0.6rem; margin-bottom: 0.8rem; flex-wrap: wrap; }
+    .gen-suggestion { background: rgba(2,6,18,0.8); border: 1px solid rgba(26,74,138,0.2); padding: 0.5rem 1rem; cursor: pointer; transition: border-color 0.2s, background 0.2s; display: flex; align-items: center; gap: 0.6rem; }
+    .gen-suggestion:hover { border-color: rgba(58,138,255,0.45); background: rgba(10,24,50,0.8); }
+    .gen-suggestion.selected { border-color: rgba(58,138,255,0.6); background: rgba(10,24,50,0.9); }
+    .gen-sug-word { font-family: 'Cinzel', serif; font-size: 0.6rem; color: var(--blue-bright); letter-spacing: 0.15em; }
+    .gen-sug-pron { font-size: 0.38rem; color: var(--text-dim); letter-spacing: 0.1em; font-style: italic; }
+    .gen-sug-hint { font-size: 0.36rem; color: rgba(26,74,138,0.45); letter-spacing: 0.1em; }
+
+    .add-word-form-row { display: grid; grid-template-columns: 1fr 1fr 1fr auto auto; gap: 0.6rem; align-items: end; margin-top: 0.8rem; }
+    .add-word-msg { font-size: 0.4rem; margin-top: 0.5rem; letter-spacing: 0.12em; min-height: 1em; }
+    .add-word-msg.success { color: rgba(80,200,120,0.8); }
+    .add-word-msg.error { color: rgba(255,80,80,0.7); }
+    .add-word-msg.saving { color: rgba(255,200,60,0.8); }
+
+    /* PHONOLOGY */
+    .phon-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.6rem; margin-bottom: 2rem; }
+    .phon-card { background: var(--panel); border: 1px solid var(--blue-border); padding: 0.8rem 1rem; display: flex; align-items: center; gap: 1rem; }
+    .phon-eng { font-family: 'Cinzel', serif; font-size: 1.1rem; color: rgba(26,74,138,0.5); letter-spacing: 0.1em; width: 22px; text-align: center; flex-shrink: 0; }
+    .phon-arrow { color: rgba(26,74,138,0.3); font-size: 0.5rem; flex-shrink: 0; }
+    .phon-vael { font-family: 'Cinzel', serif; font-size: 0.85rem; color: var(--blue-bright); letter-spacing: 0.15em; flex: 1; }
+    .phon-sound { font-size: 0.4rem; color: var(--text-dim); letter-spacing: 0.1em; font-style: italic; }
+    .phon-section-title { font-size: 0.44rem; color: var(--blue-dim); letter-spacing: 0.22em; text-transform: uppercase; margin-bottom: 0.8rem; padding-bottom: 0.3rem; border-bottom: 1px solid rgba(26,74,138,0.12); margin-top: 1.5rem; }
+    .phon-section-title:first-child { margin-top: 0; }
+    .phon-rule { background: var(--panel); border: 1px solid var(--blue-border); padding: 1rem 1.2rem; margin-bottom: 0.6rem; }
+    .phon-rule-title { font-size: 0.44rem; color: var(--blue); letter-spacing: 0.18em; margin-bottom: 0.4rem; }
+    .phon-rule-text { font-size: 0.46rem; color: var(--text); letter-spacing: 0.05em; line-height: 1.8; }
+    .phon-example { display: inline-block; margin-top: 0.3rem; margin-right: 0.4rem; font-size: 0.42rem; color: var(--blue-bright); letter-spacing: 0.1em; padding: 2px 8px; border: 1px solid rgba(26,74,138,0.2); }
+
+    /* TRANSLATOR */
+    .translator-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem; }
+    .trans-panel { background: var(--panel); border: 1px solid var(--blue-border); display: flex; flex-direction: column; }
+    .trans-panel-header { padding: 0.6rem 1rem; border-bottom: 1px solid rgba(26,74,138,0.15); font-size: 0.42rem; color: var(--blue-dim); letter-spacing: 0.2em; text-transform: uppercase; display: flex; align-items: center; justify-content: space-between; }
+    .trans-textarea { flex: 1; min-height: 160px; background: transparent; border: none; color: var(--blue); font-family: 'Share Tech Mono', monospace; font-size: 0.52rem; letter-spacing: 0.08em; line-height: 1.8; padding: 1rem; outline: none; resize: none; }
+    .trans-textarea::placeholder { color: rgba(26,74,138,0.3); }
+    .trans-output { flex: 1; min-height: 160px; padding: 1rem; font-size: 0.52rem; color: var(--blue-bright); letter-spacing: 0.08em; line-height: 1.8; font-family: 'Cinzel', serif; }
+    .trans-output.empty { color: rgba(26,74,138,0.3); font-family: 'Share Tech Mono', monospace; font-size: 0.44rem; letter-spacing: 0.15em; }
+    .trans-btn { display: block; width: 100%; padding: 0.7rem; background: rgba(26,74,138,0.15); border: none; border-top: 1px solid rgba(26,74,138,0.2); color: rgba(58,138,255,0.7); font-family: 'Share Tech Mono', monospace; font-size: 0.46rem; letter-spacing: 0.2em; cursor: pointer; transition: background 0.2s, color 0.2s; text-transform: uppercase; }
+    .trans-btn:hover { background: rgba(26,74,138,0.25); color: var(--blue); }
+    .trans-notes { background: rgba(4,10,26,0.6); border: 1px solid rgba(26,74,138,0.15); padding: 1rem 1.2rem; font-size: 0.44rem; color: var(--text-dim); letter-spacing: 0.08em; line-height: 1.8; }
+    .trans-notes strong { color: var(--blue); }
+    .trans-unknown { color: rgba(255,120,80,0.7); font-family: 'Share Tech Mono', monospace; font-size: 0.48rem; }
+  </style>
+</head>
+<body>
+
+<div class="stars" id="stars"></div>
+<div class="corner corner-tl"></div>
+<div class="corner corner-tr"></div>
+<div class="corner corner-bl"></div>
+<div class="corner corner-br"></div>
+
+<nav class="topbar">
+  <div class="topbar-left">
+    <a class="topbar-back" href="../index.html">← Home</a>
+    <div class="topbar-divider"></div>
+    <span class="topbar-title">Vaellish</span>
+  </div>
+  <div class="section-nav">
+    <button class="section-btn active" id="btn-dictionary" onclick="showSection('dictionary', this)">Dictionary</button>
+    <button class="section-btn" id="btn-phonology" onclick="showSection('phonology', this)">Phonology</button>
+    <button class="section-btn" id="btn-translator" onclick="showSection('translator', this)">Translator</button>
+  </div>
+</nav>
+
+<div class="main">
+
+  <!-- DICTIONARY -->
+  <div class="section-view active" id="section-dictionary">
+    <h1 class="page-title">Dictionary</h1>
+    <p class="page-sub">Vaellish — Full Lexicon — Apostolos Linguistic Archive</p>
+
+    <div class="dict-controls">
+      <input class="dict-search" type="text" id="dictSearch" placeholder="Search English or Vaellish..." oninput="filterDict()">
+      <select class="dict-filter" id="dictFilter" onchange="filterDict()">
+        <option value="all">All Classes</option>
+        <option value="noun">Noun</option>
+        <option value="verb">Verb</option>
+        <option value="pronoun">Pronoun</option>
+        <option value="number">Number</option>
+        <option value="particle">Particle</option>
+        <option value="adjective">Adjective</option>
+        <option value="custom">Custom</option>
+      </select>
+      <span class="dict-count" id="dictCount"></span>
+    </div>
+
+    <table class="dict-table">
+      <thead>
+        <tr>
+          <th>Vaellish</th>
+          <th>English</th>
+          <th>Pronunciation</th>
+          <th>Class</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="dictBody"></tbody>
+    </table>
+
+    <div class="add-word-section">
+      <div class="divider"></div>
+
+      <div class="add-word-lock" id="addWordLock">
+        <span class="add-word-lock-label">Lexicon editing is restricted. Enter authorisation code to add words.</span>
+        <input class="add-word-lock-input" type="password" id="lockInput" placeholder="Enter code..." onkeydown="if(event.key==='Enter')checkPassword()">
+        <button class="add-word-lock-btn" onclick="checkPassword()">Unlock</button>
+        <span class="lock-error" id="lockError"></span>
+      </div>
+
+      <div class="add-word-panel" id="addWordPanel">
+        <div class="add-word-title">
+          <span>Add Word to Lexicon</span>
+          <span class="add-word-unlock-badge">✓ Authorised</span>
+        </div>
+
+        <div class="gen-row">
+          <div class="gen-field">
+            <label class="add-word-label">English word to generate from</label>
+            <input class="add-word-input" type="text" id="genInput" placeholder="e.g. hello, run, bright...">
+          </div>
+          <button class="gen-btn primary" onclick="generateWords()">Generate →</button>
+        </div>
+
+        <div class="gen-suggestions" id="genSuggestions" style="display:none;"></div>
+
+        <div class="add-word-form-row">
+          <div class="gen-field">
+            <label class="add-word-label">Vaellish Word</label>
+            <input class="add-word-input" type="text" id="newVaellish" placeholder="e.g. velnak">
+          </div>
+          <div class="gen-field">
+            <label class="add-word-label">English Meaning</label>
+            <input class="add-word-input" type="text" id="newEnglish" placeholder="e.g. to watch">
+          </div>
+          <div class="gen-field">
+            <label class="add-word-label">Pronunciation</label>
+            <input class="add-word-input" type="text" id="newPronunciation" placeholder="e.g. VEL-nak">
+          </div>
+          <div class="gen-field">
+            <label class="add-word-label">Class</label>
+            <select class="add-word-select" id="newClass">
+              <option value="custom">Custom</option>
+              <option value="noun">Noun</option>
+              <option value="verb">Verb</option>
+              <option value="pronoun">Pronoun</option>
+              <option value="number">Number</option>
+              <option value="particle">Particle</option>
+              <option value="adjective">Adjective</option>
+            </select>
+          </div>
+          <button class="gen-btn primary" onclick="addWord()" style="align-self:flex-end;">Save to Lexicon</button>
+        </div>
+
+        <div class="add-word-msg" id="addWordMsg"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PHONOLOGY -->
+  <div class="section-view" id="section-phonology">
+    <h1 class="page-title">Phonology</h1>
+    <p class="page-sub">Vaellish — Sound System & Alphabet Correspondence</p>
+
+    <div class="phon-section-title">Alphabet Correspondence — English → Vaellish</div>
+    <div class="phon-grid" id="phonGrid"></div>
+
+    <div class="divider"></div>
+
+    <div class="phon-section-title">Vowels</div>
+    <div class="phon-rule">
+      <div class="phon-rule-title">Five Short Vowels — Always Clipped, Never Drawn Out</div>
+      <div class="phon-rule-text">Vaellish uses five vowels, all pronounced short and sharp. No long vowels, no diphthongs, no silent vowels.</div>
+      <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-top:0.6rem;">
+        <span class="phon-example">A — "ah" as in "cat"</span>
+        <span class="phon-example">E — "eh" as in "bed"</span>
+        <span class="phon-example">I — "ih" as in "bit"</span>
+        <span class="phon-example">O — "oh" as in "hot"</span>
+        <span class="phon-example">U — "uh" as in "but"</span>
+      </div>
+    </div>
+
+    <div class="phon-section-title">Consonant Clusters</div>
+    <div class="phon-rule">
+      <div class="phon-rule-title">KH — Guttural Fricative</div>
+      <div class="phon-rule-text">Produced at the back of the throat. Similar to "ch" in Scottish "loch."</div>
+      <span class="phon-example">khavel — eight</span>
+    </div>
+    <div class="phon-rule">
+      <div class="phon-rule-title">VR — Voiced Labio-velar</div>
+      <div class="phon-rule-text">Clipped "vr" blend — V immediately into rolled R.</div>
+      <span class="phon-example">vroth — six</span>
+    </div>
+    <div class="phon-rule">
+      <div class="phon-rule-title">DR — Voiced Stop Cluster</div>
+      <div class="phon-rule-text">Hard D immediately followed by rolled R, no vowel between.</div>
+      <span class="phon-example">drak — self / I</span>
+    </div>
+    <div class="phon-rule">
+      <div class="phon-rule-title">STR / STN — Triple Clusters</div>
+      <div class="phon-rule-text">Up to three consonants at word start, each pronounced distinctly.</div>
+      <span class="phon-example">sternv — truth</span>
+      <span class="phon-example">striv — flow</span>
+    </div>
+
+    <div class="phon-section-title">Stress & Rhythm</div>
+    <div class="phon-rule">
+      <div class="phon-rule-title">First-Syllable Stress — Always</div>
+      <div class="phon-rule-text">Stress falls on the first syllable of every word without exception.</div>
+      <span class="phon-example">VEL-na</span>
+      <span class="phon-example">FOR-mir-ak</span>
+    </div>
+    <div class="phon-rule">
+      <div class="phon-rule-title">No Silent Letters / No Double Vowels</div>
+      <div class="phon-rule-text">Every letter is pronounced. Adjacent vowels are separated by a glottal stop.</div>
+    </div>
+  </div>
+
+  <!-- TRANSLATOR -->
+  <div class="section-view" id="section-translator">
+    <h1 class="page-title">Translator</h1>
+    <p class="page-sub">English → Vaellish — Word-level translation using the lexicon</p>
+
+    <div class="translator-layout">
+      <div class="trans-panel">
+        <div class="trans-panel-header">
+          <span>English Input</span>
+          <span style="font-size:0.38rem;color:rgba(26,74,138,0.35);">Type below</span>
+        </div>
+        <textarea class="trans-textarea" id="transInput" placeholder="Enter English text here...&#10;&#10;Words not in the lexicon will be flagged." oninput="doTranslate()"></textarea>
+        <button class="trans-btn" onclick="clearTranslator()">Clear</button>
+      </div>
+      <div class="trans-panel">
+        <div class="trans-panel-header">
+          <span>Vaellish Output</span>
+          <span style="font-size:0.38rem;color:rgba(26,74,138,0.35);">Auto-translates</span>
+        </div>
+        <div class="trans-output empty" id="transOutput">Translation will appear here...</div>
+        <button class="trans-btn" onclick="copyOutput()">Copy Output</button>
+      </div>
+    </div>
+
+    <div class="trans-notes">
+      <strong>Translation Notes:</strong> Word-level translation only. Words not in the lexicon appear in <span class="trans-unknown">orange</span>. Grammar (SOV order, tense suffixes, cases) must be applied manually.
+    </div>
+
+    <div class="divider"></div>
+    <div class="phon-section-title">Quick Grammar Reference</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.6rem;">
+      <div class="phon-rule">
+        <div class="phon-rule-title">Sentence Structure — SOV</div>
+        <div class="phon-rule-text">Subject → Object → Verb. Verb always last.<br>
+        <span class="phon-example">drak krat-en velk-na</span><br>
+        <span style="font-size:0.4rem;color:var(--text-dim);display:block;margin-top:0.3rem;">I [other] see = I see them</span></div>
+      </div>
+      <div class="phon-rule">
+        <div class="phon-rule-title">Verb Tense Suffixes</div>
+        <div class="phon-rule-text">
+          <span class="phon-example">-ka</span> Past &nbsp;
+          <span class="phon-example">-na</span> Present &nbsp;
+          <span class="phon-example">-sha</span> Future &nbsp;
+          <span class="phon-example">-oth</span> Command
+        </div>
+      </div>
+      <div class="phon-rule">
+        <div class="phon-rule-title">Noun Case Suffixes</div>
+        <div class="phon-rule-text">
+          <span class="phon-example">(none)</span> Subject &nbsp;
+          <span class="phon-example">-en</span> Object &nbsp;
+          <span class="phon-example">-to</span> Possession &nbsp;
+          <span class="phon-example">-vel</span> Location
+        </div>
+      </div>
+      <div class="phon-rule">
+        <div class="phon-rule-title">Plurals & Adjectives</div>
+        <div class="phon-rule-text">
+          <span class="phon-example">-ir</span> Animate plural &nbsp;
+          <span class="phon-example">-en</span> Inanimate plural<br>
+          Adjectives follow the noun: <span class="phon-example">ornen stabil</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ── PASSWORD (SHA-256 hash) ───────────────────────
+const PW_HASH = 'f03f5a30f816e9cbafa420ccb21d425a4536cac9c63822fc6aac833f6cc23d2d';
+
+async function hashString(str) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+async function checkPassword() {
+  const val = document.getElementById('lockInput').value;
+  const hash = await hashString(val);
+  if (hash === PW_HASH) {
+    sessionStorage.setItem('vaellish_auth', '1');
+    document.getElementById('addWordLock').style.display = 'none';
+    document.getElementById('addWordPanel').classList.add('unlocked');
+  } else {
+    document.getElementById('lockError').textContent = 'Incorrect code.';
+    document.getElementById('lockInput').value = '';
+    setTimeout(() => document.getElementById('lockError').textContent = '', 2000);
+  }
+}
+
+if (sessionStorage.getItem('vaellish_auth') === '1') {
+  document.getElementById('addWordLock').style.display = 'none';
+  document.getElementById('addWordPanel').classList.add('unlocked');
+}
+
+// ── SECTION SWITCHING ────────────────────────────
+function showSection(id, btn) {
+  document.querySelectorAll('.section-view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.section-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('section-' + id).classList.add('active');
+  btn.classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+// ── BASE LEXICON ─────────────────────────────────
+const BASE_LEXICON = [
+  { v:'vel',      e:'sight / observe',        p:'VEL',        c:'noun' },
+  { v:'krat',     e:'mind / thought',          p:'KRAT',       c:'noun' },
+  { v:'nul',      e:'void / nothing',          p:'NUL',        c:'noun' },
+  { v:'formir',   e:'structure / order',       p:'FOR-mir',    c:'noun' },
+  { v:'veth',     e:'breath / air',            p:'VETH',       c:'noun' },
+  { v:'sten',     e:'stone / matter',          p:'STEN',       c:'noun' },
+  { v:'havel',    e:'sky / space',             p:'HA-vel',     c:'noun' },
+  { v:'aren',     e:'earth / ground',          p:'AH-ren',     c:'noun' },
+  { v:'kaen',     e:'fire / energy',           p:'KAY-en',     c:'noun' },
+  { v:'striv',    e:'water / flow',            p:'STRIV',      c:'noun' },
+  { v:'drevn',    e:'time',                    p:'DREVN',      c:'noun' },
+  { v:'ka',       e:'past',                    p:'KAH',        c:'noun' },
+  { v:'na',       e:'present',                 p:'NAH',        c:'noun' },
+  { v:'sha',      e:'future',                  p:'SHAH',       c:'noun' },
+  { v:'morts',    e:'death / end',             p:'MORTS',      c:'noun' },
+  { v:'vitrek',   e:'life',                    p:'VIT-rek',    c:'noun' },
+  { v:'drak',     e:'self / identity',         p:'DRAK',       c:'noun' },
+  { v:'thrak',    e:'power',                   p:'THRAK',      c:'noun' },
+  { v:'sternv',   e:'truth',                   p:'STERNV',     c:'noun' },
+  { v:'stel',     e:'silence',                 p:'STEL',       c:'noun' },
+  { v:'vokr',     e:'sound / voice',           p:'VOKR',       c:'noun' },
+  { v:'krents',   e:'blood',                   p:'KRENTS',     c:'noun' },
+  { v:'zuri',     e:'war / conflict / attack', p:'ZU-ri',      c:'noun' },
+  { v:'stabil',   e:'peace / stable',          p:'STA-bil',    c:'noun' },
+  { v:'serak',    e:'god / divine',            p:'SE-rak',     c:'noun' },
+  { v:'nolvr',    e:'shadow',                  p:'NOLVR',      c:'noun' },
+  { v:'kaelv',    e:'light',                   p:'KAELV',      c:'noun' },
+  { v:'ornen',    e:'flock / group',           p:'OR-nen',     c:'noun' },
+  { v:'thra',     e:'guard / protection',      p:'THRAH',      c:'noun' },
+  { v:'kurs',     e:'path / direction',        p:'KURS',       c:'noun' },
+  { v:'vire',     e:'will / intent',           p:'VI-reh',     c:'noun' },
+  { v:'synar',    e:'system',                  p:'SY-nar',     c:'noun' },
+  { v:'allar',    e:'total / all',             p:'AL-lar',     c:'noun' },
+  { v:'vaell',    e:'language',                p:'VAY-ell',    c:'noun' },
+  { v:'pneuma',   e:'mind (formal / divine)',  p:'PNEW-ma',    c:'noun' },
+  { v:'himmel',   e:'sky / heavens',           p:'HIM-mel',    c:'noun' },
+  { v:'cognar',   e:'thought (formal)',        p:'COG-nar',    c:'noun' },
+  { v:'ossyn',    e:'frigate class',           p:'OS-syn',     c:'noun' },
+  { v:'kaethor',  e:'fighter-bomber class',    p:'KAY-thor',   c:'noun' },
+  { v:'draveth',  e:'gunship class',           p:'DRA-veth',   c:'noun' },
+  { v:'sorrath',  e:'interceptor class',       p:'SOR-rath',   c:'noun' },
+  { v:'kaedryn',  e:'command / flagship',      p:'KAY-dryn',   c:'noun' },
+  { v:'velk',     e:'to see',                  p:'VELK',       c:'verb' },
+  { v:'vokrak',   e:'to speak',                p:'VOK-rak',    c:'verb' },
+  { v:'krathen',  e:'to know',                 p:'KRATH-en',   c:'verb' },
+  { v:'formirak', e:'to build',                p:'FOR-mir-ak', c:'verb' },
+  { v:'nulirak',  e:'to destroy',              p:'NU-lir-ak',  c:'verb' },
+  { v:'thrakv',   e:'to guard',                p:'THRAKV',     c:'verb' },
+  { v:'kursen',   e:'to move',                 p:'KUR-sen',    c:'verb' },
+  { v:'mortsen',  e:'to die',                  p:'MORT-sen',   c:'verb' },
+  { v:'vitrekna', e:'to live',                 p:'VIT-rek-na', c:'verb' },
+  { v:'kratenv',  e:'to think',                p:'KRA-tenv',   c:'verb' },
+  { v:'strivak',  e:'to hear',                 p:'STRIV-ak',   c:'verb' },
+  { v:'stenk',    e:'to be',                   p:'STENK',      c:'verb' },
+  { v:'drevnak',  e:'to have',                 p:'DREV-nak',   c:'verb' },
+  { v:'arenik',   e:'to come',                 p:'AH-ren-ik',  c:'verb' },
+  { v:'havelk',   e:'to go',                   p:'HA-velk',    c:'verb' },
+  { v:'kaenst',   e:'to give',                 p:'KAENST',     c:'verb' },
+  { v:'thrakst',  e:'to take',                 p:'THRAKST',    c:'verb' },
+  { v:'zurik',    e:'to fight',                p:'ZU-rik',     c:'verb' },
+  { v:'velnak',   e:'to watch',                p:'VEL-nak',    c:'verb' },
+  { v:'drak',     e:'I / me',                  p:'DRAK',       c:'pronoun' },
+  { v:'veth',     e:'you (singular)',           p:'VETH',       c:'pronoun' },
+  { v:'krat',     e:'he / she / they',         p:'KRAT',       c:'pronoun' },
+  { v:'draken',   e:'we / us',                 p:'DRA-ken',    c:'pronoun' },
+  { v:'vethen',   e:'you (plural)',             p:'VE-then',    c:'pronoun' },
+  { v:'kraten',   e:'they (plural)',            p:'KRA-ten',    c:'pronoun' },
+  { v:'kuar',     e:'who',                     p:'KU-ar',      c:'pronoun' },
+  { v:'nul',      e:'zero (0)',                 p:'NUL',        c:'number' },
+  { v:'enar',     e:'one (1)',                  p:'EH-nar',     c:'number' },
+  { v:'drev',     e:'two (2)',                  p:'DREV',       c:'number' },
+  { v:'traks',    e:'three (3)',                p:'TRAKS',      c:'number' },
+  { v:'kvent',    e:'four (4)',                 p:'KVENT',      c:'number' },
+  { v:'selva',    e:'five (5)',                 p:'SEL-va',     c:'number' },
+  { v:'vroth',    e:'six (6)',                  p:'VROTH',      c:'number' },
+  { v:'sternak',  e:'seven (7)',                p:'STER-nak',   c:'number' },
+  { v:'khavel',   e:'eight (8)',                p:'KHA-vel',    c:'number' },
+  { v:'zurak',    e:'nine (9)',                 p:'ZU-rak',     c:'number' },
+  { v:'ok',       e:'yes / affirmation',        p:'OK',         c:'particle' },
+  { v:'nulk',     e:'no / negation',            p:'NULK',       c:'particle' },
+];
+
+// ── CUSTOM WORDS ─────────────────────────────────
+let CUSTOM_WORDS = [];
+let CUSTOM_SHA = null;
+
+async function fetchCustomWords() {
+  try {
+    const res = await fetch('/api/load-words');
+    if (res.ok) {
+      const data = await res.json();
+      CUSTOM_WORDS = data.words || [];
+      CUSTOM_SHA = data.sha || null;
+    }
+  } catch {
+    CUSTOM_WORDS = [];
+  }
+  filterDict();
+  doTranslate();
+}
+
+async function saveCustomWords() {
+  const res = await fetch('/api/save-word', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ words: CUSTOM_WORDS, sha: CUSTOM_SHA })
+  });
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.error || 'Save failed');
+  }
+  const data = await res.json();
+  CUSTOM_SHA = data.sha;
+}
+
+function getAllLexicon() {
+  return [...BASE_LEXICON, ...CUSTOM_WORDS];
+}
+
+function buildLookup() {
+  const map = {};
+  getAllLexicon().forEach(entry => {
+    entry.e.toLowerCase().split(' / ').forEach(eng => {
+      const key = eng.replace(/[^a-z]/g,'').trim();
+      if (key) map[key] = entry.v;
+    });
+    map[entry.v.toLowerCase()] = entry.v;
+  });
+  return map;
+}
+
+// ── WORD GENERATOR ───────────────────────────────
+const ALPHA_MAP = {
+  a:'a',b:'vr',c:'kh',d:'dr',e:'e',f:'ts',g:'gr',h:'kh',
+  i:'i',j:'zh',k:'k',l:'lv',m:'mn',n:'n',o:'o',p:'pt',
+  q:'kv',r:'r',s:'s',t:'t',u:'u',v:'v',w:'vn',x:'ks',y:'yr',z:'z'
+};
+
+function applyMapping(word) {
+  return word.toLowerCase().split('').map(c => ALPHA_MAP[c] || c).join('');
+}
+
+function cleanupVaellish(raw) {
+  let out = raw.replace(/([aeiou])\1+/g,'$1');
+  out = out.replace(/([^aeiou]{4,})/g, m => m.slice(0,3));
+  return out;
+}
+
+function generatePronunciation(word) {
+  const syllables = word.match(/[^aeiou]*[aeiou]+[^aeiou]*/gi) || [word];
+  return syllables.map((s,i) => i===0 ? s.toUpperCase() : s).join('-');
+}
+
+function generateVariants(english) {
+  const base = applyMapping(english);
+  const clean = cleanupVaellish(base);
+  const starters = ['vel','krat','str','dr','vr','sten','kh','th'];
+  const starter = starters[Math.floor(Math.random() * starters.length)];
+  const v2 = cleanupVaellish(starter + clean.slice(Math.min(2, clean.length)));
+  const suffixes = ['ak','en','rek','vr','oth','str','nv','lv'];
+  const suffix = suffixes[english.length % suffixes.length];
+  const v3 = cleanupVaellish(clean.replace(/[aeiou]+$/,'') + suffix);
+  return [
+    { word: clean, pron: generatePronunciation(clean), hint: 'Direct mapping' },
+    { word: v2,    pron: generatePronunciation(v2),    hint: 'Cluster variant' },
+    { word: v3,    pron: generatePronunciation(v3),    hint: 'Suffix variant' },
+  ].filter((v,i,arr) => arr.findIndex(x => x.word === v.word) === i);
+}
+
+function generateWords() {
+  const eng = document.getElementById('genInput').value.trim();
+  if (!eng) return;
+  const variants = generateVariants(eng);
+  const container = document.getElementById('genSuggestions');
+  container.style.display = 'flex';
+  container.innerHTML = variants.map((v,i) => `
+    <div class="gen-suggestion" id="sug-${i}" onclick="selectSuggestion(${i},'${v.word}','${v.pron}','${eng}')">
+      <div>
+        <div class="gen-sug-word">${v.word}</div>
+        <div class="gen-sug-pron">${v.pron}</div>
+      </div>
+      <div class="gen-sug-hint">${v.hint}</div>
+    </div>`).join('');
+}
+
+function selectSuggestion(idx, word, pron, eng) {
+  document.querySelectorAll('.gen-suggestion').forEach(s => s.classList.remove('selected'));
+  document.getElementById('sug-'+idx).classList.add('selected');
+  document.getElementById('newVaellish').value = word;
+  document.getElementById('newPronunciation').value = pron;
+  if (!document.getElementById('newEnglish').value) document.getElementById('newEnglish').value = eng;
+}
+
+// ── ADD & DELETE ─────────────────────────────────
+async function addWord() {
+  const v = document.getElementById('newVaellish').value.trim().toLowerCase();
+  const e = document.getElementById('newEnglish').value.trim();
+  const p = document.getElementById('newPronunciation').value.trim().toUpperCase();
+  const c = document.getElementById('newClass').value;
+  const msg = document.getElementById('addWordMsg');
+
+  if (!v || !e) { msg.className='add-word-msg error'; msg.textContent='Vaellish word and English meaning are required.'; return; }
+  if (getAllLexicon().find(x => x.v === v)) { msg.className='add-word-msg error'; msg.textContent=`"${v}" already exists.`; return; }
+
+  msg.className='add-word-msg saving'; msg.textContent='Saving to repository...';
+
+  try {
+    CUSTOM_WORDS.push({ v, e, p: p||v.toUpperCase(), c });
+    await saveCustomWords();
+    document.getElementById('newVaellish').value = '';
+    document.getElementById('newEnglish').value = '';
+    document.getElementById('newPronunciation').value = '';
+    document.getElementById('genSuggestions').style.display = 'none';
+    document.getElementById('genInput').value = '';
+    msg.className='add-word-msg success'; msg.textContent=`"${v}" saved — visible to all on next load.`;
+    setTimeout(() => msg.textContent='', 4000);
+    filterDict();
+  } catch (err) {
+    CUSTOM_WORDS.pop();
+    msg.className='add-word-msg error'; msg.textContent=`Save failed: ${err.message}`;
+  }
+}
+
+async function deleteWord(vaellish) {
+  const msg = document.getElementById('addWordMsg');
+  CUSTOM_WORDS = CUSTOM_WORDS.filter(e => e.v !== vaellish);
+  try {
+    msg.className='add-word-msg saving'; msg.textContent='Removing...';
+    await saveCustomWords();
+    msg.className='add-word-msg success'; msg.textContent=`"${vaellish}" removed.`;
+    setTimeout(() => msg.textContent='', 3000);
+  } catch (err) {
+    msg.className='add-word-msg error'; msg.textContent=`Delete failed: ${err.message}`;
+  }
+  filterDict();
+}
+
+// ── DICTIONARY ───────────────────────────────────
+function renderDict(entries) {
+  const customSet = new Set(CUSTOM_WORDS.map(e => e.v));
+  document.getElementById('dictBody').innerHTML = entries.map(e => `
+    <tr>
+      <td class="td-vaellish">${e.v}</td>
+      <td class="td-english">${e.e}</td>
+      <td class="td-pronunciation">${e.p}</td>
+      <td><span class="td-class ${e.c}">${e.c}</span></td>
+      <td>${customSet.has(e.v) && sessionStorage.getItem('vaellish_auth')==='1'
+        ? `<button class="td-delete" onclick="deleteWord('${e.v.replace(/'/g,"\\'")}')">✕</button>` : ''}</td>
+    </tr>`).join('');
+  document.getElementById('dictCount').textContent = `${entries.length} entries`;
+}
+
+function filterDict() {
+  const q = document.getElementById('dictSearch').value.toLowerCase();
+  const cls = document.getElementById('dictFilter').value;
+  renderDict(getAllLexicon().filter(e => {
+    const mc = cls==='all' || e.c===cls;
+    const ms = !q || e.v.includes(q) || e.e.toLowerCase().includes(q);
+    return mc && ms;
+  }));
+}
+
+// ── TRANSLATOR ───────────────────────────────────
+function doTranslate() {
+  const input = document.getElementById('transInput').value;
+  const output = document.getElementById('transOutput');
+  if (!input.trim()) { output.className='trans-output empty'; output.textContent='Translation will appear here...'; return; }
+  const LOOKUP = buildLookup();
+  let html = '';
+  input.split(/(\s+|[.,!?;:—\-]+)/).forEach(token => {
+    if (/^\s+$/.test(token)) { html += token; return; }
+    if (/^[.,!?;:—\-]+$/.test(token)) { html += `<span style="color:var(--text-dim)">${token}</span>`; return; }
+    const clean = token.toLowerCase().replace(/[^a-z]/g,'');
+    if (!clean) { html += token; return; }
+    const val = LOOKUP[clean];
+    html += val ? `<span title="→ ${token}">${val}</span>` : `<span class="trans-unknown" title="Not in lexicon">${token}</span>`;
+  });
+  output.className='trans-output';
+  output.innerHTML=html;
+}
+
+function clearTranslator() {
+  document.getElementById('transInput').value='';
+  const o=document.getElementById('transOutput');
+  o.className='trans-output empty'; o.textContent='Translation will appear here...';
+}
+
+function copyOutput() {
+  navigator.clipboard.writeText(document.getElementById('transOutput').textContent).catch(()=>{});
+}
+
+// ── PHONOLOGY GRID ───────────────────────────────
+const ALPHA_DISPLAY = [
+  {eng:'A',vae:'A',  sound:'ah (as in cat)'},  {eng:'B',vae:'VR', sound:'vr- blend'},
+  {eng:'C',vae:'KH', sound:'guttural k'},       {eng:'D',vae:'DR', sound:'dr- blend'},
+  {eng:'E',vae:'E',  sound:'eh (as in bed)'},   {eng:'F',vae:'TS', sound:'ts- affricate'},
+  {eng:'G',vae:'GR', sound:'hard gr-'},         {eng:'H',vae:'KH', sound:'guttural (=C)'},
+  {eng:'I',vae:'I',  sound:'ih (as in bit)'},   {eng:'J',vae:'ZH', sound:'zh (measure)'},
+  {eng:'K',vae:'K',  sound:'hard k'},           {eng:'L',vae:'LV', sound:'lv- blend'},
+  {eng:'M',vae:'MN', sound:'mn- blend'},        {eng:'N',vae:'N',  sound:'hard n'},
+  {eng:'O',vae:'O',  sound:'oh (as in hot)'},   {eng:'P',vae:'PT', sound:'pt- cluster'},
+  {eng:'Q',vae:'KV', sound:'kv- blend'},        {eng:'R',vae:'R',  sound:'hard rolled r'},
+  {eng:'S',vae:'S',  sound:'sharp s'},          {eng:'T',vae:'T',  sound:'hard t'},
+  {eng:'U',vae:'U',  sound:'uh (as in but)'},   {eng:'V',vae:'V',  sound:'v'},
+  {eng:'W',vae:'VN', sound:'vn- blend'},        {eng:'X',vae:'KS', sound:'ks cluster'},
+  {eng:'Y',vae:'YR', sound:'yr- blend'},        {eng:'Z',vae:'Z',  sound:'sharp z'},
+];
+document.getElementById('phonGrid').innerHTML = ALPHA_DISPLAY.map(a => `
+  <div class="phon-card">
+    <div class="phon-eng">${a.eng}</div>
+    <div class="phon-arrow">→</div>
+    <div><div class="phon-vael">${a.vae}</div><div class="phon-sound">${a.sound}</div></div>
+  </div>`).join('');
+
+// ── STARS ────────────────────────────────────────
+const s = document.getElementById('stars');
+for (let i=0;i<220;i++) {
+  const el=document.createElement('div'); el.className='star';
+  const sz=Math.random()*1.4+0.3;
+  el.style.cssText=`width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*100}%;opacity:${Math.random()*0.5+0.1};`;
+  s.appendChild(el);
+}
+
+// ── INIT ─────────────────────────────────────────
+filterDict();
+fetchCustomWords();
+</script>
+</body>
+</html>
