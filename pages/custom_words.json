@@ -118,5 +118,11 @@
     "e": "researching",
     "p": "KRAT-ENT-IM",
     "c": "verb"
+  },
+  {
+    "v": "mnu",
+    "e": "your",
+    "p": "MNU",
+    "c": "custom"
   }
 ]
