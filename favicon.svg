@@ -1,8 +1,6 @@
 <svg width="100%" viewBox="0 0 680 690" xmlns="http://www.w3.org/2000/svg">
 
 
-<rect width="680" height="680" style="fill:rgb(2, 4, 8);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
-
 <!-- Subtle grid -->
 <line x1="340" y1="80" x2="340" y2="600" style="fill:rgb(0, 0, 0);stroke:rgba(26, 74, 138, 0.12);color:rgb(255, 255, 255);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
 <line x1="80" y1="340" x2="600" y2="340" style="fill:rgb(0, 0, 0);stroke:rgba(26, 74, 138, 0.12);color:rgb(255, 255, 255);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
