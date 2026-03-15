@@ -172,5 +172,11 @@
     "e": "to",
     "p": "TOH",
     "c": "custom"
+  },
+  {
+    "v": "strae",
+    "e": "rule",
+    "p": "STRAY",
+    "c": "custom"
   }
 ]
