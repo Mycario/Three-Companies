@@ -112,5 +112,11 @@
     "e": "avian",
     "p": "LVAR-ARK",
     "c": "custom"
+  },
+  {
+    "v": "kratentim",
+    "e": "researching",
+    "p": "KRAT-ENT-IM",
+    "c": "verb"
   }
 ]
