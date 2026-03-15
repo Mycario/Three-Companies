@@ -130,5 +130,11 @@
     "e": "dreams",
     "p": "KHAR",
     "c": "custom"
+  },
+  {
+    "v": "is",
+    "e": "is",
+    "p": "IS",
+    "c": "custom"
   }
 ]
