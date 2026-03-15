@@ -16,5 +16,11 @@
     "e": "mechanical",
     "p": "MNEKHK-AN-IKH-ALVR-EK",
     "c": "custom"
+  },
+  {
+    "v": "sptedr",
+    "e": "speed",
+    "p": "SPTEDR",
+    "c": "custom"
   }
 ]
