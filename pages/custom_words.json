@@ -100,5 +100,11 @@
     "e": "food",
     "p": "KRAEKR-ANV",
     "c": "custom"
+  },
+  {
+    "v": "khoas",
+    "e": "beginning",
+    "p": "KHOAS",
+    "c": "custom"
   }
 ]
