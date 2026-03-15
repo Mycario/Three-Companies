@@ -82,5 +82,11 @@
     "e": "tooth",
     "p": "KAGR-AK",
     "c": "custom"
+  },
+  {
+    "v": "kratorn",
+    "e": "name",
+    "p": "KRAT-ORN",
+    "c": "custom"
   }
 ]
