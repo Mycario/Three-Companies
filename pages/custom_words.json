@@ -142,5 +142,11 @@
     "e": "my",
     "p": "SART-AK",
     "c": "pronoun"
+  },
+  {
+    "v": "zarr",
+    "e": "am",
+    "p": "ZARR",
+    "c": "custom"
   }
 ]
