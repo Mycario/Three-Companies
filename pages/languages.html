@@ -208,7 +208,7 @@
         <input class="add-word-lock-input" type="password" id="lockInput" placeholder="Enter code..." onkeydown="if(event.key==='Enter')checkPassword()">
         <button class="add-word-lock-btn" onclick="checkPassword()">Unlock</button>
         <span class="lock-error" id="lockError"></span>
-    </div>
+      </div>
       <div class="add-word-panel" id="addWordPanel">
         <div class="add-word-title">
           <span>Add Word to Lexicon</span>
@@ -586,32 +586,61 @@ function buildLookup() {
   return map;
 }
 
-const ALPHA_MAP = {
-  a:'a',b:'vr',c:'kh',d:'dr',e:'e',f:'ts',g:'gr',h:'kh',
-  i:'i',j:'zh',k:'k',l:'lv',m:'mn',n:'n',o:'o',p:'pt',
-  q:'kv',r:'r',s:'s',t:'t',u:'u',v:'v',w:'vn',x:'ks',y:'yr',z:'z'
-};
+// ── WORD GENERATOR (loose / freeform) ────────────
+// Building blocks drawn from Vaellish phonology
+const GEN_ONSETS  = ['v','k','dr','str','vr','th','kh','st','kr','tr','n','s','z','vel','krat','sten','thr','vn','gr','mn','lv'];
+const GEN_NUCLEI  = ['a','e','i','o','u','ae','ei','or','ar','en','ak'];
+const GEN_CODAS   = ['','k','r','n','t','v','th','lv','nv','rt','st','rk','nt','','',''];
+const GEN_ENDINGS = ['','ak','en','rek','vr','oth','nv','lv','ith','ark','el','im','as','ek'];
 
-function applyMapping(word) { return word.toLowerCase().split('').map(c => ALPHA_MAP[c] || c).join(''); }
-function cleanupVaellish(raw) {
-  let out = raw.replace(/([aeiou])\1+/g,'$1');
-  return out.replace(/([^aeiou]{4,})/g, m => m.slice(0,3));
+function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+// Seed RNG from string so same input gives consistent but varied results
+function seededRng(str) {
+  let h = 0;
+  for (let i = 0; i < str.length; i++) { h = (Math.imul(31, h) + str.charCodeAt(i)) | 0; }
+  return () => { h = Math.imul(h ^ (h >>> 16), 0x45d9f3b) | 0; return ((h ^ (h >>> 16)) >>> 0) / 0xffffffff; };
 }
+
+function seededPick(arr, rng) { return arr[Math.floor(rng() * arr.length)]; }
+
+function buildWord(rng) {
+  const syllables = Math.floor(rng() * 2) + 1; // 1 or 2 syllables
+  let word = '';
+  for (let s = 0; s < syllables; s++) {
+    word += seededPick(GEN_ONSETS, rng);
+    word += seededPick(GEN_NUCLEI, rng);
+    if (s === syllables - 1) word += seededPick(GEN_CODAS, rng);
+  }
+  // Occasionally append an ending for variety
+  if (rng() > 0.5) word += seededPick(GEN_ENDINGS, rng);
+  // Clean up: no triple consonants, no double vowels
+  word = word.replace(/([aeiou])\1+/g, '$1');
+  word = word.replace(/([^aeiou]{4,})/g, m => m.slice(0, 3));
+  return word;
+}
+
 function generatePronunciation(word) {
   const syl = word.match(/[^aeiou]*[aeiou]+[^aeiou]*/gi) || [word];
-  return syl.map((s,i) => i===0 ? s.toUpperCase() : s).join('-');
+  return syl.map((s, i) => i === 0 ? s.toUpperCase() : s).join('-');
 }
+
 function generateVariants(english) {
-  const clean = cleanupVaellish(applyMapping(english));
-  const starters = ['vel','krat','str','dr','vr','sten','kh','th'];
-  const v2 = cleanupVaellish(starters[Math.floor(Math.random()*starters.length)] + clean.slice(Math.min(2,clean.length)));
-  const suffixes = ['ak','en','rek','vr','oth','str','nv','lv'];
-  const v3 = cleanupVaellish(clean.replace(/[aeiou]+$/,'') + suffixes[english.length % suffixes.length]);
-  return [
-    { word: clean, pron: generatePronunciation(clean), hint: 'Direct mapping' },
-    { word: v2,    pron: generatePronunciation(v2),    hint: 'Cluster variant' },
-    { word: v3,    pron: generatePronunciation(v3),    hint: 'Suffix variant' },
-  ].filter((v,i,arr) => arr.findIndex(x => x.word === v.word) === i);
+  const rng1 = seededRng(english + '1');
+  const rng2 = seededRng(english + '2');
+  const rng3 = seededRng(english + '3');
+
+  const w1 = buildWord(rng1);
+  const w2 = buildWord(rng2);
+  const w3 = buildWord(rng3);
+
+  const results = [
+    { word: w1, pron: generatePronunciation(w1), hint: 'Variant A' },
+    { word: w2, pron: generatePronunciation(w2), hint: 'Variant B' },
+    { word: w3, pron: generatePronunciation(w3), hint: 'Variant C' },
+  ].filter((v, i, arr) => arr.findIndex(x => x.word === v.word) === i);
+
+  return results;
 }
 
 function generateWords() {
@@ -620,7 +649,7 @@ function generateWords() {
   const variants = generateVariants(eng);
   const container = document.getElementById('genSuggestions');
   container.style.display = 'flex';
-  container.innerHTML = variants.map((v,i) => `
+  container.innerHTML = variants.map((v, i) => `
     <div class="gen-suggestion" id="sug-${i}" onclick="selectSuggestion(${i},'${v.word}','${v.pron}','${eng}')">
       <div><div class="gen-sug-word">${v.word}</div><div class="gen-sug-pron">${v.pron}</div></div>
       <div class="gen-sug-hint">${v.hint}</div>
