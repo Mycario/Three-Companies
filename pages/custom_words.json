@@ -106,5 +106,11 @@
     "e": "beginning",
     "p": "KHOAS",
     "c": "custom"
+  },
+  {
+    "v": "lvarark",
+    "e": "avian",
+    "p": "LVAR-ARK",
+    "c": "custom"
   }
 ]
