@@ -60,7 +60,6 @@
     .page-sub { font-size: 0.48rem; color: var(--blue-dim); letter-spacing: 0.2em; margin-bottom: 2rem; }
     .divider { width: 100%; height: 1px; background: linear-gradient(to right, transparent, rgba(26,74,138,0.25), transparent); margin: 2rem 0; }
 
-    /* DICTIONARY */
     .dict-controls { display: flex; gap: 0.75rem; margin-bottom: 1.5rem; align-items: center; flex-wrap: wrap; }
     .dict-search { flex: 1; min-width: 200px; background: rgba(6,14,34,0.8); border: 1px solid rgba(26,74,138,0.25); color: var(--blue); font-family: 'Share Tech Mono', monospace; font-size: 0.5rem; letter-spacing: 0.1em; padding: 0.5rem 0.8rem; outline: none; transition: border-color 0.2s; }
     .dict-search::placeholder { color: rgba(26,74,138,0.4); }
@@ -87,7 +86,6 @@
     .td-delete { cursor: pointer; font-size: 0.4rem; color: rgba(26,74,138,0.3); transition: color 0.2s; background: none; border: none; padding: 2px 6px; font-family: 'Share Tech Mono', monospace; }
     .td-delete:hover { color: rgba(255,80,80,0.7); }
 
-    /* ADD WORD PANEL */
     .add-word-section { margin-top: 2rem; }
     .add-word-lock { background: var(--panel); border: 1px solid var(--blue-border); padding: 1.2rem 1.4rem; display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
     .add-word-lock-label { font-size: 0.44rem; color: var(--blue-dim); letter-spacing: 0.18em; flex: 1; }
@@ -128,7 +126,6 @@
     .add-word-msg.error { color: rgba(255,80,80,0.7); }
     .add-word-msg.saving { color: rgba(255,200,60,0.8); }
 
-    /* PHONOLOGY */
     .phon-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.6rem; margin-bottom: 2rem; }
     .phon-card { background: var(--panel); border: 1px solid var(--blue-border); padding: 0.8rem 1rem; display: flex; align-items: center; gap: 1rem; }
     .phon-eng { font-family: 'Cinzel', serif; font-size: 1.1rem; color: rgba(26,74,138,0.5); letter-spacing: 0.1em; width: 22px; text-align: center; flex-shrink: 0; }
@@ -142,7 +139,6 @@
     .phon-rule-text { font-size: 0.46rem; color: var(--text); letter-spacing: 0.05em; line-height: 1.8; }
     .phon-example { display: inline-block; margin-top: 0.3rem; margin-right: 0.4rem; font-size: 0.42rem; color: var(--blue-bright); letter-spacing: 0.1em; padding: 2px 8px; border: 1px solid rgba(26,74,138,0.2); }
 
-    /* TRANSLATOR */
     .translator-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem; }
     .trans-panel { background: var(--panel); border: 1px solid var(--blue-border); display: flex; flex-direction: column; }
     .trans-panel-header { padding: 0.6rem 1rem; border-bottom: 1px solid rgba(26,74,138,0.15); font-size: 0.42rem; color: var(--blue-dim); letter-spacing: 0.2em; text-transform: uppercase; display: flex; align-items: center; justify-content: space-between; }
@@ -180,11 +176,9 @@
 
 <div class="main">
 
-  <!-- DICTIONARY -->
   <div class="section-view active" id="section-dictionary">
     <h1 class="page-title">Dictionary</h1>
     <p class="page-sub">Vaellish — Full Lexicon — Apostolos Linguistic Archive</p>
-
     <div class="dict-controls">
       <input class="dict-search" type="text" id="dictSearch" placeholder="Search English or Vaellish..." oninput="filterDict()">
       <select class="dict-filter" id="dictFilter" onchange="filterDict()">
@@ -199,36 +193,34 @@
       </select>
       <span class="dict-count" id="dictCount"></span>
     </div>
-
     <table class="dict-table">
       <thead>
         <tr>
-          <th>Vaellish</th>
-          <th>English</th>
-          <th>Pronunciation</th>
-          <th>Class</th>
-          <th></th>
+          <th>Vaellish</th><th>English</th><th>Pronunciation</th><th>Class</th><th></th>
         </tr>
       </thead>
       <tbody id="dictBody"></tbody>
     </table>
-
     <div class="add-word-section">
       <div class="divider"></div>
-
       <div class="add-word-lock" id="addWordLock">
         <span class="add-word-lock-label">Lexicon editing is restricted. Enter authorisation code to add words.</span>
         <input class="add-word-lock-input" type="password" id="lockInput" placeholder="Enter code..." onkeydown="if(event.key==='Enter')checkPassword()">
         <button class="add-word-lock-btn" onclick="checkPassword()">Unlock</button>
         <span class="lock-error" id="lockError"></span>
       </div>
-
       <div class="add-word-panel" id="addWordPanel">
         <div class="add-word-title">
           <span>Add Word to Lexicon</span>
           <span class="add-word-unlock-badge">✓ Authorised</span>
         </div>
 
+        <div id="tokenRow" style="display:flex;gap:0.6rem;align-items:center;margin-bottom:1rem;padding:0.7rem 0.8rem;background:rgba(2,6,18,0.6);border:1px solid rgba(26,74,138,0.2);">
+          <span style="font-size:0.4rem;color:var(--blue-dim);letter-spacing:0.15em;flex:1;">GitHub token required to save — stored in session only, never committed</span>
+          <input type="password" id="tokenInput" placeholder="Paste token..." style="background:rgba(2,6,18,0.8);border:1px solid rgba(26,74,138,0.25);color:var(--blue);font-family:'Share Tech Mono',monospace;font-size:0.44rem;letter-spacing:0.08em;padding:0.35rem 0.6rem;outline:none;width:260px;">
+          <button onclick="saveToken()" style="background:rgba(26,74,138,0.15);border:1px solid rgba(26,74,138,0.3);color:var(--blue);font-family:'Share Tech Mono',monospace;font-size:0.42rem;letter-spacing:0.15em;padding:0.35rem 0.8rem;cursor:pointer;">Save</button>
+          <span id="tokenStatus" style="font-size:0.4rem;letter-spacing:0.12em;white-space:nowrap;"></span>
+        </div>
         <div class="gen-row">
           <div class="gen-field">
             <label class="add-word-label">English word to generate from</label>
@@ -236,9 +228,7 @@
           </div>
           <button class="gen-btn primary" onclick="generateWords()">Generate →</button>
         </div>
-
         <div class="gen-suggestions" id="genSuggestions" style="display:none;"></div>
-
         <div class="add-word-form-row">
           <div class="gen-field">
             <label class="add-word-label">Vaellish Word</label>
@@ -266,22 +256,17 @@
           </div>
           <button class="gen-btn primary" onclick="addWord()" style="align-self:flex-end;">Save to Lexicon</button>
         </div>
-
         <div class="add-word-msg" id="addWordMsg"></div>
       </div>
     </div>
   </div>
 
-  <!-- PHONOLOGY -->
   <div class="section-view" id="section-phonology">
     <h1 class="page-title">Phonology</h1>
     <p class="page-sub">Vaellish — Sound System & Alphabet Correspondence</p>
-
     <div class="phon-section-title">Alphabet Correspondence — English → Vaellish</div>
     <div class="phon-grid" id="phonGrid"></div>
-
     <div class="divider"></div>
-
     <div class="phon-section-title">Vowels</div>
     <div class="phon-rule">
       <div class="phon-rule-title">Five Short Vowels — Always Clipped, Never Drawn Out</div>
@@ -294,7 +279,6 @@
         <span class="phon-example">U — "uh" as in "but"</span>
       </div>
     </div>
-
     <div class="phon-section-title">Consonant Clusters</div>
     <div class="phon-rule">
       <div class="phon-rule-title">KH — Guttural Fricative</div>
@@ -317,7 +301,6 @@
       <span class="phon-example">sternv — truth</span>
       <span class="phon-example">striv — flow</span>
     </div>
-
     <div class="phon-section-title">Stress & Rhythm</div>
     <div class="phon-rule">
       <div class="phon-rule-title">First-Syllable Stress — Always</div>
@@ -331,11 +314,9 @@
     </div>
   </div>
 
-  <!-- TRANSLATOR -->
   <div class="section-view" id="section-translator">
     <h1 class="page-title">Translator</h1>
     <p class="page-sub">English → Vaellish — Word-level translation using the lexicon</p>
-
     <div class="translator-layout">
       <div class="trans-panel">
         <div class="trans-panel-header">
@@ -354,11 +335,9 @@
         <button class="trans-btn" onclick="copyOutput()">Copy Output</button>
       </div>
     </div>
-
     <div class="trans-notes">
       <strong>Translation Notes:</strong> Word-level translation only. Words not in the lexicon appear in <span class="trans-unknown">orange</span>. Grammar (SOV order, tense suffixes, cases) must be applied manually.
     </div>
-
     <div class="divider"></div>
     <div class="phon-section-title">Quick Grammar Reference</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.6rem;">
@@ -400,12 +379,39 @@
 </div>
 
 <script>
-// ── PASSWORD (SHA-256 hash) ───────────────────────
+const GITHUB_USER = 'Mycario';
+const GITHUB_REPO = 'Three-Companies';
+const GITHUB_FILE = 'pages/custom_words.json';
 const PW_HASH = 'f03f5a30f816e9cbafa420ccb21d425a4536cac9c63822fc6aac833f6cc23d2d';
 
 async function hashString(str) {
   const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
   return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+function saveToken() {
+  const val = document.getElementById("tokenInput").value.trim();
+  const status = document.getElementById("tokenStatus");
+  if (!val) { status.style.color="rgba(255,80,80,0.7)"; status.textContent="No token entered."; return; }
+  sessionStorage.setItem("gh_token", val);
+  document.getElementById("tokenInput").value = "";
+  status.style.color="rgba(80,200,120,0.8)"; status.textContent="✓ Token saved for session.";
+  document.getElementById("tokenRow").style.borderColor="rgba(80,200,120,0.3)";
+}
+
+function getToken() {
+  const t = sessionStorage.getItem("gh_token");
+  if (!t) { const s=document.getElementById("tokenStatus"); if(s){s.style.color="rgba(255,80,80,0.7)";s.textContent="Paste your token above first.";} return null; }
+  return t;
+}
+
+function updateTokenUI() {
+  const status = document.getElementById("tokenStatus");
+  if (!status) return;
+  if (sessionStorage.getItem("gh_token")) {
+    status.style.color="rgba(80,200,120,0.8)"; status.textContent="✓ Token loaded from session.";
+    document.getElementById("tokenRow").style.borderColor="rgba(80,200,120,0.3)";
+  }
 }
 
 async function checkPassword() {
@@ -414,7 +420,7 @@ async function checkPassword() {
   if (hash === PW_HASH) {
     sessionStorage.setItem('vaellish_auth', '1');
     document.getElementById('addWordLock').style.display = 'none';
-    document.getElementById('addWordPanel').classList.add('unlocked');
+    document.getElementById('addWordPanel').classList.add('unlocked'); updateTokenUI();
   } else {
     document.getElementById('lockError').textContent = 'Incorrect code.';
     document.getElementById('lockInput').value = '';
@@ -424,10 +430,9 @@ async function checkPassword() {
 
 if (sessionStorage.getItem('vaellish_auth') === '1') {
   document.getElementById('addWordLock').style.display = 'none';
-  document.getElementById('addWordPanel').classList.add('unlocked');
+  document.getElementById('addWordPanel').classList.add('unlocked'); updateTokenUI();
 }
 
-// ── SECTION SWITCHING ────────────────────────────
 function showSection(id, btn) {
   document.querySelectorAll('.section-view').forEach(v => v.classList.remove('active'));
   document.querySelectorAll('.section-btn').forEach(b => b.classList.remove('active'));
@@ -436,7 +441,6 @@ function showSection(id, btn) {
   window.scrollTo(0, 0);
 }
 
-// ── BASE LEXICON ─────────────────────────────────
 const BASE_LEXICON = [
   { v:'vel',      e:'sight / observe',        p:'VEL',        c:'noun' },
   { v:'krat',     e:'mind / thought',          p:'KRAT',       c:'noun' },
@@ -520,42 +524,56 @@ const BASE_LEXICON = [
   { v:'nulk',     e:'no / negation',            p:'NULK',       c:'particle' },
 ];
 
-// ── CUSTOM WORDS ─────────────────────────────────
 let CUSTOM_WORDS = [];
 let CUSTOM_SHA = null;
 
 async function fetchCustomWords() {
   try {
-    const res = await fetch('/.netlify/functions/load-words');
-    if (res.ok) {
+    const res = await fetch(
+      `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${GITHUB_FILE}`,
+      { headers: { 'Accept': 'application/vnd.github.v3+json' } }
+    );
+    if (res.status === 404) { CUSTOM_WORDS = []; CUSTOM_SHA = null; }
+    else if (res.ok) {
       const data = await res.json();
-      CUSTOM_WORDS = data.words || [];
-      CUSTOM_SHA = data.sha || null;
+      CUSTOM_SHA = data.sha;
+      CUSTOM_WORDS = JSON.parse(atob(data.content.replace(/\n/g,'')));
     }
-  } catch {
-    CUSTOM_WORDS = [];
-  }
+  } catch { CUSTOM_WORDS = []; }
   filterDict();
   doTranslate();
 }
 
 async function saveCustomWords() {
-  const res = await fetch('/.netlify/functions/save-word', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ words: CUSTOM_WORDS, sha: CUSTOM_SHA })
-  });
+  const token = getToken();
+  if (!token) throw new Error('No token provided.');
+  const content = btoa(unescape(encodeURIComponent(JSON.stringify(CUSTOM_WORDS, null, 2))));
+  const body = { message: 'Update Vaellish lexicon', content, ...(CUSTOM_SHA ? { sha: CUSTOM_SHA } : {}) };
+  const res = await fetch(
+    `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${GITHUB_FILE}`,
+    {
+      method: 'PUT',
+      headers: {
+        'Authorization': `token ${token}`,
+        'Accept': 'application/vnd.github.v3+json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(body)
+    }
+  );
   if (!res.ok) {
+    if (res.status === 401) {
+      sessionStorage.removeItem('gh_token');
+      throw new Error('Token invalid or expired. You will be prompted again on next save.');
+    }
     const err = await res.json();
-    throw new Error(err.error || 'Save failed');
+    throw new Error(err.message || `GitHub API error ${res.status}`);
   }
   const data = await res.json();
-  CUSTOM_SHA = data.sha;
+  CUSTOM_SHA = data.content.sha;
 }
 
-function getAllLexicon() {
-  return [...BASE_LEXICON, ...CUSTOM_WORDS];
-}
+function getAllLexicon() { return [...BASE_LEXICON, ...CUSTOM_WORDS]; }
 
 function buildLookup() {
   const map = {};
@@ -569,37 +587,27 @@ function buildLookup() {
   return map;
 }
 
-// ── WORD GENERATOR ───────────────────────────────
 const ALPHA_MAP = {
   a:'a',b:'vr',c:'kh',d:'dr',e:'e',f:'ts',g:'gr',h:'kh',
   i:'i',j:'zh',k:'k',l:'lv',m:'mn',n:'n',o:'o',p:'pt',
   q:'kv',r:'r',s:'s',t:'t',u:'u',v:'v',w:'vn',x:'ks',y:'yr',z:'z'
 };
 
-function applyMapping(word) {
-  return word.toLowerCase().split('').map(c => ALPHA_MAP[c] || c).join('');
-}
-
+function applyMapping(word) { return word.toLowerCase().split('').map(c => ALPHA_MAP[c] || c).join(''); }
 function cleanupVaellish(raw) {
   let out = raw.replace(/([aeiou])\1+/g,'$1');
-  out = out.replace(/([^aeiou]{4,})/g, m => m.slice(0,3));
-  return out;
+  return out.replace(/([^aeiou]{4,})/g, m => m.slice(0,3));
 }
-
 function generatePronunciation(word) {
-  const syllables = word.match(/[^aeiou]*[aeiou]+[^aeiou]*/gi) || [word];
-  return syllables.map((s,i) => i===0 ? s.toUpperCase() : s).join('-');
+  const syl = word.match(/[^aeiou]*[aeiou]+[^aeiou]*/gi) || [word];
+  return syl.map((s,i) => i===0 ? s.toUpperCase() : s).join('-');
 }
-
 function generateVariants(english) {
-  const base = applyMapping(english);
-  const clean = cleanupVaellish(base);
+  const clean = cleanupVaellish(applyMapping(english));
   const starters = ['vel','krat','str','dr','vr','sten','kh','th'];
-  const starter = starters[Math.floor(Math.random() * starters.length)];
-  const v2 = cleanupVaellish(starter + clean.slice(Math.min(2, clean.length)));
+  const v2 = cleanupVaellish(starters[Math.floor(Math.random()*starters.length)] + clean.slice(Math.min(2,clean.length)));
   const suffixes = ['ak','en','rek','vr','oth','str','nv','lv'];
-  const suffix = suffixes[english.length % suffixes.length];
-  const v3 = cleanupVaellish(clean.replace(/[aeiou]+$/,'') + suffix);
+  const v3 = cleanupVaellish(clean.replace(/[aeiou]+$/,'') + suffixes[english.length % suffixes.length]);
   return [
     { word: clean, pron: generatePronunciation(clean), hint: 'Direct mapping' },
     { word: v2,    pron: generatePronunciation(v2),    hint: 'Cluster variant' },
@@ -615,10 +623,7 @@ function generateWords() {
   container.style.display = 'flex';
   container.innerHTML = variants.map((v,i) => `
     <div class="gen-suggestion" id="sug-${i}" onclick="selectSuggestion(${i},'${v.word}','${v.pron}','${eng}')">
-      <div>
-        <div class="gen-sug-word">${v.word}</div>
-        <div class="gen-sug-pron">${v.pron}</div>
-      </div>
+      <div><div class="gen-sug-word">${v.word}</div><div class="gen-sug-pron">${v.pron}</div></div>
       <div class="gen-sug-hint">${v.hint}</div>
     </div>`).join('');
 }
@@ -631,19 +636,15 @@ function selectSuggestion(idx, word, pron, eng) {
   if (!document.getElementById('newEnglish').value) document.getElementById('newEnglish').value = eng;
 }
 
-// ── ADD & DELETE ─────────────────────────────────
 async function addWord() {
   const v = document.getElementById('newVaellish').value.trim().toLowerCase();
   const e = document.getElementById('newEnglish').value.trim();
   const p = document.getElementById('newPronunciation').value.trim().toUpperCase();
   const c = document.getElementById('newClass').value;
   const msg = document.getElementById('addWordMsg');
-
   if (!v || !e) { msg.className='add-word-msg error'; msg.textContent='Vaellish word and English meaning are required.'; return; }
   if (getAllLexicon().find(x => x.v === v)) { msg.className='add-word-msg error'; msg.textContent=`"${v}" already exists.`; return; }
-
   msg.className='add-word-msg saving'; msg.textContent='Saving to repository...';
-
   try {
     CUSTOM_WORDS.push({ v, e, p: p||v.toUpperCase(), c });
     await saveCustomWords();
@@ -664,8 +665,8 @@ async function addWord() {
 async function deleteWord(vaellish) {
   const msg = document.getElementById('addWordMsg');
   CUSTOM_WORDS = CUSTOM_WORDS.filter(e => e.v !== vaellish);
+  msg.className='add-word-msg saving'; msg.textContent='Removing...';
   try {
-    msg.className='add-word-msg saving'; msg.textContent='Removing...';
     await saveCustomWords();
     msg.className='add-word-msg success'; msg.textContent=`"${vaellish}" removed.`;
     setTimeout(() => msg.textContent='', 3000);
@@ -675,7 +676,6 @@ async function deleteWord(vaellish) {
   filterDict();
 }
 
-// ── DICTIONARY ───────────────────────────────────
 function renderDict(entries) {
   const customSet = new Set(CUSTOM_WORDS.map(e => e.v));
   document.getElementById('dictBody').innerHTML = entries.map(e => `
@@ -694,13 +694,10 @@ function filterDict() {
   const q = document.getElementById('dictSearch').value.toLowerCase();
   const cls = document.getElementById('dictFilter').value;
   renderDict(getAllLexicon().filter(e => {
-    const mc = cls==='all' || e.c===cls;
-    const ms = !q || e.v.includes(q) || e.e.toLowerCase().includes(q);
-    return mc && ms;
+    return (cls==='all' || e.c===cls) && (!q || e.v.includes(q) || e.e.toLowerCase().includes(q));
   }));
 }
 
-// ── TRANSLATOR ───────────────────────────────────
 function doTranslate() {
   const input = document.getElementById('transInput').value;
   const output = document.getElementById('transOutput');
@@ -715,8 +712,7 @@ function doTranslate() {
     const val = LOOKUP[clean];
     html += val ? `<span title="→ ${token}">${val}</span>` : `<span class="trans-unknown" title="Not in lexicon">${token}</span>`;
   });
-  output.className='trans-output';
-  output.innerHTML=html;
+  output.className='trans-output'; output.innerHTML=html;
 }
 
 function clearTranslator() {
@@ -729,7 +725,6 @@ function copyOutput() {
   navigator.clipboard.writeText(document.getElementById('transOutput').textContent).catch(()=>{});
 }
 
-// ── PHONOLOGY GRID ───────────────────────────────
 const ALPHA_DISPLAY = [
   {eng:'A',vae:'A',  sound:'ah (as in cat)'},  {eng:'B',vae:'VR', sound:'vr- blend'},
   {eng:'C',vae:'KH', sound:'guttural k'},       {eng:'D',vae:'DR', sound:'dr- blend'},
@@ -752,7 +747,6 @@ document.getElementById('phonGrid').innerHTML = ALPHA_DISPLAY.map(a => `
     <div><div class="phon-vael">${a.vae}</div><div class="phon-sound">${a.sound}</div></div>
   </div>`).join('');
 
-// ── STARS ────────────────────────────────────────
 const s = document.getElementById('stars');
 for (let i=0;i<220;i++) {
   const el=document.createElement('div'); el.className='star';
@@ -761,7 +755,6 @@ for (let i=0;i<220;i++) {
   s.appendChild(el);
 }
 
-// ── INIT ─────────────────────────────────────────
 filterDict();
 fetchCustomWords();
 </script>
