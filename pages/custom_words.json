@@ -190,5 +190,11 @@
     "e": "galaxy",
     "p": "GRAEKR-AT-AENT",
     "c": "noun"
+  },
+  {
+    "v": "kaeith",
+    "e": "universe",
+    "p": "KAEITH",
+    "c": "noun"
   }
 ]
