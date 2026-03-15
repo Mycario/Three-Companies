@@ -178,5 +178,11 @@
     "e": "rule",
     "p": "STRAY",
     "c": "custom"
+  },
+  {
+    "v": "strorrt",
+    "e": "planet",
+    "p": "STRORRT",
+    "c": "noun"
   }
 ]
