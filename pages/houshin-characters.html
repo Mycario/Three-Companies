@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="../favicon.png">
+  <title>HC Characters — Apostolos Archive</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Share+Tech+Mono&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #080600;
+      --gold: #c9a84c;
+      --gold-bright: #e8c96a;
+      --gold-dim: rgba(180,140,50,0.6);
+      --gold-border: rgba(180,140,50,0.22);
+      --text: rgba(220,185,100,0.85);
+      --text-dim: rgba(150,115,45,0.65);
+      --panel: rgba(20,15,5,0.75);
+    }
+
+    html, body {
+      width: 100%; height: 100%;
+      overflow: hidden;
+      background: var(--bg);
+      font-family: 'Share Tech Mono', monospace;
+      color: var(--gold);
+    }
+
+    .stars { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+    .star { position: absolute; background: #c9a84c; border-radius: 50%; }
+
+    .corner { position: fixed; width: 20px; height: 20px; border-color: rgba(180,140,50,0.2); border-style: solid; z-index: 10; pointer-events: none; }
+    .corner-tl { top: 12px; left: 12px; border-width: 1px 0 0 1px; }
+    .corner-tr { top: 12px; right: 12px; border-width: 1px 1px 0 0; }
+    .corner-bl { bottom: 12px; left: 12px; border-width: 0 0 1px 1px; }
+    .corner-br { bottom: 12px; right: 12px; border-width: 0 1px 1px 0; }
+
+    .topbar {
+      position: fixed; top: 0; left: 0; right: 0; height: 48px;
+      background: rgba(8,6,0,0.92); border-bottom: 1px solid rgba(180,140,50,0.18);
+      display: flex; align-items: center; padding: 0 2rem; gap: 1.5rem;
+      z-index: 10; backdrop-filter: blur(6px);
+    }
+    .topbar-back { font-size: 0.5rem; color: rgba(150,115,45,0.65); letter-spacing: 0.2em; text-decoration: none; transition: color 0.2s; }
+    .topbar-back:hover { color: var(--gold); }
+    .topbar-divider { width: 1px; height: 16px; background: rgba(180,140,50,0.25); }
+    .topbar-title { font-family: 'Cinzel', serif; font-size: 0.7rem; color: var(--gold); letter-spacing: 0.3em; }
+
+    .slider-outer {
+      position: fixed; top: 48px; left: 0; right: 0; bottom: 0;
+      overflow: hidden; z-index: 1;
+    }
+
+    .slide-track {
+      display: flex; height: 100%;
+      transition: transform 0.55s cubic-bezier(0.77,0,0.18,1);
+      will-change: transform;
+    }
+
+    .slide {
+      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px 72px 36px;
+      height: 100%;
+    }
+
+    .char-card {
+      width: 100%; max-width: 1060px; height: 100%;
+      display: grid; grid-template-rows: auto 1fr;
+      background: rgba(20,14,2,0.6);
+      border: 1px solid var(--gold-border);
+      overflow: hidden;
+    }
+
+    /* HEADER */
+    .card-header {
+      padding: 1rem 1.6rem 0.9rem;
+      border-bottom: 1px solid rgba(180,140,50,0.18);
+      display: flex; align-items: baseline; gap: 1.5rem; flex-shrink: 0;
+    }
+    .char-name { font-family: 'Cinzel', serif; font-size: 1.4rem; color: var(--gold); letter-spacing: 0.3em; }
+    .char-title { font-size: 0.48rem; color: var(--gold-dim); letter-spacing: 0.2em; }
+    .char-status {
+      margin-left: auto; font-size: 0.42rem; color: var(--gold-dim);
+      letter-spacing: 0.2em; border: 1px solid rgba(180,140,50,0.25);
+      padding: 3px 10px; white-space: nowrap;
+    }
+    .char-status.classified { color: rgba(255,120,80,0.7); border-color: rgba(255,120,80,0.3); }
+
+    /* BODY */
+    .card-body {
+      display: grid; grid-template-columns: 250px 1fr;
+      overflow: hidden; min-height: 0;
+    }
+
+    /* LEFT COLUMN */
+    .col-left {
+      border-right: 1px solid rgba(180,140,50,0.18);
+      display: flex; flex-direction: column; overflow: hidden; min-height: 0;
+    }
+
+    .portrait-box {
+      width: 100%; aspect-ratio: 1 / 1;
+      background: rgba(12,9,2,0.8);
+      border-bottom: 1px solid rgba(180,140,50,0.18);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; position: relative; overflow: hidden;
+    }
+    .portrait-box img { width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; }
+    .portrait-placeholder {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 0.5rem; width: 100%; height: 100%;
+    }
+    .portrait-placeholder .ph-icon {
+      width: 48px; height: 48px; border: 1px solid rgba(180,140,50,0.3);
+      display: flex; align-items: center; justify-content: center;
+      color: rgba(180,140,50,0.4); font-size: 1.2rem;
+    }
+    .portrait-placeholder .ph-text { font-size: 0.42rem; color: rgba(180,140,50,0.35); letter-spacing: 0.18em; text-align: center; }
+    .portrait-corner { position: absolute; width: 10px; height: 10px; border-color: rgba(180,140,50,0.4); border-style: solid; pointer-events: none; }
+    .portrait-corner.tl { top: 6px; left: 6px; border-width: 1px 0 0 1px; }
+    .portrait-corner.tr { top: 6px; right: 6px; border-width: 1px 1px 0 0; }
+    .portrait-corner.bl { bottom: 6px; left: 6px; border-width: 0 0 1px 1px; }
+    .portrait-corner.br { bottom: 6px; right: 6px; border-width: 0 1px 1px 0; }
+
+    .dossier-stats {
+      flex: 1; padding: 0.8rem 1rem;
+      display: flex; flex-direction: column; overflow-y: auto; min-height: 0;
+      scrollbar-width: thin; scrollbar-color: rgba(180,140,50,0.3) rgba(12,9,2,0.6);
+    }
+    .dossier-stats::-webkit-scrollbar { width: 4px; }
+    .dossier-stats::-webkit-scrollbar-track { background: rgba(12,9,2,0.6); }
+    .dossier-stats::-webkit-scrollbar-thumb { background: rgba(180,140,50,0.3); }
+
+    .stat-group-title {
+      font-size: 0.38rem; color: rgba(180,140,50,0.4); letter-spacing: 0.2em;
+      text-transform: uppercase; margin: 0.6rem 0 0.3rem;
+      padding-bottom: 0.2rem; border-bottom: 1px solid rgba(180,140,50,0.1);
+    }
+    .stat-group-title:first-child { margin-top: 0; }
+
+    .stat-item {
+      display: flex; justify-content: space-between; align-items: baseline;
+      padding: 0.3rem 0; border-bottom: 1px solid rgba(180,140,50,0.08); gap: 0.5rem;
+    }
+    .stat-item:last-child { border-bottom: none; }
+    .stat-label { font-size: 0.38rem; color: var(--text-dim); letter-spacing: 0.12em; flex-shrink: 0; }
+    .stat-value { font-size: 0.42rem; color: var(--text); letter-spacing: 0.06em; text-align: right; }
+    .stat-value.threat-low { color: rgba(100,220,140,0.8); }
+    .stat-value.threat-med { color: rgba(255,200,60,0.8); }
+    .stat-value.threat-high { color: rgba(255,120,60,0.8); }
+    .stat-value.threat-critical { color: rgba(255,60,60,0.9); }
+    .stat-value.redacted { background: rgba(180,140,50,0.15); color: transparent; user-select: none; padding: 0 4px; }
+
+    /* RIGHT COLUMN */
+    .col-right {
+      overflow-y: auto; padding: 1.1rem 1.4rem;
+      display: flex; flex-direction: column; gap: 1rem; min-height: 0;
+      scrollbar-width: thin; scrollbar-color: rgba(180,140,50,0.3) rgba(12,9,2,0.6);
+    }
+    .col-right::-webkit-scrollbar { width: 4px; }
+    .col-right::-webkit-scrollbar-track { background: rgba(12,9,2,0.6); }
+    .col-right::-webkit-scrollbar-thumb { background: rgba(180,140,50,0.3); }
+
+    .info-section-title {
+      font-size: 0.44rem; color: var(--gold-dim); letter-spacing: 0.22em;
+      text-transform: uppercase; margin-bottom: 0.5rem;
+      padding-bottom: 0.28rem; border-bottom: 1px solid rgba(180,140,50,0.12);
+    }
+    .info-text { font-size: 0.5rem; color: var(--text); letter-spacing: 0.04em; line-height: 1.85; }
+    .info-text p { margin-bottom: 0.45rem; }
+    .info-text p:last-child { margin-bottom: 0; }
+
+    .trait-list { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.2rem; }
+    .trait-pill {
+      font-size: 0.4rem; letter-spacing: 0.12em; padding: 3px 10px;
+      border: 1px solid rgba(180,140,50,0.28); color: rgba(200,160,70,0.7);
+    }
+
+    /* PLACEHOLDER CARD */
+    .char-card.placeholder {
+      background: rgba(14,10,2,0.4);
+      border-color: rgba(180,140,50,0.1);
+      align-items: center; justify-content: center;
+      display: flex; flex-direction: column; gap: 1rem;
+    }
+    .placeholder-icon { font-size: 2rem; color: rgba(180,140,50,0.15); }
+    .placeholder-name { font-family: 'Cinzel', serif; font-size: 0.9rem; color: rgba(180,140,50,0.3); letter-spacing: 0.3em; }
+    .placeholder-role { font-size: 0.44rem; color: rgba(150,115,45,0.3); letter-spacing: 0.2em; }
+
+    /* NAV */
+    .nav-arrow {
+      position: fixed; top: 50%; transform: translateY(-50%);
+      z-index: 10; background: rgba(12,9,2,0.7);
+      border: 1px solid rgba(180,140,50,0.25);
+      width: 40px; height: 72px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: background 0.2s, border-color 0.2s, opacity 0.2s;
+      backdrop-filter: blur(4px);
+    }
+    .nav-arrow:hover { background: rgba(20,14,2,0.85); border-color: rgba(220,175,70,0.45); }
+    .nav-arrow.disabled { opacity: 0.15; pointer-events: none; }
+    .nav-arrow.left { left: 16px; }
+    .nav-arrow.right { right: 16px; }
+    .nav-arrow svg { width: 14px; height: 14px; stroke: rgba(180,140,50,0.7); fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+
+    .page-dots {
+      position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%);
+      display: flex; gap: 8px; z-index: 10;
+    }
+    .dot { width: 5px; height: 5px; border: 1px solid rgba(180,140,50,0.35); transition: background 0.3s, border-color 0.3s; cursor: pointer; }
+    .dot.active { background: rgba(180,140,50,0.6); border-color: rgba(180,140,50,0.6); }
+
+    .char-counter {
+      position: fixed; bottom: 18px; right: 32px;
+      font-size: 0.42rem; color: rgba(150,115,45,0.4); letter-spacing: 0.2em; z-index: 10;
+    }
+  </style>
+</head>
+<body>
+
+<div class="stars" id="stars"></div>
+<div class="corner corner-tl"></div>
+<div class="corner corner-tr"></div>
+<div class="corner corner-bl"></div>
+<div class="corner corner-br"></div>
+
+<nav class="topbar">
+  <a class="topbar-back" href="../index.html">← Home</a>
+  <div class="topbar-divider"></div>
+  <a class="topbar-back" href="houshin-company.html">← Houshin Company</a>
+  <div class="topbar-divider"></div>
+  <span class="topbar-title">Characters</span>
+</nav>
+
+<div class="slider-outer">
+  <div class="slide-track" id="track">
+
+    <!-- ═══════════════════════════════════════ -->
+    <!-- SLIDE 1 — VAEN HOUSHIN                  -->
+    <!-- ═══════════════════════════════════════ -->
+    <div class="slide" style="width:100vw;">
+      <div class="char-card">
+        <div class="card-header">
+          <span class="char-name">Vaen Houshin</span>
+          <span class="char-title">Merchant Sovereign — Houshin Company</span>
+          <span class="char-status">Active — Company Leader</span>
+        </div>
+        <div class="card-body">
+          <div class="col-left">
+            <div class="portrait-box" id="portrait-vaen">
+              <div class="portrait-placeholder">
+                <div class="ph-icon">◈</div>
+                <div class="ph-text">PORTRAIT<br>PENDING</div>
+              </div>
+              <div class="portrait-corner tl"></div><div class="portrait-corner tr"></div>
+              <div class="portrait-corner bl"></div><div class="portrait-corner br"></div>
+            </div>
+            <div class="dossier-stats">
+              <div class="stat-group-title">Personal</div>
+              <div class="stat-item"><span class="stat-label">Species</span><span class="stat-value">Avriethrax</span></div>
+              <div class="stat-item"><span class="stat-label">Sex</span><span class="stat-value">Female</span></div>
+              <div class="stat-item"><span class="stat-label">Age</span><span class="stat-value">34</span></div>
+              <div class="stat-item"><span class="stat-label">Appearance</span><span class="stat-value">Deep slate-grey feathers, black wingtips, pale amber eyes</span></div>
+
+              <div class="stat-group-title">Role</div>
+              <div class="stat-item"><span class="stat-label">Title</span><span class="stat-value">Merchant Sovereign</span></div>
+              <div class="stat-item"><span class="stat-label">Rank</span><span class="stat-value">Highest — Company Leader</span></div>
+              <div class="stat-item"><span class="stat-label">Tenure</span><span class="stat-value">Youngest Sovereign in Company history</span></div>
+              <div class="stat-item"><span class="stat-label">Allegiance</span><span class="stat-value">Houshin Company — Institute aligned</span></div>
+
+              <div class="stat-group-title">Background</div>
+              <div class="stat-item"><span class="stat-label">Origin</span><span class="stat-value">Rose through ranks from Associate level</span></div>
+              <div class="stat-item"><span class="stat-label">Known Associates</span><span class="stat-value">Sael, Orveth, Keth, Mirren</span></div>
+              <div class="stat-item"><span class="stat-label">Psionic Rating</span><span class="stat-value">Standard — no exceptional ability noted</span></div>
+
+              <div class="stat-group-title">Threat Assessment</div>
+              <div class="stat-item"><span class="stat-label">Physical</span><span class="stat-value threat-low">Low</span></div>
+              <div class="stat-item"><span class="stat-label">Political</span><span class="stat-value threat-critical">Critical</span></div>
+              <div class="stat-item"><span class="stat-label">Economic</span><span class="stat-value threat-high">High</span></div>
+              <div class="stat-item"><span class="stat-label">Intelligence</span><span class="stat-value threat-high">High</span></div>
+              <div class="stat-item"><span class="stat-label">Overall</span><span class="stat-value threat-critical">Critical</span></div>
+            </div>
+          </div>
+          <div class="col-right">
+            <div class="info-section">
+              <div class="info-section-title">Profile</div>
+              <div class="info-text">
+                <p>Vaen Houshin is the current Merchant Sovereign of the Houshin Company — the youngest individual to hold the title in the Company's history. She is female, Avriethrax, thirty-four years old, with deep slate-grey feathers shading to black at the wingtips and pale amber eyes. She rose to the Sovereign position entirely through internal advancement, beginning at Associate level — a trajectory that required both exceptional competence and a political intelligence that her predecessors consistently underestimated until it was too late to matter.</p>
+                <p>The name Houshin is an institutional title granted on appointment, not a hereditary name. Vaen carries it now. Before her, someone else did. The continuity is the Company, not the individual.</p>
+              </div>
+            </div>
+            <div class="info-section">
+              <div class="info-section-title">Personality</div>
+              <div class="info-text">
+                <p>Vaen projects warmth as a professional tool. In any given room she is attentive, personable, and apparently candid — qualities that create the persistent impression that she is sharing more than she is. She is not. Her actual emotional register is cold and calculating, oriented entirely around long-term outcome. Personal loyalty exists in her framework only insofar as it produces reliable results. Sentiment does not.</p>
+                <p>She is not cruel. Cruelty is inefficient. She is, however, entirely transactional — every relationship is evaluated in terms of what it costs and what it yields, and relationships that cease to yield are ended with the same equanimity as a business contract that has run its term. The one partial exception is Sael, her Director of Intelligence and childhood acquaintance, whose relationship with Vaen is the single data point that does not reduce cleanly to transaction. Whether this reflects genuine attachment or simply a very long-running investment is not clear, possibly even to Vaen herself.</p>
+              </div>
+            </div>
+            <div class="info-section">
+              <div class="info-section-title">Strategic Goals</div>
+              <div class="info-text">
+                <p>Vaen's primary long-term objective is interstellar expansion — making the Houshin Company operational beyond Institute space. This requires diplomatic groundwork, military capability, and the kind of institutional credibility that only comes from sustained performance. All three are in progress. The Architects are being quietly expanded. The Intelligence Division's reach is being extended. And Vaen's public posture toward the Institute remains one of dependable alignment, buying time and goodwill for the eventual move.</p>
+                <p>Her secondary objective — which she would frame as the means to the first — is making the Houshin Company genuinely indispensable to the Institute. Not merely useful. Indispensable. A company the Institute cannot sanction, cannot replace, and cannot afford to lose. At that point, Vaen's options expand considerably.</p>
+              </div>
+            </div>
+            <div class="info-section">
+              <div class="info-section-title">Relationship with the Institute</div>
+              <div class="info-text">
+                <p>Vaen understands what the Institute is. Not the public version — the research body, the religious framework, the benevolent stewardship of Seraphic heritage — but the actual version: an absolute authority that has run Apostolos from the shadows since the Great Catastrophe and views every other power structure on the planet as a resource or a threat. She has never said this aloud to anyone outside her inner circle, and may not have said it even there.</p>
+                <p>Her relationship with the Institute is therefore one of deliberate, managed alignment. She gives them what they need. She does not give them more than that. She does not give them leverage. Every contract, every intelligence report, every Architect deployment is calibrated to demonstrate value while revealing nothing that could be used against her. It is, by any measure, an extraordinarily demanding performance to sustain — and she has sustained it for years.</p>
+              </div>
+            </div>
+            <div class="info-section">
+              <div class="info-section-title">Notable Traits</div>
+              <div class="trait-list">
+                <span class="trait-pill">Cold beneath warm exterior</span>
+                <span class="trait-pill">Purely transactional</span>
+                <span class="trait-pill">Long-term strategic thinker</span>
+                <span class="trait-pill">Politically exceptional</span>
+                <span class="trait-pill">Profit above all</span>
+                <span class="trait-pill">Youngest Sovereign in history</span>
+                <span class="trait-pill">Institute-aware</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════ -->
+    <!-- SLIDE 2 — SAEL                          -->
+    <!-- ═══════════════════════════════════════ -->
+    <div class="slide" style="width:100vw;">
+      <div class="char-card placeholder">
+        <div class="portrait-placeholder" style="width:80px;height:80px;border:1px solid rgba(180,140,50,0.15);">
+          <div class="ph-icon" style="width:100%;height:100%;">◈</div>
+        </div>
+        <div class="placeholder-name">Sael</div>
+        <div class="placeholder-role">Director of Intelligence — Inner Circle</div>
+        <div style="font-size:0.42rem;color:rgba(150,115,45,0.25);letter-spacing:0.15em;margin-top:0.5rem;">Dossier pending</div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════ -->
+    <!-- SLIDE 3 — ORVETH                        -->
+    <!-- ═══════════════════════════════════════ -->
+    <div class="slide" style="width:100vw;">
+      <div class="char-card placeholder">
+        <div class="portrait-placeholder" style="width:80px;height:80px;border:1px solid rgba(180,140,50,0.15);">
+          <div class="ph-icon" style="width:100%;height:100%;">◈</div>
+        </div>
+        <div class="placeholder-name">Orveth</div>
+        <div class="placeholder-role">Noctivex Aide — Inner Circle</div>
+        <div style="font-size:0.42rem;color:rgba(150,115,45,0.25);letter-spacing:0.15em;margin-top:0.5rem;">Dossier pending</div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════ -->
+    <!-- SLIDE 4 — KETH                          -->
+    <!-- ═══════════════════════════════════════ -->
+    <div class="slide" style="width:100vw;">
+      <div class="char-card placeholder">
+        <div class="portrait-placeholder" style="width:80px;height:80px;border:1px solid rgba(180,140,50,0.15);">
+          <div class="ph-icon" style="width:100%;height:100%;">◈</div>
+        </div>
+        <div class="placeholder-name">Keth</div>
+        <div class="placeholder-role">Director of Architects — Inner Circle</div>
+        <div style="font-size:0.42rem;color:rgba(150,115,45,0.25);letter-spacing:0.15em;margin-top:0.5rem;">Dossier pending</div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════ -->
+    <!-- SLIDE 5 — MIRREN                        -->
+    <!-- ═══════════════════════════════════════ -->
+    <div class="slide" style="width:100vw;">
+      <div class="char-card placeholder">
+        <div class="portrait-placeholder" style="width:80px;height:80px;border:1px solid rgba(180,140,50,0.15);">
+          <div class="ph-icon" style="width:100%;height:100%;">◈</div>
+        </div>
+        <div class="placeholder-name">Mirren</div>
+        <div class="placeholder-role">Noctivex Legal Counsel — Inner Circle</div>
+        <div style="font-size:0.42rem;color:rgba(150,115,45,0.25);letter-spacing:0.15em;margin-top:0.5rem;">Dossier pending</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<button class="nav-arrow left disabled" id="arrow-left" onclick="navigate(-1)" aria-label="Previous">
+  <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+</button>
+<button class="nav-arrow right" id="arrow-right" onclick="navigate(1)" aria-label="Next">
+  <svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg>
+</button>
+
+<div class="page-dots" id="dots"></div>
+<div class="char-counter" id="counter"></div>
+
+<script>
+  const CHARS = [
+    { name: 'Vaen Houshin', role: 'Merchant Sovereign' },
+    { name: 'Sael',         role: 'Director of Intelligence' },
+    { name: 'Orveth',       role: 'Noctivex Aide' },
+    { name: 'Keth',         role: 'Director of Architects' },
+    { name: 'Mirren',       role: 'Legal Counsel' },
+  ];
+
+  const total = CHARS.length;
+  let current = 0;
+
+  const track   = document.getElementById('track');
+  const dotsEl  = document.getElementById('dots');
+  const arrowL  = document.getElementById('arrow-left');
+  const arrowR  = document.getElementById('arrow-right');
+  const counter = document.getElementById('counter');
+
+  // Set slide widths
+  document.querySelectorAll('.slide').forEach(s => s.style.width = '100vw');
+  track.style.width = `${total * 100}vw`;
+
+  // Build dots
+  CHARS.forEach((c, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === 0 ? ' active' : '');
+    d.title = c.name;
+    d.onclick = () => goTo(i);
+    dotsEl.appendChild(d);
+  });
+
+  function goTo(index) {
+    current = Math.max(0, Math.min(total - 1, index));
+    track.style.transform = `translateX(-${current * (100 / total)}%)`;
+    document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === current));
+    arrowL.classList.toggle('disabled', current === 0);
+    arrowR.classList.toggle('disabled', current === total - 1);
+    counter.textContent = `0${current + 1} / 0${total}`;
+  }
+
+  function navigate(dir) { goTo(current + dir); }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowLeft') navigate(-1);
+    if (e.key === 'ArrowRight') navigate(1);
+  });
+
+  let touchX = null;
+  document.addEventListener('touchstart', e => { touchX = e.touches[0].clientX; });
+  document.addEventListener('touchend', e => {
+    if (touchX === null) return;
+    const diff = touchX - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 50) navigate(diff > 0 ? 1 : -1);
+    touchX = null;
+  });
+
+  function setPortrait(id, src) {
+    const box = document.getElementById('portrait-' + id);
+    if (!box) return;
+    box.innerHTML = `<img src="${src}" alt="${id}">
+      <div class="portrait-corner tl"></div><div class="portrait-corner tr"></div>
+      <div class="portrait-corner bl"></div><div class="portrait-corner br"></div>`;
+  }
+
+  goTo(0);
+
+  const s = document.getElementById('stars');
+  for (let i = 0; i < 200; i++) {
+    const el = document.createElement('div'); el.className = 'star';
+    const sz = Math.random() * 1.2 + 0.2;
+    el.style.cssText = `width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*100}%;opacity:${Math.random()*0.3+0.05};`;
+    s.appendChild(el);
+  }
+</script>
+</body>
+</html>
