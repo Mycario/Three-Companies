@@ -4,5 +4,11 @@
     "e": "Hello",
     "p": "KHELVL",
     "c": "custom"
+  },
+  {
+    "v": "andr",
+    "e": "And",
+    "p": "ANDR",
+    "c": "custom"
   }
 ]
