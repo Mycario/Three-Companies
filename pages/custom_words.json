@@ -64,5 +64,11 @@
     "e": "labour",
     "p": "STEN-AVR-OUR",
     "c": "custom"
+  },
+  {
+    "v": "kratrain",
+    "e": "brain",
+    "p": "KRATR-AIN",
+    "c": "custom"
   }
 ]
