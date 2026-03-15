@@ -1,17 +1,11 @@
 <svg width="100%" viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
 
-<!-- Subtle grid -->
-<line x1="340" y1="80" x2="340" y2="600" stroke="rgba(74,138,223,0.2)" stroke-width="0.5"/>
-<line x1="80" y1="340" x2="600" y2="340" stroke="rgba(74,138,223,0.2)" stroke-width="0.5"/>
-<line x1="152" y1="152" x2="528" y2="528" stroke="rgba(74,138,223,0.2)" stroke-width="0.5"/>
-<line x1="528" y1="152" x2="152" y2="528" stroke="rgba(74,138,223,0.2)" stroke-width="0.5"/>
-
-<!-- Outer ring — PI -->
+<!-- Outer ring -->
 <circle cx="340" cy="340" r="160" fill="none" stroke="#4a8adf" stroke-width="2"/>
 <circle cx="340" cy="340" r="148" fill="none" stroke="#4a8adf" stroke-width="0.8"/>
 <circle cx="340" cy="340" r="100" fill="none" stroke="#4a8adf" stroke-width="0.8"/>
 
-<!-- Six spokes — PI -->
+<!-- Six spokes -->
 <line x1="340" y1="340" x2="299" y2="183" stroke="#4a8adf" stroke-width="1.5"/>
 <line x1="340" y1="340" x2="476" y2="243" stroke="#4a8adf" stroke-width="1.5"/>
 <line x1="340" y1="340" x2="464" y2="408" stroke="#4a8adf" stroke-width="1.5"/>
@@ -19,7 +13,7 @@
 <line x1="340" y1="340" x2="216" y2="408" stroke="#4a8adf" stroke-width="1.5"/>
 <line x1="340" y1="340" x2="204" y2="243" stroke="#4a8adf" stroke-width="1.5"/>
 
-<!-- Six outer nodes — PI -->
+<!-- Six outer nodes -->
 <circle cx="299" cy="183" r="9" fill="#4a8adf"/>
 <circle cx="476" cy="243" r="9" fill="#4a8adf"/>
 <circle cx="464" cy="408" r="9" fill="#4a8adf"/>
@@ -27,32 +21,9 @@
 <circle cx="216" cy="408" r="9" fill="#4a8adf"/>
 <circle cx="204" cy="243" r="9" fill="#4a8adf"/>
 
-<!-- Mirror Protocol triangles -->
-<polygon points="340,230 290,310 390,310" fill="rgba(74,138,223,0.15)" stroke="#4a8adf" stroke-width="1.2"/>
-<polygon points="340,450 290,370 390,370" fill="rgba(74,138,223,0.15)" stroke="#4a8adf" stroke-width="1.2"/>
-
-<!-- Mirror line -->
-<line x1="265" y1="340" x2="415" y2="340" stroke="#4a8adf" stroke-width="0.6" stroke-dasharray="3,4" opacity="0.4"/>
-
-<!-- Houshin H mark -->
-<rect x="316" y="292" width="7" height="96" fill="#4a8adf"/>
-<rect x="357" y="292" width="7" height="96" fill="#4a8adf"/>
-<rect x="316" y="336" width="48" height="8" fill="#4a8adf"/>
-
-<!-- Three Houshin diamonds -->
-<polygon points="340,175 347,184 340,193 333,184" fill="#4a8adf"/>
-<polygon points="247,340 256,333 265,340 256,347" fill="#4a8adf"/>
-<polygon points="415,340 424,333 433,340 424,347" fill="#4a8adf"/>
-
 <!-- Core -->
 <circle cx="340" cy="340" r="22" fill="none" stroke="#4a8adf" stroke-width="1.5"/>
 <circle cx="340" cy="340" r="14" fill="#4a8adf" opacity="0.6"/>
 <circle cx="340" cy="340" r="5" fill="#4a8adf"/>
-
-<!-- Corner brackets -->
-<path d="M100,100 L100,116 M100,100 L116,100" fill="none" stroke="rgba(74,138,223,0.4)" stroke-width="1"/>
-<path d="M580,100 L580,116 M580,100 L564,100" fill="none" stroke="rgba(74,138,223,0.4)" stroke-width="1"/>
-<path d="M100,580 L100,564 M100,580 L116,580" fill="none" stroke="rgba(74,138,223,0.4)" stroke-width="1"/>
-<path d="M580,580 L580,564 M580,580 L564,580" fill="none" stroke="rgba(74,138,223,0.4)" stroke-width="1"/>
 
 </svg>
