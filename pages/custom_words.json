@@ -202,5 +202,11 @@
     "e": "creation",
     "p": "VUTH-EN",
     "c": "custom"
+  },
+  {
+    "v": "vuth",
+    "e": "create",
+    "p": "VOOF",
+    "c": "verb"
   }
 ]
