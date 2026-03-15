@@ -26,7 +26,7 @@
     .star { position: absolute; background: white; border-radius: 50%; }
 
     .container {
-      position: relative; z-index: 5; text-align: center;
+      position: relative; z-index: 4; text-align: center; pointer-events: none;
       padding: 2rem; max-width: 1100px; width: 100%;
     }
 
@@ -97,9 +97,9 @@
 <div class="star-hidden" id="redStar" title=""></div>
 
 <div class="container">
-  <h1 class="main-title">The Three Companies of Apostolos</h1>
+  <h1 class="main-title" style="pointer-events:all;">The Three Companies of Apostolos</h1>
 
-  <div class="companies">
+  <div class="companies" style="pointer-events:all;">
 
     <!-- Pneuma Institute -->
     <a class="company-card" href="pages/pneuma-institute.html">
@@ -178,13 +178,13 @@
 
   </div>
 
-  <div class="divider"></div>
-  <div style="display:flex;gap:2.5rem;justify-content:center;margin-bottom:1.5rem;">
+  <div class="divider" style="pointer-events:all;"></div>
+  <div style="display:flex;gap:2.5rem;justify-content:center;margin-bottom:1.5rem;pointer-events:all;">
     <a href="pages/pi-species.html" style="font-size:0.48rem;color:rgba(122,184,255,0.85);letter-spacing:0.2em;text-decoration:none;transition:color 0.2s;" onmouseover="this.style.color='#7ab8ff'" onmouseout="this.style.color='rgba(122,184,255,0.85)'">Species</a>
     <span style="font-size:0.48rem;color:rgba(26,74,138,0.25);letter-spacing:0.2em;">—</span>
     <a href="pages/languages.html" style="font-size:0.48rem;color:rgba(122,184,255,0.85);letter-spacing:0.2em;text-decoration:none;transition:color 0.2s;" onmouseover="this.style.color='#7ab8ff'" onmouseout="this.style.color='rgba(122,184,255,0.85)'">Language</a>
   </div>
-  <p class="footer">Apostolos Classified Archive — Pneuma Institute Internal Network — Unauthorised Access Prohibited</p>
+  <p class="footer" style="pointer-events:all;">Apostolos Classified Archive — Pneuma Institute Internal Network — Unauthorised Access Prohibited</p>
 </div>
 
 <script>
