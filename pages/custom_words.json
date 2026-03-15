@@ -94,5 +94,11 @@
     "e": "chud",
     "p": "ZENST",
     "c": "particle"
+  },
+  {
+    "v": "kraekranv",
+    "e": "food",
+    "p": "KRAEKR-ANV",
+    "c": "custom"
   }
 ]
