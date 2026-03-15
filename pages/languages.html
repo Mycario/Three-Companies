@@ -525,7 +525,7 @@ let CUSTOM_SHA = null;
 
 async function fetchCustomWords() {
   try {
-    const res = await fetch('/api/load-words');
+    const res = await fetch('/.netlify/functions/load-words');
     if (res.ok) {
       const data = await res.json();
       CUSTOM_WORDS = data.words || [];
@@ -539,7 +539,7 @@ async function fetchCustomWords() {
 }
 
 async function saveCustomWords() {
-  const res = await fetch('/api/save-word', {
+  const res = await fetch('/.netlify/functions/save-word', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ words: CUSTOM_WORDS, sha: CUSTOM_SHA })
