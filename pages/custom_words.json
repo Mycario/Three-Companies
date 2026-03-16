@@ -208,5 +208,11 @@
     "e": "create",
     "p": "VOOF",
     "c": "verb"
+  },
+  {
+    "v": "virim",
+    "e": "see",
+    "p": "VIR-IM",
+    "c": "custom"
   }
 ]
