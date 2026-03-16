@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="../favicon.png">
+  <title>Mirror Protocol — Apostolos Archive</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Share+Tech+Mono&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #050308;
+      --purple: #9b6fc4;
+      --purple-bright: #c4a0e8;
+      --purple-dim: rgba(130,80,180,0.6);
+      --purple-faint: rgba(130,80,180,0.1);
+      --purple-border: rgba(130,80,180,0.22);
+      --text: rgba(190,155,230,0.85);
+      --text-dim: rgba(110,70,155,0.65);
+      --panel: rgba(12,6,20,0.75);
+    }
+
+    html, body {
+      min-height: 100vh;
+      background: var(--bg);
+      font-family: 'Share Tech Mono', monospace;
+      color: var(--purple);
+      overflow-x: hidden;
+    }
+
+    .stars { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+    .star { position: absolute; background: #7040a0; border-radius: 50%; }
+
+    .corner { position: fixed; width: 20px; height: 20px; border-color: rgba(130,80,180,0.2); border-style: solid; z-index: 10; pointer-events: none; }
+    .corner-tl { top: 12px; left: 12px; border-width: 1px 0 0 1px; }
+    .corner-tr { top: 12px; right: 12px; border-width: 1px 1px 0 0; }
+    .corner-bl { bottom: 12px; left: 12px; border-width: 0 0 1px 1px; }
+    .corner-br { bottom: 12px; right: 12px; border-width: 0 1px 1px 0; }
+
+    .topbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 48px;
+      background: rgba(5,3,8,0.92);
+      border-bottom: 1px solid rgba(130,80,180,0.18);
+      display: flex;
+      align-items: center;
+      padding: 0 2rem;
+      gap: 1.5rem;
+      z-index: 10;
+      backdrop-filter: blur(6px);
+    }
+    .topbar-back { font-size: 0.5rem; color: rgba(110,70,155,0.65); letter-spacing: 0.2em; text-decoration: none; transition: color 0.2s; }
+    .topbar-back:hover { color: var(--purple); }
+    .topbar-divider { width: 1px; height: 16px; background: rgba(130,80,180,0.25); }
+    .topbar-title { font-family: 'Cinzel', serif; font-size: 0.7rem; color: var(--purple); letter-spacing: 0.3em; }
+
+    .main {
+      position: relative;
+      z-index: 1;
+      max-width: 1060px;
+      margin: 0 auto;
+      padding: 80px 2rem 4rem;
+    }
+
+    .company-header {
+      display: grid;
+      grid-template-columns: 180px 1fr;
+      gap: 2rem;
+      margin-bottom: 2.5rem;
+      align-items: start;
+    }
+
+    .flag-container {
+      aspect-ratio: 3 / 2;
+      background: #050308;
+      border: 1px solid var(--purple-border);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .flag-container canvas { width: 100%; height: 100%; display: block; }
+    .flag-corner { position: absolute; width: 8px; height: 8px; border-color: rgba(130,80,180,0.5); border-style: solid; pointer-events: none; }
+    .flag-corner.tl { top: 4px; left: 4px; border-width: 1px 0 0 1px; }
+    .flag-corner.tr { top: 4px; right: 4px; border-width: 1px 1px 0 0; }
+    .flag-corner.bl { bottom: 4px; left: 4px; border-width: 0 0 1px 1px; }
+    .flag-corner.br { bottom: 4px; right: 4px; border-width: 0 1px 1px 0; }
+
+    .company-name { font-family: 'Cinzel', serif; font-size: 2rem; color: var(--purple-bright); letter-spacing: 0.35em; margin-bottom: 0.3rem; }
+    .company-subtitle { font-size: 0.5rem; color: var(--purple-dim); letter-spacing: 0.22em; margin-bottom: 1rem; }
+    .company-motto {
+      font-size: 0.52rem; color: var(--text); letter-spacing: 0.1em; font-style: italic;
+      margin-bottom: 1.2rem; padding-left: 0.8rem; border-left: 1px solid rgba(130,80,180,0.3);
+    }
+    .company-motto span { display: block; font-size: 0.42rem; color: var(--text-dim); letter-spacing: 0.15em; margin-top: 0.2rem; font-style: normal; }
+
+    .quick-facts { display: flex; gap: 1.5rem; flex-wrap: wrap; }
+    .fact-label { font-size: 0.38rem; color: var(--text-dim); letter-spacing: 0.15em; margin-bottom: 2px; }
+    .fact-value { font-size: 0.46rem; color: var(--text); letter-spacing: 0.08em; }
+
+    .divider { width: 100%; height: 1px; background: linear-gradient(to right, transparent, rgba(130,80,180,0.25), transparent); margin: 2rem 0; }
+
+    .overview {
+      background: rgba(10,5,18,0.6);
+      border: 1px solid var(--purple-border);
+      padding: 1.4rem 1.6rem;
+      margin-bottom: 2rem;
+    }
+    .overview-title { font-size: 0.44rem; color: var(--purple-dim); letter-spacing: 0.25em; text-transform: uppercase; margin-bottom: 0.9rem; padding-bottom: 0.4rem; border-bottom: 1px solid rgba(130,80,180,0.12); }
+    .overview-text { font-size: 0.5rem; color: var(--text); letter-spacing: 0.04em; line-height: 1.9; }
+    .overview-text p { margin-bottom: 0.6rem; }
+    .overview-text p:last-child { margin-bottom: 0; }
+
+    .nav-cards-title { font-size: 0.44rem; color: var(--purple-dim); letter-spacing: 0.25em; text-transform: uppercase; margin-bottom: 1rem; }
+
+    .nav-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem;
+      margin-bottom: 2rem;
+    }
+    .nav-card {
+      background: rgba(12,6,20,0.7);
+      border: 1px solid rgba(130,80,180,0.22);
+      padding: 1.1rem 1.2rem;
+      text-decoration: none;
+      transition: border-color 0.2s, background 0.2s;
+      display: block;
+      position: relative;
+      overflow: hidden;
+    }
+    .nav-card::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(130,80,180,0.04) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .nav-card:hover { border-color: rgba(180,130,220,0.5); background: rgba(18,10,30,0.85); }
+    .nav-card-title { font-family: 'Cinzel', serif; font-size: 0.65rem; color: var(--purple-bright); letter-spacing: 0.2em; margin-bottom: 0.4rem; }
+    .nav-card-sub { font-size: 0.4rem; color: var(--text-dim); letter-spacing: 0.15em; margin-bottom: 0.7rem; line-height: 1.6; }
+    .nav-card-arrow { font-size: 0.42rem; color: rgba(130,80,180,0.4); letter-spacing: 0.1em; transition: color 0.2s; }
+    .nav-card:hover .nav-card-arrow { color: var(--purple); }
+
+    .divisions {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.6rem;
+      margin-bottom: 2rem;
+    }
+    .division-item {
+      background: rgba(10,5,18,0.6);
+      border: 1px solid rgba(130,80,180,0.15);
+      padding: 0.8rem 1rem;
+    }
+    .division-name { font-size: 0.44rem; color: var(--purple); letter-spacing: 0.15em; margin-bottom: 0.3rem; }
+    .division-desc { font-size: 0.4rem; color: var(--text-dim); letter-spacing: 0.08em; line-height: 1.6; }
+
+    .footer-line {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(130,80,180,0.1);
+    }
+    .footer-text { font-size: 0.4rem; color: rgba(110,70,155,0.35); letter-spacing: 0.18em; }
+  </style>
+</head>
+<body>
+
+<div class="stars" id="stars"></div>
+<div class="corner corner-tl"></div>
+<div class="corner corner-tr"></div>
+<div class="corner corner-bl"></div>
+<div class="corner corner-br"></div>
+
+<nav class="topbar">
+  <a class="topbar-back" href="../index.html">← Home</a>
+  <div class="topbar-divider"></div>
+  <span class="topbar-title">Mirror Protocol</span>
+</nav>
+
+<div class="main">
+
+  <div class="company-header">
+    <div class="flag-container">
+      <canvas id="flag" width="270" height="180"></canvas>
+      <div class="flag-corner tl"></div>
+      <div class="flag-corner tr"></div>
+      <div class="flag-corner bl"></div>
+      <div class="flag-corner br"></div>
+    </div>
+    <div class="header-text">
+      <div class="company-name">Mirror Protocol</div>
+      <div class="company-subtitle">Intelligence Contractor — Infiltration Specialists — Nominally Independent</div>
+      <div class="company-motto">
+        "Nul vel, allar krathen"
+        <span>— "Unseen, all-knowing"</span>
+      </div>
+      <div class="quick-facts">
+        <div class="fact-item">
+          <div class="fact-label">Founded</div>
+          <div class="fact-value">Post-Catastrophe — origins classified</div>
+        </div>
+        <div class="fact-item">
+          <div class="fact-label">Founder</div>
+          <div class="fact-value">Noctivex — name withheld</div>
+        </div>
+        <div class="fact-item">
+          <div class="fact-label">Current Leader</div>
+          <div class="fact-value">The Founder — title undisclosed</div>
+        </div>
+        <div class="fact-item">
+          <div class="fact-label">Headquarters</div>
+          <div class="fact-value">Apostolos — location classified</div>
+        </div>
+        <div class="fact-item">
+          <div class="fact-label">Personnel</div>
+          <div class="fact-value">Unknown — estimates unavailable</div>
+        </div>
+        <div class="fact-item">
+          <div class="fact-label">Demographics</div>
+          <div class="fact-value">~80% Noctivex — remainder undisclosed</div>
+        </div>
+        <div class="fact-item">
+          <div class="fact-label">Allegiance</div>
+          <div class="fact-value">Independent — occasional Institute contracts</div>
+        </div>
+        <div class="fact-item">
+          <div class="fact-label">Operational Zone</div>
+          <div class="fact-value">All of Apostolos — suspected beyond</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="overview">
+    <div class="overview-title">Overview</div>
+    <div class="overview-text">
+      <p>Mirror Protocol is not a company in the conventional sense. It does not maintain a public headquarters, does not publish a personnel count, and does not formally acknowledge most of its operations. What is known is pieced together from its clients, its occasional public-facing contracts, and the quiet fear it commands in intelligence circles across Apostolos.</p>
+      <p>The organisation was founded by a Noctivex whose name has never been officially recorded — a deliberate choice. What began as a Noctivex rights movement, pushing back against the Institute's engineered subjugation of the species, gradually evolved into something altogether different. Mirror Protocol concluded that the most effective way to protect Noctivex interests was not protest or political pressure, but leverage. Information is leverage. Infiltration is leverage. The ability to vanish and reappear anywhere, undetected, is the most profound leverage of all.</p>
+      <p>Today, Mirror Protocol operates as an intelligence contractor and infiltration specialist, offering its services to clients who can meet its price and its standards. The Institute is among those clients, though the relationship is one of mutual wariness rather than alignment. Mirror Protocol does not answer to the Archons, does not submit to PICS oversight, and has never been successfully surveilled. For an organisation built on the premise that nothing stays hidden, this is a point of considerable institutional pride.</p>
+      <p>The Founder still leads. How long they have led, and how they have remained effective across the decades since the organisation's founding, is not publicly known.</p>
+    </div>
+  </div>
+
+  <div class="nav-cards-title">Divisions</div>
+  <div class="divisions">
+    <div class="division-item">
+      <div class="division-name">Intelligence</div>
+      <div class="division-desc">Information collection, analysis, and brokering. The organisation's core capability and primary revenue source.</div>
+    </div>
+    <div class="division-item">
+      <div class="division-name">Field Operations</div>
+      <div class="division-desc">Infiltration, extraction, and direct action. Operates exclusively via Noctivex agents and stealth-rated assets.</div>
+    </div>
+    <div class="division-item">
+      <div class="division-name">Stealth R&D</div>
+      <div class="division-desc">Development of proprietary stealth technology. Produces the MPC suit line and the Vaethos-Nul infiltrator platform.</div>
+    </div>
+    <div class="division-item">
+      <div class="division-name">External Relations</div>
+      <div class="division-desc">Manages client contracts and inter-company dealings. The only division with a public-facing presence.</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="nav-cards-title">Archive Sections</div>
+  <div class="nav-cards">
+    <a class="nav-card" href="mp-characters.html">
+      <div class="nav-card-title">Characters</div>
+      <div class="nav-card-sub">The Founder and key operational personnel</div>
+      <div class="nav-card-arrow">Access →</div>
+    </a>
+    <a class="nav-card" href="mp-ships.html">
+      <div class="nav-card-title">Ships & Fleet</div>
+      <div class="nav-card-sub">Stealth vessel registry and infiltrator platform specs</div>
+      <div class="nav-card-arrow">Access →</div>
+    </a>
+    <a class="nav-card" href="mp-technology.html">
+      <div class="nav-card-title">Technology</div>
+      <div class="nav-card-sub">MPC suit line, stealth systems and proprietary equipment</div>
+      <div class="nav-card-arrow">Access →</div>
+    </a>
+    <a class="nav-card" href="mp-military.html">
+      <div class="nav-card-title">Military</div>
+      <div class="nav-card-sub">Field operations doctrine, agent structure, and known deployments</div>
+      <div class="nav-card-arrow">Access →</div>
+    </a>
+    <a class="nav-card" href="mp-lore.html">
+      <div class="nav-card-title">Lore & History</div>
+      <div class="nav-card-sub">Origins, the rights movement, and the transition to contractor</div>
+      <div class="nav-card-arrow">Access →</div>
+    </a>
+    <a class="nav-card" href="mp-leadership.html">
+      <div class="nav-card-title">Leadership</div>
+      <div class="nav-card-sub">The Founder — classified profile and known directives</div>
+      <div class="nav-card-arrow">Access →</div>
+    </a>
+  </div>
+
+  <div class="footer-line">
+    <span class="footer-text">Mirror Protocol — Apostolos Archive</span>
+    <span class="footer-text">"Nul vel, allar krathen"</span>
+    <span class="footer-text">Classification: Restricted</span>
+  </div>
+
+</div>
+
+<script>
+// ── FLAG CANVAS ──────────────────────────────────
+const fc = document.getElementById('flag');
+const fctx = fc.getContext('2d');
+const FW = fc.width, FH = fc.height;
+const cx = FW/2, cy = FH/2;
+
+// Background
+fctx.fillStyle = '#050308';
+fctx.fillRect(0, 0, FW, FH);
+
+// Subtle grid
+fctx.strokeStyle = 'rgba(130,80,180,0.06)';
+fctx.lineWidth = 0.5;
+for (let x = 0; x < FW; x += 18) { fctx.beginPath(); fctx.moveTo(x,0); fctx.lineTo(x,FH); fctx.stroke(); }
+for (let y = 0; y < FH; y += 18) { fctx.beginPath(); fctx.moveTo(0,y); fctx.lineTo(FW,y); fctx.stroke(); }
+
+// Outer border
+fctx.strokeStyle = 'rgba(130,80,180,0.35)';
+fctx.lineWidth = 1;
+fctx.strokeRect(4, 4, FW-8, FH-8);
+
+// Outer ring
+const R = Math.min(FW,FH) * 0.3;
+fctx.beginPath();
+fctx.arc(cx, cy, R, 0, Math.PI*2);
+fctx.strokeStyle = 'rgba(130,80,180,0.5)';
+fctx.lineWidth = 1;
+fctx.stroke();
+
+// Mirror line — horizontal axis
+fctx.beginPath();
+fctx.moveTo(cx - R, cy);
+fctx.lineTo(cx + R, cy);
+fctx.strokeStyle = 'rgba(160,110,210,0.4)';
+fctx.lineWidth = 0.7;
+fctx.setLineDash([2,4]);
+fctx.stroke();
+fctx.setLineDash([]);
+
+// Upper triangle (solid)
+fctx.beginPath();
+fctx.moveTo(cx, cy - R*0.72);
+fctx.lineTo(cx - R*0.52, cy);
+fctx.lineTo(cx + R*0.52, cy);
+fctx.closePath();
+fctx.fillStyle = 'rgba(130,80,180,0.18)';
+fctx.fill();
+fctx.strokeStyle = 'rgba(160,110,210,0.7)';
+fctx.lineWidth = 1.2;
+fctx.stroke();
+
+// Lower triangle (reflection — inverted)
+fctx.beginPath();
+fctx.moveTo(cx, cy + R*0.72);
+fctx.lineTo(cx - R*0.52, cy);
+fctx.lineTo(cx + R*0.52, cy);
+fctx.closePath();
+fctx.fillStyle = 'rgba(100,55,155,0.12)';
+fctx.fill();
+fctx.strokeStyle = 'rgba(130,80,180,0.45)';
+fctx.lineWidth = 0.8;
+fctx.stroke();
+
+// Core dot
+fctx.beginPath();
+fctx.arc(cx, cy, 3.5, 0, Math.PI*2);
+fctx.fillStyle = 'rgba(190,140,240,0.85)';
+fctx.fill();
+
+// Corner accents
+[[8,8],[FW-8,8],[8,FH-8],[FW-8,FH-8]].forEach(([ax,ay]) => {
+  fctx.beginPath();
+  fctx.arc(ax, ay, 1.5, 0, Math.PI*2);
+  fctx.fillStyle = 'rgba(130,80,180,0.4)';
+  fctx.fill();
+});
+
+// ── STARS ───────────────────────────────────────
+const s = document.getElementById('stars');
+for (let i = 0; i < 200; i++) {
+  const el = document.createElement('div');
+  el.className = 'star';
+  const sz = Math.random() * 1.2 + 0.2;
+  el.style.cssText = `width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*100}%;opacity:${Math.random()*0.3+0.05};`;
+  s.appendChild(el);
+}
+</script>
+
+</body>
+</html>
