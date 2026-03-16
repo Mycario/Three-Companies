@@ -226,5 +226,11 @@
     "e": "unseen",
     "p": "THAKN-ELV",
     "c": "custom"
+  },
+  {
+    "v": "virimi",
+    "e": "seeing",
+    "p": "VIR-IMI",
+    "c": "custom"
   }
 ]
