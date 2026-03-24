@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="../favicon.png">
+  <title>PI Characters — Apostolos Archive</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Share+Tech+Mono&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #020408;
+      --blue: #7ab8ff;
+      --blue-bright: #a8d0ff;
+      --blue-dim: rgba(26,74,138,0.65);
+      --blue-border: rgba(26,74,138,0.22);
+      --text: rgba(122,184,255,0.85);
+      --text-dim: rgba(60,120,200,0.65);
+      --panel: rgba(10,20,40,0.75);
+    }
+
+    html, body { width: 100%; height: 100%; overflow: hidden; background: var(--bg); font-family: 'Share Tech Mono', monospace; color: var(--blue); }
+
+    .stars { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+    .star { position: absolute; background: white; border-radius: 50%; }
+
+    .corner { position: fixed; width: 20px; height: 20px; border-color: rgba(26,74,138,0.25); border-style: solid; z-index: 10; pointer-events: none; }
+    .corner-tl { top: 12px; left: 12px; border-width: 1px 0 0 1px; }
+    .corner-tr { top: 12px; right: 12px; border-width: 1px 1px 0 0; }
+    .corner-bl { bottom: 12px; left: 12px; border-width: 0 0 1px 1px; }
+    .corner-br { bottom: 12px; right: 12px; border-width: 0 1px 1px 0; }
+
+    .topbar {
+      position: fixed; top: 0; left: 0; right: 0; height: 48px;
+      background: rgba(2,4,8,0.92); border-bottom: 1px solid rgba(26,74,138,0.2);
+      display: flex; align-items: center; padding: 0 2rem; gap: 1.5rem;
+      z-index: 10; backdrop-filter: blur(6px);
+    }
+    .topbar-back { font-size: 0.5rem; color: rgba(26,74,138,0.7); letter-spacing: 0.2em; text-decoration: none; transition: color 0.2s; }
+    .topbar-back:hover { color: var(--blue); }
+    .topbar-divider { width: 1px; height: 16px; background: rgba(26,74,138,0.3); }
+    .topbar-title { font-family: 'Cinzel', serif; font-size: 0.7rem; color: var(--blue); letter-spacing: 0.3em; }
+
+    .slider-outer { position: fixed; top: 48px; left: 0; right: 0; bottom: 0; overflow: hidden; z-index: 1; }
+    .slide-track { display: flex; height: 100%; transition: transform 0.55s cubic-bezier(0.77,0,0.18,1); will-change: transform; }
+    .slide { flex-shrink: 0; display: flex; align-items: center; justify-content: center; padding: 20px 72px 36px; height: 100%; }
+
+    .char-card {
+      width: 100%; max-width: 1060px; height: 100%;
+      display: grid; grid-template-rows: auto 1fr;
+      background: rgba(6,14,34,0.6); border: 1px solid var(--blue-border); overflow: hidden;
+    }
+
+    .card-header {
+      padding: 1rem 1.6rem 0.9rem; border-bottom: 1px solid rgba(26,74,138,0.18);
+      display: flex; align-items: baseline; gap: 1.5rem; flex-shrink: 0;
+    }
+    .char-name { font-family: 'Cinzel', serif; font-size: 1.4rem; color: var(--blue); letter-spacing: 0.3em; }
+    .char-title { font-size: 0.48rem; color: var(--blue-dim); letter-spacing: 0.2em; }
+    .char-status { margin-left: auto; font-size: 0.42rem; color: var(--blue-dim); letter-spacing: 0.2em; border: 1px solid rgba(26,74,138,0.25); padding: 3px 10px; white-space: nowrap; }
+    .char-status.classified { color: rgba(255,120,80,0.7); border-color: rgba(255,120,80,0.3); }
+
+    .card-body { display: grid; grid-template-columns: 250px 1fr; overflow: hidden; min-height: 0; }
+
+    .col-left { border-right: 1px solid rgba(26,74,138,0.18); display: flex; flex-direction: column; overflow: hidden; min-height: 0; }
+
+    .portrait-box {
+      width: 100%; aspect-ratio: 1 / 1; background: rgba(4,10,28,0.8);
+      border-bottom: 1px solid rgba(26,74,138,0.18);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; position: relative; overflow: hidden;
+    }
+    .portrait-box img { width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; }
+    .portrait-placeholder { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.5rem; width: 100%; height: 100%; }
+    .portrait-placeholder .ph-icon { width: 48px; height: 48px; border: 1px solid rgba(26,74,138,0.3); display: flex; align-items: center; justify-content: center; color: rgba(26,74,138,0.4); font-size: 1.2rem; }
+    .portrait-placeholder .ph-text { font-size: 0.42rem; color: rgba(26,74,138,0.35); letter-spacing: 0.18em; text-align: center; }
+    .portrait-corner { position: absolute; width: 10px; height: 10px; border-color: rgba(26,74,138,0.4); border-style: solid; pointer-events: none; }
+    .portrait-corner.tl { top: 6px; left: 6px; border-width: 1px 0 0 1px; }
+    .portrait-corner.tr { top: 6px; right: 6px; border-width: 1px 1px 0 0; }
+    .portrait-corner.bl { bottom: 6px; left: 6px; border-width: 0 0 1px 1px; }
+    .portrait-corner.br { bottom: 6px; right: 6px; border-width: 0 1px 1px 0; }
+
+    .dossier-stats { flex: 1; padding: 0.8rem 1rem; display: flex; flex-direction: column; overflow-y: auto; min-height: 0; scrollbar-width: thin; scrollbar-color: rgba(26,74,138,0.3) rgba(4,10,28,0.6); }
+    .dossier-stats::-webkit-scrollbar { width: 4px; }
+    .dossier-stats::-webkit-scrollbar-track { background: rgba(4,10,28,0.6); }
+    .dossier-stats::-webkit-scrollbar-thumb { background: rgba(26,74,138,0.3); }
+
+    .stat-group-title { font-size: 0.38rem; color: rgba(26,74,138,0.5); letter-spacing: 0.2em; text-transform: uppercase; margin: 0.6rem 0 0.3rem; padding-bottom: 0.2rem; border-bottom: 1px solid rgba(26,74,138,0.1); }
+    .stat-group-title:first-child { margin-top: 0; }
+    .stat-item { display: flex; justify-content: space-between; align-items: baseline; padding: 0.3rem 0; border-bottom: 1px solid rgba(26,74,138,0.08); gap: 0.5rem; }
+    .stat-item:last-child { border-bottom: none; }
+    .stat-label { font-size: 0.38rem; color: var(--text-dim); letter-spacing: 0.12em; flex-shrink: 0; }
+    .stat-value { font-size: 0.42rem; color: var(--text); letter-spacing: 0.06em; text-align: right; }
+    .stat-value.threat-low { color: rgba(100,220,140,0.8); }
+    .stat-value.threat-med { color: rgba(255,200,60,0.8); }
+    .stat-value.threat-high { color: rgba(255,120,60,0.8); }
+    .stat-value.threat-critical { color: rgba(255,60,60,0.9); }
+    .stat-value.redacted { background: rgba(26,74,138,0.15); color: transparent; user-select: none; padding: 0 4px; }
+
+    .col-right { overflow-y: auto; padding: 1.1rem 1.4rem; display: flex; flex-direction: column; gap: 1rem; min-height: 0; scrollbar-width: thin; scrollbar-color: rgba(26,74,138,0.3) rgba(4,10,28,0.6); }
+    .col-right::-webkit-scrollbar { width: 4px; }
+    .col-right::-webkit-scrollbar-track { background: rgba(4,10,28,0.6); }
+    .col-right::-webkit-scrollbar-thumb { background: rgba(26,74,138,0.3); }
+
+    .info-section-title { font-size: 0.44rem; color: var(--blue-dim); letter-spacing: 0.22em; text-transform: uppercase; margin-bottom: 0.5rem; padding-bottom: 0.28rem; border-bottom: 1px solid rgba(26,74,138,0.12); }
+    .info-text { font-size: 0.5rem; color: var(--text); letter-spacing: 0.04em; line-height: 1.85; }
+    .info-text p { margin-bottom: 0.45rem; }
+    .info-text p:last-child { margin-bottom: 0; }
+
+    .trait-list { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.2rem; }
+    .trait-pill { font-size: 0.4rem; letter-spacing: 0.12em; padding: 3px 10px; border: 1px solid rgba(26,74,138,0.28); color: rgba(100,160,255,0.7); }
+
+    /* ADD SLIDE */
+    .add-card { width: 100%; max-width: 1060px; height: 100%; background: rgba(6,14,34,0.6); border: 1px solid var(--blue-border); display: flex; flex-direction: column; overflow: hidden; }
+    .add-card-header { padding: 1rem 1.6rem 0.9rem; border-bottom: 1px solid rgba(26,74,138,0.18); display: flex; align-items: baseline; gap: 1.5rem; flex-shrink: 0; }
+    .add-card-title { font-family: 'Cinzel', serif; font-size: 1.1rem; color: var(--blue); letter-spacing: 0.3em; }
+    .add-card-badge { margin-left: auto; font-size: 0.38rem; color: rgba(80,200,120,0.7); letter-spacing: 0.15em; }
+
+    .add-card-body { flex: 1; overflow-y: auto; padding: 1.2rem 1.6rem; scrollbar-width: thin; scrollbar-color: rgba(26,74,138,0.3) rgba(4,10,28,0.6); }
+    .add-card-body::-webkit-scrollbar { width: 4px; }
+    .add-card-body::-webkit-scrollbar-track { background: rgba(4,10,28,0.6); }
+    .add-card-body::-webkit-scrollbar-thumb { background: rgba(26,74,138,0.3); }
+
+    .add-lock { background: rgba(4,10,28,0.8); border: 1px solid var(--blue-border); padding: 1.2rem 1.4rem; display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+    .add-lock-label { font-size: 0.44rem; color: var(--blue-dim); letter-spacing: 0.18em; flex: 1; }
+    .add-lock-input { background: rgba(2,4,12,0.8); border: 1px solid rgba(26,74,138,0.25); color: var(--blue); font-family: 'Share Tech Mono', monospace; font-size: 0.46rem; letter-spacing: 0.1em; padding: 0.4rem 0.7rem; outline: none; width: 180px; }
+    .add-lock-btn { background: rgba(26,74,138,0.15); border: 1px solid rgba(26,74,138,0.3); color: var(--blue); font-family: 'Share Tech Mono', monospace; font-size: 0.44rem; letter-spacing: 0.15em; padding: 0.4rem 1rem; cursor: pointer; }
+    .add-lock-btn:hover { background: rgba(26,74,138,0.28); }
+    .lock-error { font-size: 0.4rem; color: rgba(255,80,80,0.7); letter-spacing: 0.12em; }
+
+    .add-form { display: none; }
+    .add-form.unlocked { display: block; }
+
+    .token-row { display: flex; gap: 0.6rem; align-items: center; margin-bottom: 1.2rem; padding: 0.8rem; background: rgba(2,4,12,0.8); border: 1px solid rgba(26,74,138,0.3); }
+    .token-row span { font-size: 0.44rem; color: var(--blue-dim); letter-spacing: 0.15em; flex: 1; }
+    .token-input { background: rgba(2,4,12,0.9); border: 1px solid rgba(26,74,138,0.3); color: var(--blue); font-family: 'Share Tech Mono', monospace; font-size: 0.44rem; padding: 0.4rem 0.7rem; outline: none; width: 240px; }
+    .token-btn { background: rgba(26,74,138,0.2); border: 1px solid rgba(58,138,255,0.4); color: var(--blue-bright); font-family: 'Share Tech Mono', monospace; font-size: 0.44rem; letter-spacing: 0.15em; padding: 0.4rem 0.9rem; cursor: pointer; }
+    .token-status { font-size: 0.4rem; color: rgba(80,200,120,0.8); letter-spacing: 0.12em; white-space: nowrap; min-width: 120px; }
+
+    .form-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; margin-bottom: 1rem; }
+    .section-label { font-size: 0.38rem; color: rgba(26,74,138,0.5); letter-spacing: 0.2em; text-transform: uppercase; margin: 1rem 0 0.5rem; padding-bottom: 0.2rem; border-bottom: 1px solid rgba(26,74,138,0.1); }
+    .section-label:first-child { margin-top: 0; }
+    .form-field { display: flex; flex-direction: column; gap: 0.3rem; margin-bottom: 0.6rem; }
+    .form-label { font-size: 0.38rem; color: var(--text-dim); letter-spacing: 0.15em; }
+    .form-input { background: rgba(2,4,12,0.8); border: 1px solid rgba(26,74,138,0.22); color: var(--blue); font-family: 'Share Tech Mono', monospace; font-size: 0.44rem; letter-spacing: 0.06em; padding: 0.4rem 0.65rem; outline: none; width: 100%; transition: border-color 0.2s; }
+    .form-input:focus { border-color: rgba(58,138,255,0.45); }
+    .form-input::placeholder { color: rgba(26,74,138,0.3); }
+    .form-textarea { background: rgba(2,4,12,0.8); border: 1px solid rgba(26,74,138,0.22); color: var(--blue); font-family: 'Share Tech Mono', monospace; font-size: 0.44rem; letter-spacing: 0.06em; padding: 0.4rem 0.65rem; outline: none; width: 100%; resize: vertical; min-height: 80px; line-height: 1.7; transition: border-color 0.2s; }
+    .form-textarea:focus { border-color: rgba(58,138,255,0.45); }
+    .form-textarea::placeholder { color: rgba(26,74,138,0.3); }
+    .form-note { font-size: 0.38rem; color: rgba(26,74,138,0.4); letter-spacing: 0.1em; margin-bottom: 1rem; line-height: 1.7; }
+
+    .submit-row { display: flex; align-items: center; gap: 1rem; margin-top: 1.2rem; padding-top: 1rem; border-top: 1px solid rgba(26,74,138,0.1); }
+    .submit-btn { background: rgba(26,74,138,0.2); border: 1px solid rgba(58,138,255,0.4); color: var(--blue-bright); font-family: 'Share Tech Mono', monospace; font-size: 0.46rem; letter-spacing: 0.2em; padding: 0.55rem 1.4rem; cursor: pointer; transition: background 0.2s; }
+    .submit-btn:hover { background: rgba(26,74,138,0.35); }
+    .submit-msg { font-size: 0.42rem; letter-spacing: 0.12em; }
+    .submit-msg.success { color: rgba(80,200,120,0.8); }
+    .submit-msg.error { color: rgba(255,80,80,0.7); }
+    .submit-msg.saving { color: rgba(255,200,60,0.8); }
+
+    .nav-arrow { position: fixed; top: 50%; transform: translateY(-50%); z-index: 10; background: rgba(4,8,20,0.7); border: 1px solid rgba(26,74,138,0.25); width: 40px; height: 72px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background 0.2s, border-color 0.2s, opacity 0.2s; backdrop-filter: blur(4px); }
+    .nav-arrow:hover { background: rgba(6,14,34,0.85); border-color: rgba(58,138,255,0.45); }
+    .nav-arrow.disabled { opacity: 0.15; pointer-events: none; }
+    .nav-arrow.left { left: 16px; }
+    .nav-arrow.right { right: 16px; }
+    .nav-arrow svg { width: 14px; height: 14px; stroke: rgba(26,74,138,0.7); fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+
+    .page-dots { position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; z-index: 10; }
+    .dot { width: 5px; height: 5px; border: 1px solid rgba(26,74,138,0.35); transition: background 0.3s, border-color 0.3s; cursor: pointer; }
+    .dot.active { background: rgba(26,74,138,0.6); border-color: rgba(58,138,255,0.6); }
+    .char-counter { position: fixed; bottom: 18px; right: 32px; font-size: 0.42rem; color: rgba(26,74,138,0.4); letter-spacing: 0.2em; z-index: 10; }
+  </style>
+</head>
+<body>
+
+<div class="stars" id="stars"></div>
+<div class="corner corner-tl"></div>
+<div class="corner corner-tr"></div>
+<div class="corner corner-bl"></div>
+<div class="corner corner-br"></div>
+
+<nav class="topbar">
+  <a class="topbar-back" href="../index.html">← Home</a>
+  <div class="topbar-divider"></div>
+  <a class="topbar-back" href="pneuma-institute.html">← Pneuma Institute</a>
+  <div class="topbar-divider"></div>
+  <span class="topbar-title">Characters</span>
+</nav>
+
+<div class="slider-outer">
+  <div class="slide-track" id="track">
+
+    <!-- SLIDE 1 — KAIA VAELOR -->
+    <div class="slide" style="width:100vw;">
+      <div class="char-card">
+        <div class="card-header">
+          <span class="char-name">Kaia Vaelor</span>
+          <span class="char-title">Chief Diplomatic Officer — Pneuma Institute</span>
+          <span class="char-status">Active — CDO</span>
+        </div>
+        <div class="card-body">
+          <div class="col-left">
+            <div class="portrait-box">
+              <div class="portrait-placeholder">
+                <div class="ph-icon">◈</div>
+                <div class="ph-text">PORTRAIT<br>PENDING</div>
+              </div>
+              <div class="portrait-corner tl"></div><div class="portrait-corner tr"></div>
+              <div class="portrait-corner bl"></div><div class="portrait-corner br"></div>
+            </div>
+            <div class="dossier-stats">
+              <div class="stat-group-title">Personal</div>
+              <div class="stat-item"><span class="stat-label">Species</span><span class="stat-value">Avriethrax</span></div>
+              <div class="stat-item"><span class="stat-label">Sex</span><span class="stat-value">Female</span></div>
+              <div class="stat-item"><span class="stat-label">Age</span><span class="stat-value">24</span></div>
+              <div class="stat-item"><span class="stat-label">Height</span><span class="stat-value">3'11"</span></div>
+              <div class="stat-item"><span class="stat-label">Weight</span><span class="stat-value">110kg</span></div>
+              <div class="stat-item"><span class="stat-label">Appearance</span><span class="stat-value">Purple-green abdominal scales, white-grey feathers, four white eyes</span></div>
+
+              <div class="stat-group-title">Role</div>
+              <div class="stat-item"><span class="stat-label">Title</span><span class="stat-value">Chief Diplomatic Officer</span></div>
+              <div class="stat-item"><span class="stat-label">Rank</span><span class="stat-value">Senior Institute Officer</span></div>
+              <div class="stat-item"><span class="stat-label">Choir</span><span class="stat-value">Fifth Choir — Vector Operations Command</span></div>
+              <div class="stat-item"><span class="stat-label">Allegiance</span><span class="stat-value">Pneuma Institute</span></div>
+
+              <div class="stat-group-title">Background</div>
+              <div class="stat-item"><span class="stat-label">Origin</span><span class="stat-value">Born within the Institute — egg proximity incident</span></div>
+              <div class="stat-item"><span class="stat-label">Condition</span><span class="stat-value">Congenital blindness — Seraph-adjacent psionic enhancement</span></div>
+              <div class="stat-item"><span class="stat-label">Psionic Rating</span><span class="stat-value">Exceptional — among highest recorded in Institute</span></div>
+              <div class="stat-item"><span class="stat-label">Seraph Exposure</span><span class="stat-value">Seraph Prime — in ovo — classified</span></div>
+
+              <div class="stat-group-title">Threat Assessment</div>
+              <div class="stat-item"><span class="stat-label">Physical</span><span class="stat-value threat-med">Medium</span></div>
+              <div class="stat-item"><span class="stat-label">Political</span><span class="stat-value threat-high">High</span></div>
+              <div class="stat-item"><span class="stat-label">Psionic</span><span class="stat-value threat-critical">Critical</span></div>
+              <div class="stat-item"><span class="stat-label">Diplomatic</span><span class="stat-value threat-critical">Critical</span></div>
+              <div class="stat-item"><span class="stat-label">Overall</span><span class="stat-value threat-high">High</span></div>
+            </div>
+          </div>
+          <div class="col-right">
+            <div class="info-section">
+              <div class="info-section-title">Profile</div>
+              <div class="info-text">
+                <p>Kaia Vaelor is the Pneuma Institute's Chief Diplomatic Officer — the face the Institute presents to the outside world when it chooses to present one at all. She is female, Avriethrax, twenty-four years old, and by any objective measure one of the most psionically gifted individuals alive. Her abdominal scales carry the standard purple-green hue of mature Avriethrax, her feathers a blend of white and grey across her back, wings, crest and tail-tip. Her most immediately striking feature is her eyes — all four are white. Complete blindness, a rare genetic disorder affecting only a few thousand Avriethrax in recorded history.</p>
+                <p>She does not experience this as a disadvantage. Not anymore.</p>
+              </div>
+            </div>
+            <div class="info-section">
+              <div class="info-section-title">Psionic Ability — Echolocation</div>
+              <div class="info-text">
+                <p>Kaia is a powerful psion by any standard — and her blindness appears to be the cause rather than a coincidence. Most congenitally blind Avriethrax develop compensatory psionic sensitivity; Kaia developed something considerably beyond that. She perceives her environment through a form of psionic echolocation: a periodic low chirp, barely noticeable in conversation, that she amplifies psionically to paint a vivid spatial model of her surroundings directly within her mind. Effective range unaided: approximately 500km. With her experimental resonance harness, worn constantly, this range extends to near-planetary scale.</p>
+                <p>The limitations are real and she is aware of them. She perceives the world in high-resolution monochrome — no colour, ever. Fast-moving objects are difficult to track unless she is chirping continuously or they are producing sound. In silence, anything moving quietly can vanish from her perception entirely. She has adapted her environment and her habits accordingly, and after twenty-four years the adaptation is seamless enough that most people who work with her for the first time do not realise she is blind until someone tells them.</p>
+              </div>
+            </div>
+            <div class="info-section">
+              <div class="info-section-title">Personality</div>
+              <div class="info-text">
+                <p>Kaia presents as warm, curious, and openly playful — qualities that read as disarming in the context of the Institute, which produces few individuals with anything like a natural social register. She is genuinely fascinated by other species, by the differences in cognition and culture that make cross-species diplomacy the genuinely complex problem it is, and her curiosity is not performed. In conversation she is attentive in the way only someone who cannot rely on visual cues learns to be — she hears everything.</p>
+                <p>The playfulness is real. The seriousness underneath it is equally real. She has spent her career in an institution that runs on secrecy and classified information, and she has learned to be as careful with what she does not say as with what she does. In formal negotiations she shifts into a mode that her counterparts consistently describe as unsettling — precise, unhurried, apparently aware of things she should not be. Whether this is exceptional preparation, psionic perception, or something she absorbed from proximity to Seraph Prime before she hatched, no one has been able to determine.</p>
+              </div>
+            </div>
+            <div class="info-section">
+              <div class="info-section-title">Background — The Egg Incident</div>
+              <div class="info-text">
+                <p>Kaia's origin is one of the more unusual on record within the Institute, and the full details are classified above her own clearance level. The available version is this: her egg was accidentally displaced during a routine maintenance cycle in the Institute's deep-level infrastructure, rolling into an air duct and falling several levels before coming to rest in proximity to the Cruciform Vault — the sealed chamber 26km below the surface that contains the collapsed remains of Seraph Prime.</p>
+                <p>Standard protocol for any biological material exposed to the Vault's psionic pressure field is immediate quarantine and almost certain loss. Eggs do not survive. The psionic pressure alone is sufficient to cause embryonic collapse. Kaia survived. She hatched early, was found by a maintenance team who did not immediately understand what they had found, and was brought to the Institute's medical division with no expectation that she would be neurologically intact.</p>
+                <p>She was intact. She was blind. Her psionic architecture was, by every measure the Institute had, profoundly altered. The working theory — unconfirmed, classified at Archon level — is that some fragment of Seraph Prime's residual essence passed into the metaphysical substrate that Avriethrax draw their psionic ability from, permanently amplifying what would have been a standard psionic profile into something the Institute has not encountered before or since. The blindness is understood to be a side effect of the same event — the visual architecture simply did not survive the pressure. Everything else was restructured rather than destroyed.</p>
+              </div>
+            </div>
+            <div class="info-section">
+              <div class="info-section-title">Role within the Institute</div>
+              <div class="info-text">
+                <p>Kaia's appointment as CDO is, on the surface, an unusual choice. She is young, her background is anomalous, and her public profile — warm, personable, visibly blind — does not match the Institute's default presentation of itself. This is precisely why she was chosen. The Institute requires a face for external dealings that does not immediately communicate what the Institute actually is. Kaia provides that face with complete authenticity, because her warmth and curiosity are genuine.</p>
+                <p>What external parties consistently fail to account for is that she is also, at all times, operating at a psionic sensitivity level that gives her a read on the emotional state of every individual in a room. She does not use this intrusively — she is not a telepath in the classical sense — but she perceives stress, deception, and hesitation as clearly as most people read facial expressions. In negotiations, she knows when a counterpart is lying before they have finished the sentence.</p>
+              </div>
+            </div>
+            <div class="info-section">
+              <div class="info-section-title">Notable Traits</div>
+              <div class="trait-list">
+                <span class="trait-pill">Congenitally blind</span>
+                <span class="trait-pill">Exceptional psion</span>
+                <span class="trait-pill">Seraph Prime exposure — in ovo</span>
+                <span class="trait-pill">Psionic echolocation</span>
+                <span class="trait-pill">Genuinely curious</span>
+                <span class="trait-pill">Disarmingly warm exterior</span>
+                <span class="trait-pill">Perceives deception passively</span>
+                <span class="trait-pill">Resonance harness dependent</span>
+                <span class="trait-pill">Youngest CDO on record</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ADD NEW CHARACTER --><!-- ADD NEW CHARACTER -->
+    <div class="slide" style="width:100vw;">
+      <div class="add-card">
+        <div class="add-card-header">
+          <span class="add-card-title">Add New Character</span>
+          <span class="add-card-badge" id="addBadge" style="display:none;">✓ Authorised</span>
+        </div>
+        <div class="add-card-body">
+
+          <div class="add-lock" id="addLock">
+            <span class="add-lock-label">Character registry editing is restricted. Enter authorisation code to add entries.</span>
+            <input class="add-lock-input" type="password" id="lockInput" placeholder="Enter code..." onkeydown="if(event.key==='Enter')checkPassword()">
+            <button class="add-lock-btn" onclick="checkPassword()">Unlock</button>
+            <span class="lock-error" id="lockError"></span>
+          </div>
+
+          <div class="add-form" id="addForm">
+            <div class="token-row" id="tokenRow">
+              <span>GitHub token — paste once per session to enable saving</span>
+              <input type="password" id="tokenInput" class="token-input" placeholder="Paste GitHub token...">
+              <button class="token-btn" onclick="saveToken()">Save Token</button>
+              <span class="token-status" id="tokenStatus"></span>
+            </div>
+
+            <div class="form-note">Fill in all fields. Prose sections support multiple paragraphs — separate them with a blank line. Traits are comma-separated.</div>
+
+            <div class="section-label">Identity</div>
+            <div class="form-cols">
+              <div class="form-field"><label class="form-label">Name</label><input class="form-input" type="text" id="f-name" placeholder="e.g. Kaia Vaelor"></div>
+              <div class="form-field"><label class="form-label">Title / Role</label><input class="form-input" type="text" id="f-title" placeholder="e.g. Chief Diplomatic Officer — Pneuma Institute"></div>
+              <div class="form-field"><label class="form-label">Status</label><input class="form-input" type="text" id="f-status" placeholder="e.g. Active — CDO"></div>
+              <div class="form-field"><label class="form-label">Status Type</label>
+                <select class="form-input" id="f-status-type" style="cursor:pointer;background:rgba(2,4,12,0.8);">
+                  <option value="">Normal</option>
+                  <option value="classified">Classified (red)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="section-label">Personal</div>
+            <div class="form-cols">
+              <div class="form-field"><label class="form-label">Species</label><input class="form-input" type="text" id="f-species" placeholder="e.g. Avriethrax"></div>
+              <div class="form-field"><label class="form-label">Sex</label><input class="form-input" type="text" id="f-sex" placeholder="e.g. Female / Hermaphroditic"></div>
+              <div class="form-field"><label class="form-label">Age</label><input class="form-input" type="text" id="f-age" placeholder="e.g. 24"></div>
+              <div class="form-field"><label class="form-label">Appearance</label><input class="form-input" type="text" id="f-appearance" placeholder="e.g. Purple-green scales, white eyes"></div>
+              <div class="form-field"><label class="form-label">Height (optional)</label><input class="form-input" type="text" id="f-height" placeholder="e.g. 3'11&quot;"></div>
+              <div class="form-field"><label class="form-label">Weight (optional)</label><input class="form-input" type="text" id="f-weight" placeholder="e.g. 110kg"></div>
+            </div>
+
+            <div class="section-label">Role</div>
+            <div class="form-cols">
+              <div class="form-field"><label class="form-label">Title</label><input class="form-input" type="text" id="f-role-title" placeholder="e.g. Chief Diplomatic Officer"></div>
+              <div class="form-field"><label class="form-label">Rank</label><input class="form-input" type="text" id="f-rank" placeholder="e.g. Senior Institute Officer"></div>
+              <div class="form-field"><label class="form-label">Choir</label><input class="form-input" type="text" id="f-choir" placeholder="e.g. Fifth Choir — Vector Operations Command"></div>
+              <div class="form-field"><label class="form-label">Allegiance</label><input class="form-input" type="text" id="f-allegiance" placeholder="e.g. Pneuma Institute"></div>
+              <div class="form-field"><label class="form-label">Extra Role Field (optional)</label><input class="form-input" type="text" id="f-role-extra" placeholder="Label | Value"></div>
+            </div>
+
+            <div class="section-label">Background</div>
+            <div class="form-cols">
+              <div class="form-field"><label class="form-label">Origin</label><input class="form-input" type="text" id="f-origin" placeholder="e.g. Born within the Institute"></div>
+              <div class="form-field"><label class="form-label">Condition / Notes</label><input class="form-input" type="text" id="f-condition" placeholder="e.g. Congenital blindness"></div>
+              <div class="form-field"><label class="form-label">Psionic Rating</label><input class="form-input" type="text" id="f-psionic" placeholder="e.g. Exceptional"></div>
+              <div class="form-field"><label class="form-label">Seraph Exposure (optional)</label><input class="form-input" type="text" id="f-seraph" placeholder="e.g. Seraph Prime — classified"></div>
+              <div class="form-field"><label class="form-label">Extra Background Field (optional)</label><input class="form-input" type="text" id="f-bg-extra" placeholder="Label | Value"></div>
+            </div>
+
+            <div class="section-label">Threat Assessment</div>
+            <div class="form-cols">
+              <div class="form-field"><label class="form-label">Physical</label>
+                <select class="form-input" id="f-threat-physical" style="cursor:pointer;background:rgba(2,4,12,0.8);"><option value="">—</option><option value="threat-low">Low</option><option value="threat-med">Medium</option><option value="threat-high">High</option><option value="threat-critical">Critical</option></select>
+              </div>
+              <div class="form-field"><label class="form-label">Political</label>
+                <select class="form-input" id="f-threat-political" style="cursor:pointer;background:rgba(2,4,12,0.8);"><option value="">—</option><option value="threat-low">Low</option><option value="threat-med">Medium</option><option value="threat-high">High</option><option value="threat-critical">Critical</option></select>
+              </div>
+              <div class="form-field"><label class="form-label">Psionic</label>
+                <select class="form-input" id="f-threat-psionic" style="cursor:pointer;background:rgba(2,4,12,0.8);"><option value="">—</option><option value="threat-low">Low</option><option value="threat-med">Medium</option><option value="threat-high">High</option><option value="threat-critical">Critical</option></select>
+              </div>
+              <div class="form-field"><label class="form-label">Diplomatic</label>
+                <select class="form-input" id="f-threat-diplomatic" style="cursor:pointer;background:rgba(2,4,12,0.8);"><option value="">—</option><option value="threat-low">Low</option><option value="threat-med">Medium</option><option value="threat-high">High</option><option value="threat-critical">Critical</option></select>
+              </div>
+              <div class="form-field"><label class="form-label">Overall</label>
+                <select class="form-input" id="f-threat-overall" style="cursor:pointer;background:rgba(2,4,12,0.8);"><option value="">—</option><option value="threat-low">Low</option><option value="threat-med">Medium</option><option value="threat-high">High</option><option value="threat-critical">Critical</option></select>
+              </div>
+            </div>
+
+            <div class="section-label">Prose Sections</div>
+            <div class="form-note">Leave blank to omit. Separate paragraphs with a blank line.</div>
+            <div class="form-field"><label class="form-label">Profile</label><textarea class="form-textarea" id="f-profile" placeholder="General profile..."></textarea></div>
+            <div class="form-field"><label class="form-label">Personality</label><textarea class="form-textarea" id="f-personality" placeholder="Personality description..."></textarea></div>
+            <div class="form-field"><label class="form-label">Background / History</label><textarea class="form-textarea" id="f-background" placeholder="Background and history..."></textarea></div>
+            <div class="form-field"><label class="form-label">Skills / Abilities</label><textarea class="form-textarea" id="f-skills" placeholder="Skills and abilities..."></textarea></div>
+            <div class="form-field"><label class="form-label">Role within the Institute</label><textarea class="form-textarea" id="f-role-prose" placeholder="Their function and position..."></textarea></div>
+            <div class="form-field"><label class="form-label">Extra Section Title (optional)</label><input class="form-input" type="text" id="f-extra-title" placeholder="e.g. Relationship with the Archons"></div>
+            <div class="form-field"><label class="form-label">Extra Section Content (optional)</label><textarea class="form-textarea" id="f-extra-content" placeholder="Extra section text..."></textarea></div>
+            <div class="form-field"><label class="form-label">Notable Traits (comma-separated)</label><input class="form-input" type="text" id="f-traits" placeholder="e.g. Exceptional psion, Seraph-touched, Youngest CDO on record"></div>
+
+            <div class="submit-row">
+              <button class="submit-btn" onclick="submitCharacter()">Add to Registry</button>
+              <span class="submit-msg" id="submitMsg"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<button class="nav-arrow left disabled" id="arrow-left" onclick="navigate(-1)" aria-label="Previous">
+  <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+</button>
+<button class="nav-arrow right" id="arrow-right" onclick="navigate(1)" aria-label="Next">
+  <svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg>
+</button>
+
+<div class="page-dots" id="dots"></div>
+<div class="char-counter" id="counter"></div>
+
+<script>
+const GITHUB_USER = 'Mycario';
+const GITHUB_REPO = 'Three-Companies';
+const GITHUB_FILE = 'pages/pi-characters.html';
+const PW_HASH = 'f03f5a30f816e9cbafa420ccb21d425a4536cac9c63822fc6aac833f6cc23d2d';
+
+async function hashString(str) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+function saveToken() {
+  const val = document.getElementById('tokenInput').value.trim();
+  const status = document.getElementById('tokenStatus');
+  if (!val) { status.style.color='rgba(255,80,80,0.7)'; status.textContent='No token entered.'; return; }
+  sessionStorage.setItem('gh_token', val);
+  document.getElementById('tokenInput').value = '';
+  status.style.color='rgba(80,200,120,0.8)'; status.textContent='✓ Token saved for session.';
+  document.getElementById('tokenRow').style.borderColor='rgba(80,200,120,0.3)';
+}
+
+function getToken() {
+  const t = sessionStorage.getItem('gh_token');
+  if (!t) { const s=document.getElementById('tokenStatus'); if(s){s.style.color='rgba(255,80,80,0.7)';s.textContent='Paste your token above first.';} return null; }
+  return t;
+}
+
+function updateTokenUI() {
+  const status = document.getElementById('tokenStatus');
+  if (!status) return;
+  if (sessionStorage.getItem('gh_token')) {
+    status.style.color='rgba(80,200,120,0.8)'; status.textContent='✓ Token loaded from session.';
+    document.getElementById('tokenRow').style.borderColor='rgba(80,200,120,0.3)';
+  }
+}
+
+async function checkPassword() {
+  const val = document.getElementById('lockInput').value;
+  const hash = await hashString(val);
+  if (hash === PW_HASH) {
+    sessionStorage.setItem('pi_chars_auth', '1');
+    document.getElementById('addLock').style.display = 'none';
+    document.getElementById('addForm').classList.add('unlocked');
+    document.getElementById('addBadge').style.display = '';
+    updateTokenUI();
+  } else {
+    document.getElementById('lockError').textContent = 'Incorrect code.';
+    document.getElementById('lockInput').value = '';
+    setTimeout(() => document.getElementById('lockError').textContent = '', 2000);
+  }
+}
+
+if (sessionStorage.getItem('pi_chars_auth') === '1') {
+  document.getElementById('addLock').style.display = 'none';
+  document.getElementById('addForm').classList.add('unlocked');
+  document.getElementById('addBadge').style.display = '';
+  updateTokenUI();
+}
+
+let current = 0;
+const track   = document.getElementById('track');
+const dotsEl  = document.getElementById('dots');
+const arrowL  = document.getElementById('arrow-left');
+const arrowR  = document.getElementById('arrow-right');
+const counter = document.getElementById('counter');
+
+function rebuildSlider() {
+  const slides = track.querySelectorAll('.slide');
+  const total = slides.length;
+  slides.forEach(s => s.style.width = '100vw');
+  track.style.width = `${total * 100}vw`;
+  dotsEl.innerHTML = '';
+  for (let i = 0; i < total; i++) {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === current ? ' active' : '');
+    d.onclick = () => goTo(i);
+    dotsEl.appendChild(d);
+  }
+  updateNav(total);
+}
+
+function updateNav(total) {
+  track.style.transform = `translateX(-${current * (100 / total)}%)`;
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === current));
+  arrowL.classList.toggle('disabled', current === 0);
+  arrowR.classList.toggle('disabled', current === total - 1);
+  const isAdd = current === total - 1;
+  counter.textContent = isAdd ? '+ / ' + String(total - 1).padStart(2,'0') : String(current + 1).padStart(2,'0') + ' / ' + String(total - 1).padStart(2,'0');
+}
+
+function goTo(index) {
+  const total = track.querySelectorAll('.slide').length;
+  current = Math.max(0, Math.min(total - 1, index));
+  updateNav(total);
+}
+
+function navigate(dir) { goTo(current + dir); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowLeft') navigate(-1);
+  if (e.key === 'ArrowRight') navigate(1);
+});
+
+let touchX = null;
+document.addEventListener('touchstart', e => { touchX = e.touches[0].clientX; });
+document.addEventListener('touchend', e => {
+  if (touchX === null) return;
+  const diff = touchX - e.changedTouches[0].clientX;
+  if (Math.abs(diff) > 50) navigate(diff > 0 ? 1 : -1);
+  touchX = null;
+});
+
+rebuildSlider();
+
+function v(id) { return (document.getElementById(id)?.value || '').trim(); }
+
+function threatClass(val) {
+  return { 'threat-low':'Low','threat-med':'Medium','threat-high':'High','threat-critical':'Critical' }[val] || '';
+}
+
+function proseParagraphs(text) {
+  if (!text.trim()) return '';
+  return text.split(/\n\s*\n/).map(p => `<p>${p.trim().replace(/\n/g,' ')}</p>`).join('\n                ');
+}
+
+function makeSection(title, content) {
+  const paras = proseParagraphs(content);
+  if (!paras) return '';
+  return `
+            <div class="info-section">
+              <div class="info-section-title">${title}</div>
+              <div class="info-text">
+                ${paras}
+              </div>
+            </div>`;
+}
+
+function si(label, val) { return val ? `\n              <div class="stat-item"><span class="stat-label">${label}</span><span class="stat-value">${val}</span></div>` : ''; }
+function siT(label, cls) { return cls ? `\n              <div class="stat-item"><span class="stat-label">${label}</span><span class="stat-value ${cls}">${threatClass(cls)}</span></div>` : ''; }
+function parseExtra(raw) {
+  if (!raw) return '';
+  const parts = raw.split('|');
+  return parts.length >= 2 ? si(parts[0].trim(), parts.slice(1).join('|').trim()) : '';
+}
+
+function buildCharSlide() {
+  const name       = v('f-name');
+  const title      = v('f-title');
+  const status     = v('f-status');
+  const statusType = v('f-status-type');
+  const statusClass = statusType === 'classified' ? ' classified' : '';
+
+  const stats = `
+              <div class="stat-group-title">Personal</div>
+              ${si('Species', v('f-species'))}${si('Sex', v('f-sex'))}${si('Age', v('f-age'))}${si('Height', v('f-height'))}${si('Weight', v('f-weight'))}${si('Appearance', v('f-appearance'))}
+              <div class="stat-group-title">Role</div>
+              ${si('Title', v('f-role-title'))}${si('Rank', v('f-rank'))}${si('Choir', v('f-choir'))}${si('Allegiance', v('f-allegiance'))}${parseExtra(v('f-role-extra'))}
+              <div class="stat-group-title">Background</div>
+              ${si('Origin', v('f-origin'))}${si('Condition', v('f-condition'))}${si('Psionic Rating', v('f-psionic'))}${si('Seraph Exposure', v('f-seraph'))}${parseExtra(v('f-bg-extra'))}
+              <div class="stat-group-title">Threat Assessment</div>
+              ${siT('Physical', v('f-threat-physical'))}${siT('Political', v('f-threat-political'))}${siT('Psionic', v('f-threat-psionic'))}${siT('Diplomatic', v('f-threat-diplomatic'))}${siT('Overall', v('f-threat-overall'))}`;
+
+  const traitsRaw = v('f-traits');
+  const traitsHTML = traitsRaw ? `
+            <div class="info-section">
+              <div class="info-section-title">Notable Traits</div>
+              <div class="trait-list">
+                ${traitsRaw.split(',').map(t => `<span class="trait-pill">${t.trim()}</span>`).join('\n                ')}
+              </div>
+            </div>` : '';
+
+  const extraSection = (v('f-extra-title') && v('f-extra-content')) ? makeSection(v('f-extra-title'), v('f-extra-content')) : '';
+
+  return `
+    <!-- CHARACTER: ${name} -->
+    <div class="slide" style="width:100vw;">
+      <div class="char-card">
+        <div class="card-header">
+          <span class="char-name">${name}</span>
+          <span class="char-title">${title}</span>
+          <span class="char-status${statusClass}">${status}</span>
+        </div>
+        <div class="card-body">
+          <div class="col-left">
+            <div class="portrait-box">
+              <div class="portrait-placeholder">
+                <div class="ph-icon">◈</div>
+                <div class="ph-text">PORTRAIT<br>PENDING</div>
+              </div>
+              <div class="portrait-corner tl"></div><div class="portrait-corner tr"></div>
+              <div class="portrait-corner bl"></div><div class="portrait-corner br"></div>
+            </div>
+            <div class="dossier-stats">${stats}
+            </div>
+          </div>
+          <div class="col-right">${makeSection('Profile', v('f-profile'))}${makeSection('Personality', v('f-personality'))}${makeSection('Background', v('f-background'))}${makeSection('Skills & Abilities', v('f-skills'))}${makeSection('Role within the Institute', v('f-role-prose'))}${extraSection}${traitsHTML}
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+
+async function submitCharacter() {
+  const msg = document.getElementById('submitMsg');
+  const name = v('f-name');
+  if (!name) { msg.className='submit-msg error'; msg.textContent='Name is required.'; return; }
+
+  const token = getToken();
+  if (!token) return;
+
+  msg.className='submit-msg saving'; msg.textContent='Saving to repository...';
+
+  try {
+    const res = await fetch(
+      `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${GITHUB_FILE}`,
+      { headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' } }
+    );
+    if (!res.ok) throw new Error(`GitHub API error ${res.status}`);
+    const data = await res.json();
+    const sha = data.sha;
+    let html = decodeURIComponent(escape(atob(data.content.replace(/\n/g,''))));
+
+    const newSlide = buildCharSlide();
+    const marker = '    <!-- ADD NEW CHARACTER --><!-- ADD NEW CHARACTER -->';
+    if (!html.includes(marker)) throw new Error('Could not find insertion point in file.');
+    html = html.replace(marker, newSlide + '\n\n    <!-- ADD NEW CHARACTER --><!-- ADD NEW CHARACTER -->');
+
+    const encoded = btoa(unescape(encodeURIComponent(html)));
+    const putRes = await fetch(
+      `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${GITHUB_FILE}`,
+      {
+        method: 'PUT',
+        headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: `Add character: ${name}`, content: encoded, sha })
+      }
+    );
+    if (!putRes.ok) {
+      if (putRes.status === 401) { sessionStorage.removeItem('gh_token'); throw new Error('Token invalid or expired.'); }
+      const err = await putRes.json();
+      throw new Error(err.message || `GitHub API error ${putRes.status}`);
+    }
+
+    const addSlide = track.querySelector('.slide:last-child');
+    addSlide.insertAdjacentHTML('beforebegin', newSlide);
+    rebuildSlider();
+    goTo(track.querySelectorAll('.slide').length - 2);
+
+    ['f-name','f-title','f-status','f-species','f-sex','f-age','f-height','f-weight','f-appearance',
+     'f-role-title','f-rank','f-choir','f-allegiance','f-role-extra','f-origin','f-condition',
+     'f-psionic','f-seraph','f-bg-extra','f-profile','f-personality','f-background','f-skills',
+     'f-role-prose','f-extra-title','f-extra-content','f-traits'].forEach(id => {
+      const el = document.getElementById(id); if (el) el.value = '';
+    });
+    ['f-status-type','f-threat-physical','f-threat-political','f-threat-psionic',
+     'f-threat-diplomatic','f-threat-overall'].forEach(id => {
+      const el = document.getElementById(id); if (el) el.selectedIndex = 0;
+    });
+
+    msg.className='submit-msg success'; msg.textContent=`"${name}" added — live on next page load.`;
+    setTimeout(() => msg.textContent='', 5000);
+
+  } catch(err) {
+    msg.className='submit-msg error'; msg.textContent=`Save failed: ${err.message}`;
+  }
+}
+
+const s = document.getElementById('stars');
+for (let i = 0; i < 220; i++) {
+  const el = document.createElement('div'); el.className = 'star';
+  const sz = Math.random() * 1.4 + 0.3;
+  el.style.cssText = `width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*100}%;opacity:${Math.random()*0.5+0.1};`;
+  s.appendChild(el);
+}
+</script>
+</body>
+</html>

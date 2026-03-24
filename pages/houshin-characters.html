@@ -21,13 +21,7 @@
       --panel: rgba(20,15,5,0.75);
     }
 
-    html, body {
-      width: 100%; height: 100%;
-      overflow: hidden;
-      background: var(--bg);
-      font-family: 'Share Tech Mono', monospace;
-      color: var(--gold);
-    }
+    html, body { width: 100%; height: 100%; overflow: hidden; background: var(--bg); font-family: 'Share Tech Mono', monospace; color: var(--gold); }
 
     .stars { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
     .star { position: absolute; background: #c9a84c; border-radius: 50%; }
@@ -49,76 +43,38 @@
     .topbar-divider { width: 1px; height: 16px; background: rgba(180,140,50,0.25); }
     .topbar-title { font-family: 'Cinzel', serif; font-size: 0.7rem; color: var(--gold); letter-spacing: 0.3em; }
 
-    .slider-outer {
-      position: fixed; top: 48px; left: 0; right: 0; bottom: 0;
-      overflow: hidden; z-index: 1;
-    }
-
-    .slide-track {
-      display: flex; height: 100%;
-      transition: transform 0.55s cubic-bezier(0.77,0,0.18,1);
-      will-change: transform;
-    }
-
-    .slide {
-      flex-shrink: 0;
-      display: flex; align-items: center; justify-content: center;
-      padding: 20px 72px 36px;
-      height: 100%;
-    }
+    .slider-outer { position: fixed; top: 48px; left: 0; right: 0; bottom: 0; overflow: hidden; z-index: 1; }
+    .slide-track { display: flex; height: 100%; transition: transform 0.55s cubic-bezier(0.77,0,0.18,1); will-change: transform; }
+    .slide { flex-shrink: 0; display: flex; align-items: center; justify-content: center; padding: 20px 72px 36px; height: 100%; }
 
     .char-card {
       width: 100%; max-width: 1060px; height: 100%;
       display: grid; grid-template-rows: auto 1fr;
-      background: rgba(20,14,2,0.6);
-      border: 1px solid var(--gold-border);
-      overflow: hidden;
+      background: rgba(20,14,2,0.6); border: 1px solid var(--gold-border); overflow: hidden;
     }
 
-    /* HEADER */
     .card-header {
-      padding: 1rem 1.6rem 0.9rem;
-      border-bottom: 1px solid rgba(180,140,50,0.18);
+      padding: 1rem 1.6rem 0.9rem; border-bottom: 1px solid rgba(180,140,50,0.18);
       display: flex; align-items: baseline; gap: 1.5rem; flex-shrink: 0;
     }
     .char-name { font-family: 'Cinzel', serif; font-size: 1.4rem; color: var(--gold); letter-spacing: 0.3em; }
     .char-title { font-size: 0.48rem; color: var(--gold-dim); letter-spacing: 0.2em; }
-    .char-status {
-      margin-left: auto; font-size: 0.42rem; color: var(--gold-dim);
-      letter-spacing: 0.2em; border: 1px solid rgba(180,140,50,0.25);
-      padding: 3px 10px; white-space: nowrap;
-    }
+    .char-status { margin-left: auto; font-size: 0.42rem; color: var(--gold-dim); letter-spacing: 0.2em; border: 1px solid rgba(180,140,50,0.25); padding: 3px 10px; white-space: nowrap; }
     .char-status.classified { color: rgba(255,120,80,0.7); border-color: rgba(255,120,80,0.3); }
 
-    /* BODY */
-    .card-body {
-      display: grid; grid-template-columns: 250px 1fr;
-      overflow: hidden; min-height: 0;
-    }
+    .card-body { display: grid; grid-template-columns: 250px 1fr; overflow: hidden; min-height: 0; }
 
-    /* LEFT COLUMN */
-    .col-left {
-      border-right: 1px solid rgba(180,140,50,0.18);
-      display: flex; flex-direction: column; overflow: hidden; min-height: 0;
-    }
+    .col-left { border-right: 1px solid rgba(180,140,50,0.18); display: flex; flex-direction: column; overflow: hidden; min-height: 0; }
 
     .portrait-box {
-      width: 100%; aspect-ratio: 1 / 1;
-      background: rgba(12,9,2,0.8);
+      width: 100%; aspect-ratio: 1 / 1; background: rgba(12,9,2,0.8);
       border-bottom: 1px solid rgba(180,140,50,0.18);
       display: flex; align-items: center; justify-content: center;
       flex-shrink: 0; position: relative; overflow: hidden;
     }
     .portrait-box img { width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; }
-    .portrait-placeholder {
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      gap: 0.5rem; width: 100%; height: 100%;
-    }
-    .portrait-placeholder .ph-icon {
-      width: 48px; height: 48px; border: 1px solid rgba(180,140,50,0.3);
-      display: flex; align-items: center; justify-content: center;
-      color: rgba(180,140,50,0.4); font-size: 1.2rem;
-    }
+    .portrait-placeholder { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.5rem; width: 100%; height: 100%; }
+    .portrait-placeholder .ph-icon { width: 48px; height: 48px; border: 1px solid rgba(180,140,50,0.3); display: flex; align-items: center; justify-content: center; color: rgba(180,140,50,0.4); font-size: 1.2rem; }
     .portrait-placeholder .ph-text { font-size: 0.42rem; color: rgba(180,140,50,0.35); letter-spacing: 0.18em; text-align: center; }
     .portrait-corner { position: absolute; width: 10px; height: 10px; border-color: rgba(180,140,50,0.4); border-style: solid; pointer-events: none; }
     .portrait-corner.tl { top: 6px; left: 6px; border-width: 1px 0 0 1px; }
@@ -126,26 +82,14 @@
     .portrait-corner.bl { bottom: 6px; left: 6px; border-width: 0 0 1px 1px; }
     .portrait-corner.br { bottom: 6px; right: 6px; border-width: 0 1px 1px 0; }
 
-    .dossier-stats {
-      flex: 1; padding: 0.8rem 1rem;
-      display: flex; flex-direction: column; overflow-y: auto; min-height: 0;
-      scrollbar-width: thin; scrollbar-color: rgba(180,140,50,0.3) rgba(12,9,2,0.6);
-    }
+    .dossier-stats { flex: 1; padding: 0.8rem 1rem; display: flex; flex-direction: column; overflow-y: auto; min-height: 0; scrollbar-width: thin; scrollbar-color: rgba(180,140,50,0.3) rgba(12,9,2,0.6); }
     .dossier-stats::-webkit-scrollbar { width: 4px; }
     .dossier-stats::-webkit-scrollbar-track { background: rgba(12,9,2,0.6); }
     .dossier-stats::-webkit-scrollbar-thumb { background: rgba(180,140,50,0.3); }
 
-    .stat-group-title {
-      font-size: 0.38rem; color: rgba(180,140,50,0.4); letter-spacing: 0.2em;
-      text-transform: uppercase; margin: 0.6rem 0 0.3rem;
-      padding-bottom: 0.2rem; border-bottom: 1px solid rgba(180,140,50,0.1);
-    }
+    .stat-group-title { font-size: 0.38rem; color: rgba(180,140,50,0.4); letter-spacing: 0.2em; text-transform: uppercase; margin: 0.6rem 0 0.3rem; padding-bottom: 0.2rem; border-bottom: 1px solid rgba(180,140,50,0.1); }
     .stat-group-title:first-child { margin-top: 0; }
-
-    .stat-item {
-      display: flex; justify-content: space-between; align-items: baseline;
-      padding: 0.3rem 0; border-bottom: 1px solid rgba(180,140,50,0.08); gap: 0.5rem;
-    }
+    .stat-item { display: flex; justify-content: space-between; align-items: baseline; padding: 0.3rem 0; border-bottom: 1px solid rgba(180,140,50,0.08); gap: 0.5rem; }
     .stat-item:last-child { border-bottom: none; }
     .stat-label { font-size: 0.38rem; color: var(--text-dim); letter-spacing: 0.12em; flex-shrink: 0; }
     .stat-value { font-size: 0.42rem; color: var(--text); letter-spacing: 0.06em; text-align: right; }
@@ -155,69 +99,93 @@
     .stat-value.threat-critical { color: rgba(255,60,60,0.9); }
     .stat-value.redacted { background: rgba(180,140,50,0.15); color: transparent; user-select: none; padding: 0 4px; }
 
-    /* RIGHT COLUMN */
-    .col-right {
-      overflow-y: auto; padding: 1.1rem 1.4rem;
-      display: flex; flex-direction: column; gap: 1rem; min-height: 0;
-      scrollbar-width: thin; scrollbar-color: rgba(180,140,50,0.3) rgba(12,9,2,0.6);
-    }
+    .col-right { overflow-y: auto; padding: 1.1rem 1.4rem; display: flex; flex-direction: column; gap: 1rem; min-height: 0; scrollbar-width: thin; scrollbar-color: rgba(180,140,50,0.3) rgba(12,9,2,0.6); }
     .col-right::-webkit-scrollbar { width: 4px; }
     .col-right::-webkit-scrollbar-track { background: rgba(12,9,2,0.6); }
     .col-right::-webkit-scrollbar-thumb { background: rgba(180,140,50,0.3); }
 
-    .info-section-title {
-      font-size: 0.44rem; color: var(--gold-dim); letter-spacing: 0.22em;
-      text-transform: uppercase; margin-bottom: 0.5rem;
-      padding-bottom: 0.28rem; border-bottom: 1px solid rgba(180,140,50,0.12);
-    }
+    .info-section-title { font-size: 0.44rem; color: var(--gold-dim); letter-spacing: 0.22em; text-transform: uppercase; margin-bottom: 0.5rem; padding-bottom: 0.28rem; border-bottom: 1px solid rgba(180,140,50,0.12); }
     .info-text { font-size: 0.5rem; color: var(--text); letter-spacing: 0.04em; line-height: 1.85; }
     .info-text p { margin-bottom: 0.45rem; }
     .info-text p:last-child { margin-bottom: 0; }
 
     .trait-list { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.2rem; }
-    .trait-pill {
-      font-size: 0.4rem; letter-spacing: 0.12em; padding: 3px 10px;
-      border: 1px solid rgba(180,140,50,0.28); color: rgba(200,160,70,0.7);
-    }
+    .trait-pill { font-size: 0.4rem; letter-spacing: 0.12em; padding: 3px 10px; border: 1px solid rgba(180,140,50,0.28); color: rgba(200,160,70,0.7); }
 
-    /* PLACEHOLDER CARD */
-    .char-card.placeholder {
-      background: rgba(14,10,2,0.4);
-      border-color: rgba(180,140,50,0.1);
-      align-items: center; justify-content: center;
-      display: flex; flex-direction: column; gap: 1rem;
-    }
+    .char-card.placeholder { background: rgba(14,10,2,0.4); border-color: rgba(180,140,50,0.1); align-items: center; justify-content: center; display: flex; flex-direction: column; gap: 1rem; }
     .placeholder-icon { font-size: 2rem; color: rgba(180,140,50,0.15); }
     .placeholder-name { font-family: 'Cinzel', serif; font-size: 0.9rem; color: rgba(180,140,50,0.3); letter-spacing: 0.3em; }
     .placeholder-role { font-size: 0.44rem; color: rgba(150,115,45,0.3); letter-spacing: 0.2em; }
 
-    /* NAV */
-    .nav-arrow {
-      position: fixed; top: 50%; transform: translateY(-50%);
-      z-index: 10; background: rgba(12,9,2,0.7);
-      border: 1px solid rgba(180,140,50,0.25);
-      width: 40px; height: 72px;
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer; transition: background 0.2s, border-color 0.2s, opacity 0.2s;
-      backdrop-filter: blur(4px);
+    /* ADD SLIDE */
+    .add-card {
+      width: 100%; max-width: 1060px; height: 100%;
+      background: rgba(20,14,2,0.6); border: 1px solid var(--gold-border);
+      display: flex; flex-direction: column; overflow: hidden;
     }
+    .add-card-header {
+      padding: 1rem 1.6rem 0.9rem; border-bottom: 1px solid rgba(180,140,50,0.18);
+      display: flex; align-items: baseline; gap: 1.5rem; flex-shrink: 0;
+    }
+    .add-card-title { font-family: 'Cinzel', serif; font-size: 1.1rem; color: var(--gold); letter-spacing: 0.3em; }
+    .add-card-badge { margin-left: auto; font-size: 0.38rem; color: rgba(80,200,120,0.7); letter-spacing: 0.15em; }
+
+    .add-card-body { flex: 1; overflow-y: auto; padding: 1.2rem 1.6rem; scrollbar-width: thin; scrollbar-color: rgba(180,140,50,0.3) rgba(12,9,2,0.6); }
+    .add-card-body::-webkit-scrollbar { width: 4px; }
+    .add-card-body::-webkit-scrollbar-track { background: rgba(12,9,2,0.6); }
+    .add-card-body::-webkit-scrollbar-thumb { background: rgba(180,140,50,0.3); }
+
+    /* Lock */
+    .add-lock { background: rgba(14,10,2,0.8); border: 1px solid var(--gold-border); padding: 1.2rem 1.4rem; display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+    .add-lock-label { font-size: 0.44rem; color: var(--gold-dim); letter-spacing: 0.18em; flex: 1; }
+    .add-lock-input { background: rgba(2,2,0,0.8); border: 1px solid rgba(180,140,50,0.25); color: var(--gold); font-family: 'Share Tech Mono', monospace; font-size: 0.46rem; letter-spacing: 0.1em; padding: 0.4rem 0.7rem; outline: none; width: 180px; }
+    .add-lock-btn { background: rgba(180,140,50,0.12); border: 1px solid rgba(180,140,50,0.3); color: var(--gold); font-family: 'Share Tech Mono', monospace; font-size: 0.44rem; letter-spacing: 0.15em; padding: 0.4rem 1rem; cursor: pointer; }
+    .add-lock-btn:hover { background: rgba(180,140,50,0.22); }
+    .lock-error { font-size: 0.4rem; color: rgba(255,80,80,0.7); letter-spacing: 0.12em; }
+
+    .add-form { display: none; }
+    .add-form.unlocked { display: block; }
+
+    .token-row { display: flex; gap: 0.6rem; align-items: center; margin-bottom: 1.2rem; padding: 0.8rem; background: rgba(2,2,0,0.8); border: 1px solid rgba(180,140,50,0.3); }
+    .token-row span { font-size: 0.44rem; color: var(--gold-dim); letter-spacing: 0.15em; flex: 1; }
+    .token-input { background: rgba(2,2,0,0.9); border: 1px solid rgba(180,140,50,0.3); color: var(--gold); font-family: 'Share Tech Mono', monospace; font-size: 0.44rem; padding: 0.4rem 0.7rem; outline: none; width: 240px; }
+    .token-btn { background: rgba(180,140,50,0.15); border: 1px solid rgba(220,175,70,0.4); color: var(--gold-bright); font-family: 'Share Tech Mono', monospace; font-size: 0.44rem; letter-spacing: 0.15em; padding: 0.4rem 0.9rem; cursor: pointer; }
+    .token-status { font-size: 0.4rem; color: rgba(80,200,120,0.8); letter-spacing: 0.12em; white-space: nowrap; min-width: 120px; }
+
+    .form-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; margin-bottom: 1rem; }
+    .form-col-full { margin-bottom: 1rem; }
+    .section-label { font-size: 0.38rem; color: rgba(180,140,50,0.45); letter-spacing: 0.2em; text-transform: uppercase; margin: 1rem 0 0.5rem; padding-bottom: 0.2rem; border-bottom: 1px solid rgba(180,140,50,0.1); }
+    .section-label:first-child { margin-top: 0; }
+    .form-field { display: flex; flex-direction: column; gap: 0.3rem; margin-bottom: 0.6rem; }
+    .form-label { font-size: 0.38rem; color: var(--text-dim); letter-spacing: 0.15em; }
+    .form-input { background: rgba(2,2,0,0.8); border: 1px solid rgba(180,140,50,0.22); color: var(--gold); font-family: 'Share Tech Mono', monospace; font-size: 0.44rem; letter-spacing: 0.06em; padding: 0.4rem 0.65rem; outline: none; width: 100%; transition: border-color 0.2s; }
+    .form-input:focus { border-color: rgba(220,175,70,0.45); }
+    .form-input::placeholder { color: rgba(150,115,45,0.3); }
+    .form-textarea { background: rgba(2,2,0,0.8); border: 1px solid rgba(180,140,50,0.22); color: var(--gold); font-family: 'Share Tech Mono', monospace; font-size: 0.44rem; letter-spacing: 0.06em; padding: 0.4rem 0.65rem; outline: none; width: 100%; resize: vertical; min-height: 80px; line-height: 1.7; transition: border-color 0.2s; }
+    .form-textarea:focus { border-color: rgba(220,175,70,0.45); }
+    .form-textarea::placeholder { color: rgba(150,115,45,0.3); }
+    .form-note { font-size: 0.38rem; color: rgba(150,115,45,0.4); letter-spacing: 0.1em; margin-bottom: 1rem; line-height: 1.7; }
+
+    .submit-row { display: flex; align-items: center; gap: 1rem; margin-top: 1.2rem; padding-top: 1rem; border-top: 1px solid rgba(180,140,50,0.1); }
+    .submit-btn { background: rgba(180,140,50,0.15); border: 1px solid rgba(220,175,70,0.4); color: var(--gold-bright); font-family: 'Share Tech Mono', monospace; font-size: 0.46rem; letter-spacing: 0.2em; padding: 0.55rem 1.4rem; cursor: pointer; transition: background 0.2s; }
+    .submit-btn:hover { background: rgba(180,140,50,0.28); }
+    .submit-msg { font-size: 0.42rem; letter-spacing: 0.12em; }
+    .submit-msg.success { color: rgba(80,200,120,0.8); }
+    .submit-msg.error { color: rgba(255,80,80,0.7); }
+    .submit-msg.saving { color: rgba(255,200,60,0.8); }
+
+    /* NAV */
+    .nav-arrow { position: fixed; top: 50%; transform: translateY(-50%); z-index: 10; background: rgba(12,9,2,0.7); border: 1px solid rgba(180,140,50,0.25); width: 40px; height: 72px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background 0.2s, border-color 0.2s, opacity 0.2s; backdrop-filter: blur(4px); }
     .nav-arrow:hover { background: rgba(20,14,2,0.85); border-color: rgba(220,175,70,0.45); }
     .nav-arrow.disabled { opacity: 0.15; pointer-events: none; }
     .nav-arrow.left { left: 16px; }
     .nav-arrow.right { right: 16px; }
     .nav-arrow svg { width: 14px; height: 14px; stroke: rgba(180,140,50,0.7); fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
 
-    .page-dots {
-      position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%);
-      display: flex; gap: 8px; z-index: 10;
-    }
+    .page-dots { position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; z-index: 10; }
     .dot { width: 5px; height: 5px; border: 1px solid rgba(180,140,50,0.35); transition: background 0.3s, border-color 0.3s; cursor: pointer; }
     .dot.active { background: rgba(180,140,50,0.6); border-color: rgba(180,140,50,0.6); }
-
-    .char-counter {
-      position: fixed; bottom: 18px; right: 32px;
-      font-size: 0.42rem; color: rgba(150,115,45,0.4); letter-spacing: 0.2em; z-index: 10;
-    }
+    .char-counter { position: fixed; bottom: 18px; right: 32px; font-size: 0.42rem; color: rgba(150,115,45,0.4); letter-spacing: 0.2em; z-index: 10; }
   </style>
 </head>
 <body>
@@ -239,9 +207,7 @@
 <div class="slider-outer">
   <div class="slide-track" id="track">
 
-    <!-- ═══════════════════════════════════════ -->
-    <!-- SLIDE 1 — VAEN HOUSHIN                  -->
-    <!-- ═══════════════════════════════════════ -->
+    <!-- SLIDE 1 — VAEN HOUSHIN -->
     <div class="slide" style="width:100vw;">
       <div class="char-card">
         <div class="card-header">
@@ -265,18 +231,15 @@
               <div class="stat-item"><span class="stat-label">Sex</span><span class="stat-value">Female</span></div>
               <div class="stat-item"><span class="stat-label">Age</span><span class="stat-value">34</span></div>
               <div class="stat-item"><span class="stat-label">Appearance</span><span class="stat-value">Deep slate-grey feathers, black wingtips, pale amber eyes</span></div>
-
               <div class="stat-group-title">Role</div>
               <div class="stat-item"><span class="stat-label">Title</span><span class="stat-value">Merchant Sovereign</span></div>
               <div class="stat-item"><span class="stat-label">Rank</span><span class="stat-value">Highest — Company Leader</span></div>
               <div class="stat-item"><span class="stat-label">Tenure</span><span class="stat-value">Youngest Sovereign in Company history</span></div>
               <div class="stat-item"><span class="stat-label">Allegiance</span><span class="stat-value">Houshin Company — Institute aligned</span></div>
-
               <div class="stat-group-title">Background</div>
               <div class="stat-item"><span class="stat-label">Origin</span><span class="stat-value">Rose through ranks from Associate level</span></div>
               <div class="stat-item"><span class="stat-label">Known Associates</span><span class="stat-value">Sael, Orveth, Keth, Mirren</span></div>
               <div class="stat-item"><span class="stat-label">Psionic Rating</span><span class="stat-value">Standard — no exceptional ability noted</span></div>
-
               <div class="stat-group-title">Threat Assessment</div>
               <div class="stat-item"><span class="stat-label">Physical</span><span class="stat-value threat-low">Low</span></div>
               <div class="stat-item"><span class="stat-label">Political</span><span class="stat-value threat-critical">Critical</span></div>
@@ -331,59 +294,104 @@
       </div>
     </div>
 
-    <!-- ═══════════════════════════════════════ -->
-    <!-- SLIDE 2 — SAEL                          -->
-    <!-- ═══════════════════════════════════════ -->
+    <!-- SLIDE 6 — ADD NEW CHARACTER --><!-- ADD NEW CHARACTER -->
     <div class="slide" style="width:100vw;">
-      <div class="char-card placeholder">
-        <div class="portrait-placeholder" style="width:80px;height:80px;border:1px solid rgba(180,140,50,0.15);">
-          <div class="ph-icon" style="width:100%;height:100%;">◈</div>
+      <div class="add-card">
+        <div class="add-card-header">
+          <span class="add-card-title">Add New Character</span>
+          <span class="add-card-badge" id="addBadge" style="display:none;">✓ Authorised</span>
         </div>
-        <div class="placeholder-name">Sael</div>
-        <div class="placeholder-role">Director of Intelligence — Inner Circle</div>
-        <div style="font-size:0.42rem;color:rgba(150,115,45,0.25);letter-spacing:0.15em;margin-top:0.5rem;">Dossier pending</div>
-      </div>
-    </div>
+        <div class="add-card-body">
 
-    <!-- ═══════════════════════════════════════ -->
-    <!-- SLIDE 3 — ORVETH                        -->
-    <!-- ═══════════════════════════════════════ -->
-    <div class="slide" style="width:100vw;">
-      <div class="char-card placeholder">
-        <div class="portrait-placeholder" style="width:80px;height:80px;border:1px solid rgba(180,140,50,0.15);">
-          <div class="ph-icon" style="width:100%;height:100%;">◈</div>
-        </div>
-        <div class="placeholder-name">Orveth</div>
-        <div class="placeholder-role">Noctivex Aide — Inner Circle</div>
-        <div style="font-size:0.42rem;color:rgba(150,115,45,0.25);letter-spacing:0.15em;margin-top:0.5rem;">Dossier pending</div>
-      </div>
-    </div>
+          <div class="add-lock" id="addLock">
+            <span class="add-lock-label">Character registry editing is restricted. Enter authorisation code to add entries.</span>
+            <input class="add-lock-input" type="password" id="lockInput" placeholder="Enter code..." onkeydown="if(event.key==='Enter')checkPassword()">
+            <button class="add-lock-btn" onclick="checkPassword()">Unlock</button>
+            <span class="lock-error" id="lockError"></span>
+          </div>
 
-    <!-- ═══════════════════════════════════════ -->
-    <!-- SLIDE 4 — KETH                          -->
-    <!-- ═══════════════════════════════════════ -->
-    <div class="slide" style="width:100vw;">
-      <div class="char-card placeholder">
-        <div class="portrait-placeholder" style="width:80px;height:80px;border:1px solid rgba(180,140,50,0.15);">
-          <div class="ph-icon" style="width:100%;height:100%;">◈</div>
-        </div>
-        <div class="placeholder-name">Keth</div>
-        <div class="placeholder-role">Director of Architects — Inner Circle</div>
-        <div style="font-size:0.42rem;color:rgba(150,115,45,0.25);letter-spacing:0.15em;margin-top:0.5rem;">Dossier pending</div>
-      </div>
-    </div>
+          <div class="add-form" id="addForm">
+            <div class="token-row" id="tokenRow">
+              <span>GitHub token — paste once per session to enable saving</span>
+              <input type="password" id="tokenInput" class="token-input" placeholder="Paste GitHub token...">
+              <button class="token-btn" onclick="saveToken()">Save Token</button>
+              <span class="token-status" id="tokenStatus"></span>
+            </div>
 
-    <!-- ═══════════════════════════════════════ -->
-    <!-- SLIDE 5 — MIRREN                        -->
-    <!-- ═══════════════════════════════════════ -->
-    <div class="slide" style="width:100vw;">
-      <div class="char-card placeholder">
-        <div class="portrait-placeholder" style="width:80px;height:80px;border:1px solid rgba(180,140,50,0.15);">
-          <div class="ph-icon" style="width:100%;height:100%;">◈</div>
+            <div class="form-note">Fill in all fields. Prose sections support multiple paragraphs — separate them with a blank line. Traits are comma-separated.</div>
+
+            <div class="section-label">Identity</div>
+            <div class="form-cols">
+              <div class="form-field"><label class="form-label">Name</label><input class="form-input" type="text" id="f-name" placeholder="e.g. Sael"></div>
+              <div class="form-field"><label class="form-label">Title / Role</label><input class="form-input" type="text" id="f-title" placeholder="e.g. Director of Intelligence — Houshin Company"></div>
+              <div class="form-field"><label class="form-label">Status</label><input class="form-input" type="text" id="f-status" placeholder="e.g. Active — Inner Circle"></div>
+              <div class="form-field"><label class="form-label">Status Type</label>
+                <select class="form-input" id="f-status-type" style="cursor:pointer;">
+                  <option value="">Normal</option>
+                  <option value="classified">Classified (red)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="section-label">Personal</div>
+            <div class="form-cols">
+              <div class="form-field"><label class="form-label">Species</label><input class="form-input" type="text" id="f-species" placeholder="e.g. Avriethrax"></div>
+              <div class="form-field"><label class="form-label">Sex</label><input class="form-input" type="text" id="f-sex" placeholder="e.g. Female / Hermaphroditic"></div>
+              <div class="form-field"><label class="form-label">Age</label><input class="form-input" type="text" id="f-age" placeholder="e.g. 34"></div>
+              <div class="form-field"><label class="form-label">Appearance</label><input class="form-input" type="text" id="f-appearance" placeholder="e.g. Grey feathers, amber eyes"></div>
+            </div>
+
+            <div class="section-label">Role</div>
+            <div class="form-cols">
+              <div class="form-field"><label class="form-label">Title</label><input class="form-input" type="text" id="f-role-title" placeholder="e.g. Director of Intelligence"></div>
+              <div class="form-field"><label class="form-label">Rank</label><input class="form-input" type="text" id="f-rank" placeholder="e.g. Inner Circle"></div>
+              <div class="form-field"><label class="form-label">Allegiance</label><input class="form-input" type="text" id="f-allegiance" placeholder="e.g. Houshin Company"></div>
+              <div class="form-field"><label class="form-label">Extra Role Field (optional)</label><input class="form-input" type="text" id="f-role-extra" placeholder="Label | Value"></div>
+            </div>
+
+            <div class="section-label">Background</div>
+            <div class="form-cols">
+              <div class="form-field"><label class="form-label">Origin</label><input class="form-input" type="text" id="f-origin" placeholder="e.g. Recruited from..."></div>
+              <div class="form-field"><label class="form-label">Known Associates</label><input class="form-input" type="text" id="f-associates" placeholder="e.g. Vaen Houshin"></div>
+              <div class="form-field"><label class="form-label">Psionic Rating</label><input class="form-input" type="text" id="f-psionic" placeholder="e.g. Standard / Enhanced"></div>
+              <div class="form-field"><label class="form-label">Extra Background Field (optional)</label><input class="form-input" type="text" id="f-bg-extra" placeholder="Label | Value"></div>
+            </div>
+
+            <div class="section-label">Threat Assessment</div>
+            <div class="form-cols">
+              <div class="form-field"><label class="form-label">Physical</label>
+                <select class="form-input" id="f-threat-physical" style="cursor:pointer;"><option value="">—</option><option value="threat-low">Low</option><option value="threat-med">Medium</option><option value="threat-high">High</option><option value="threat-critical">Critical</option></select>
+              </div>
+              <div class="form-field"><label class="form-label">Political</label>
+                <select class="form-input" id="f-threat-political" style="cursor:pointer;"><option value="">—</option><option value="threat-low">Low</option><option value="threat-med">Medium</option><option value="threat-high">High</option><option value="threat-critical">Critical</option></select>
+              </div>
+              <div class="form-field"><label class="form-label">Economic</label>
+                <select class="form-input" id="f-threat-economic" style="cursor:pointer;"><option value="">—</option><option value="threat-low">Low</option><option value="threat-med">Medium</option><option value="threat-high">High</option><option value="threat-critical">Critical</option></select>
+              </div>
+              <div class="form-field"><label class="form-label">Intelligence</label>
+                <select class="form-input" id="f-threat-intelligence" style="cursor:pointer;"><option value="">—</option><option value="threat-low">Low</option><option value="threat-med">Medium</option><option value="threat-high">High</option><option value="threat-critical">Critical</option></select>
+              </div>
+              <div class="form-field"><label class="form-label">Overall</label>
+                <select class="form-input" id="f-threat-overall" style="cursor:pointer;"><option value="">—</option><option value="threat-low">Low</option><option value="threat-med">Medium</option><option value="threat-high">High</option><option value="threat-critical">Critical</option></select>
+              </div>
+            </div>
+
+            <div class="section-label">Prose Sections</div>
+            <div class="form-note">Each field below becomes a named section on the right side of the dossier. Leave blank to omit. Separate paragraphs with a blank line.</div>
+            <div class="form-field form-col-full"><label class="form-label">Profile</label><textarea class="form-textarea" id="f-profile" placeholder="General profile..."></textarea></div>
+            <div class="form-field form-col-full"><label class="form-label">Personality</label><textarea class="form-textarea" id="f-personality" placeholder="Personality description..."></textarea></div>
+            <div class="form-field form-col-full"><label class="form-label">Background / History</label><textarea class="form-textarea" id="f-background" placeholder="Background and history..."></textarea></div>
+            <div class="form-field form-col-full"><label class="form-label">Goals / Motivations</label><textarea class="form-textarea" id="f-goals" placeholder="Goals and motivations..."></textarea></div>
+            <div class="form-field form-col-full"><label class="form-label">Additional Section Title (optional)</label><input class="form-input" type="text" id="f-extra-title" placeholder="e.g. Relationship with the Institute"></div>
+            <div class="form-field form-col-full"><label class="form-label">Additional Section Content (optional)</label><textarea class="form-textarea" id="f-extra-content" placeholder="Additional section text..."></textarea></div>
+            <div class="form-field form-col-full"><label class="form-label">Notable Traits (comma-separated)</label><input class="form-input" type="text" id="f-traits" placeholder="e.g. Loyal, Calculating, Institute-aware"></div>
+
+            <div class="submit-row">
+              <button class="submit-btn" onclick="submitCharacter()">Add to Registry</button>
+              <span class="submit-msg" id="submitMsg"></span>
+            </div>
+          </div>
         </div>
-        <div class="placeholder-name">Mirren</div>
-        <div class="placeholder-role">Noctivex Legal Counsel — Inner Circle</div>
-        <div style="font-size:0.42rem;color:rgba(150,115,45,0.25);letter-spacing:0.15em;margin-top:0.5rem;">Dossier pending</div>
       </div>
     </div>
 
@@ -401,78 +409,297 @@
 <div class="char-counter" id="counter"></div>
 
 <script>
-  const CHARS = [
-    { name: 'Vaen Houshin', role: 'Merchant Sovereign' },
-    { name: 'Sael',         role: 'Director of Intelligence' },
-    { name: 'Orveth',       role: 'Noctivex Aide' },
-    { name: 'Keth',         role: 'Director of Architects' },
-    { name: 'Mirren',       role: 'Legal Counsel' },
-  ];
+const GITHUB_USER = 'Mycario';
+const GITHUB_REPO = 'Three-Companies';
+const GITHUB_FILE = 'pages/houshin-characters.html';
+const PW_HASH = 'f03f5a30f816e9cbafa420ccb21d425a4536cac9c63822fc6aac833f6cc23d2d';
 
-  const total = CHARS.length;
-  let current = 0;
+async function hashString(str) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
 
-  const track   = document.getElementById('track');
-  const dotsEl  = document.getElementById('dots');
-  const arrowL  = document.getElementById('arrow-left');
-  const arrowR  = document.getElementById('arrow-right');
-  const counter = document.getElementById('counter');
+function saveToken() {
+  const val = document.getElementById('tokenInput').value.trim();
+  const status = document.getElementById('tokenStatus');
+  if (!val) { status.style.color='rgba(255,80,80,0.7)'; status.textContent='No token entered.'; return; }
+  sessionStorage.setItem('gh_token', val);
+  document.getElementById('tokenInput').value = '';
+  status.style.color='rgba(80,200,120,0.8)'; status.textContent='✓ Token saved for session.';
+  document.getElementById('tokenRow').style.borderColor='rgba(80,200,120,0.3)';
+}
 
-  // Set slide widths
-  document.querySelectorAll('.slide').forEach(s => s.style.width = '100vw');
+function getToken() {
+  const t = sessionStorage.getItem('gh_token');
+  if (!t) { const s=document.getElementById('tokenStatus'); if(s){s.style.color='rgba(255,80,80,0.7)';s.textContent='Paste your token above first.';} return null; }
+  return t;
+}
+
+function updateTokenUI() {
+  const status = document.getElementById('tokenStatus');
+  if (!status) return;
+  if (sessionStorage.getItem('gh_token')) {
+    status.style.color='rgba(80,200,120,0.8)'; status.textContent='✓ Token loaded from session.';
+    document.getElementById('tokenRow').style.borderColor='rgba(80,200,120,0.3)';
+  }
+}
+
+async function checkPassword() {
+  const val = document.getElementById('lockInput').value;
+  const hash = await hashString(val);
+  if (hash === PW_HASH) {
+    sessionStorage.setItem('chars_auth', '1');
+    document.getElementById('addLock').style.display = 'none';
+    document.getElementById('addForm').classList.add('unlocked');
+    document.getElementById('addBadge').style.display = '';
+    updateTokenUI();
+  } else {
+    document.getElementById('lockError').textContent = 'Incorrect code.';
+    document.getElementById('lockInput').value = '';
+    setTimeout(() => document.getElementById('lockError').textContent = '', 2000);
+  }
+}
+
+if (sessionStorage.getItem('chars_auth') === '1') {
+  document.getElementById('addLock').style.display = 'none';
+  document.getElementById('addForm').classList.add('unlocked');
+  document.getElementById('addBadge').style.display = '';
+  updateTokenUI();
+}
+
+// ── SLIDER ──────────────────────────────────────
+let CHAR_COUNT = 5; // existing characters (not counting add slide)
+let current = 0;
+const track  = document.getElementById('track');
+const dotsEl = document.getElementById('dots');
+const arrowL = document.getElementById('arrow-left');
+const arrowR = document.getElementById('arrow-right');
+const counter = document.getElementById('counter');
+
+function rebuildSlider() {
+  const slides = track.querySelectorAll('.slide');
+  const total = slides.length;
+  slides.forEach(s => s.style.width = '100vw');
   track.style.width = `${total * 100}vw`;
 
-  // Build dots
-  CHARS.forEach((c, i) => {
+  dotsEl.innerHTML = '';
+  for (let i = 0; i < total; i++) {
     const d = document.createElement('div');
-    d.className = 'dot' + (i === 0 ? ' active' : '');
-    d.title = c.name;
+    d.className = 'dot' + (i === current ? ' active' : '');
+    // last slide is add panel — style differently
+    if (i === total - 1) d.style.borderColor = 'rgba(180,140,50,0.2)';
     d.onclick = () => goTo(i);
     dotsEl.appendChild(d);
-  });
-
-  function goTo(index) {
-    current = Math.max(0, Math.min(total - 1, index));
-    track.style.transform = `translateX(-${current * (100 / total)}%)`;
-    document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === current));
-    arrowL.classList.toggle('disabled', current === 0);
-    arrowR.classList.toggle('disabled', current === total - 1);
-    counter.textContent = `0${current + 1} / 0${total}`;
   }
+  updateNav(total);
+}
 
-  function navigate(dir) { goTo(current + dir); }
+function updateNav(total) {
+  track.style.transform = `translateX(-${current * (100 / total)}%)`;
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === current));
+  arrowL.classList.toggle('disabled', current === 0);
+  arrowR.classList.toggle('disabled', current === total - 1);
+  const isAddSlide = current === total - 1;
+  counter.textContent = isAddSlide ? '+ / ' + String(total - 1).padStart(2,'0') : String(current + 1).padStart(2,'0') + ' / ' + String(total - 1).padStart(2,'0');
+}
 
-  document.addEventListener('keydown', e => {
-    if (e.key === 'ArrowLeft') navigate(-1);
-    if (e.key === 'ArrowRight') navigate(1);
-  });
+function goTo(index) {
+  const total = track.querySelectorAll('.slide').length;
+  current = Math.max(0, Math.min(total - 1, index));
+  updateNav(total);
+}
 
-  let touchX = null;
-  document.addEventListener('touchstart', e => { touchX = e.touches[0].clientX; });
-  document.addEventListener('touchend', e => {
-    if (touchX === null) return;
-    const diff = touchX - e.changedTouches[0].clientX;
-    if (Math.abs(diff) > 50) navigate(diff > 0 ? 1 : -1);
-    touchX = null;
-  });
+function navigate(dir) { goTo(current + dir); }
 
-  function setPortrait(id, src) {
-    const box = document.getElementById('portrait-' + id);
-    if (!box) return;
-    box.innerHTML = `<img src="${src}" alt="${id}">
-      <div class="portrait-corner tl"></div><div class="portrait-corner tr"></div>
-      <div class="portrait-corner bl"></div><div class="portrait-corner br"></div>`;
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowLeft') navigate(-1);
+  if (e.key === 'ArrowRight') navigate(1);
+});
+
+let touchX = null;
+document.addEventListener('touchstart', e => { touchX = e.touches[0].clientX; });
+document.addEventListener('touchend', e => {
+  if (touchX === null) return;
+  const diff = touchX - e.changedTouches[0].clientX;
+  if (Math.abs(diff) > 50) navigate(diff > 0 ? 1 : -1);
+  touchX = null;
+});
+
+rebuildSlider();
+
+// ── CHARACTER BUILDER ────────────────────────────
+function v(id) { return document.getElementById(id).value.trim(); }
+
+function threatClass(val) {
+  const map = { 'threat-low': 'Low', 'threat-med': 'Medium', 'threat-high': 'High', 'threat-critical': 'Critical' };
+  return map[val] || '';
+}
+
+function proseParagraphs(text) {
+  if (!text.trim()) return '';
+  return text.split(/\n\s*\n/).map(p => `<p>${p.trim().replace(/\n/g,' ')}</p>`).join('\n                ');
+}
+
+function buildCharSlide() {
+  const name       = v('f-name');
+  const title      = v('f-title');
+  const status     = v('f-status');
+  const statusType = v('f-status-type');
+
+  // Dossier stat rows helper
+  const si = (label, val) => val ? `\n              <div class="stat-item"><span class="stat-label">${label}</span><span class="stat-value">${val}</span></div>` : '';
+  const siT = (label, cls) => cls ? `\n              <div class="stat-item"><span class="stat-label">${label}</span><span class="stat-value ${cls}">${threatClass(cls)}</span></div>` : '';
+
+  // Extra fields
+  const parseExtra = (raw) => {
+    if (!raw) return '';
+    const parts = raw.split('|');
+    return parts.length >= 2 ? si(parts[0].trim(), parts.slice(1).join('|').trim()) : '';
+  };
+
+  const stats = `
+              <div class="stat-group-title">Personal</div>
+              ${si('Species', v('f-species'))}${si('Sex', v('f-sex'))}${si('Age', v('f-age'))}${si('Appearance', v('f-appearance'))}
+              <div class="stat-group-title">Role</div>
+              ${si('Title', v('f-role-title'))}${si('Rank', v('f-rank'))}${si('Allegiance', v('f-allegiance'))}${parseExtra(v('f-role-extra'))}
+              <div class="stat-group-title">Background</div>
+              ${si('Origin', v('f-origin'))}${si('Known Associates', v('f-associates'))}${si('Psionic Rating', v('f-psionic'))}${parseExtra(v('f-bg-extra'))}
+              <div class="stat-group-title">Threat Assessment</div>
+              ${siT('Physical', v('f-threat-physical'))}${siT('Political', v('f-threat-political'))}${siT('Economic', v('f-threat-economic'))}${siT('Intelligence', v('f-threat-intelligence'))}${siT('Overall', v('f-threat-overall'))}`;
+
+  // Prose sections
+  const makeSection = (title, content) => {
+    const paras = proseParagraphs(content);
+    if (!paras) return '';
+    return `
+            <div class="info-section">
+              <div class="info-section-title">${title}</div>
+              <div class="info-text">
+                ${paras}
+              </div>
+            </div>`;
+  };
+
+  const extraSection = (v('f-extra-title') && v('f-extra-content'))
+    ? makeSection(v('f-extra-title'), v('f-extra-content')) : '';
+
+  // Traits
+  const traitsRaw = v('f-traits');
+  const traitsHTML = traitsRaw ? `
+            <div class="info-section">
+              <div class="info-section-title">Notable Traits</div>
+              <div class="trait-list">
+                ${traitsRaw.split(',').map(t => `<span class="trait-pill">${t.trim()}</span>`).join('\n                ')}
+              </div>
+            </div>` : '';
+
+  const statusClass = statusType === 'classified' ? ' classified' : '';
+
+  return `
+    <!-- CHARACTER: ${name} -->
+    <div class="slide" style="width:100vw;">
+      <div class="char-card">
+        <div class="card-header">
+          <span class="char-name">${name}</span>
+          <span class="char-title">${title}</span>
+          <span class="char-status${statusClass}">${status}</span>
+        </div>
+        <div class="card-body">
+          <div class="col-left">
+            <div class="portrait-box">
+              <div class="portrait-placeholder">
+                <div class="ph-icon">◈</div>
+                <div class="ph-text">PORTRAIT<br>PENDING</div>
+              </div>
+              <div class="portrait-corner tl"></div><div class="portrait-corner tr"></div>
+              <div class="portrait-corner bl"></div><div class="portrait-corner br"></div>
+            </div>
+            <div class="dossier-stats">${stats}
+            </div>
+          </div>
+          <div class="col-right">${makeSection('Profile', v('f-profile'))}${makeSection('Personality', v('f-personality'))}${makeSection('Background', v('f-background'))}${makeSection('Goals & Motivations', v('f-goals'))}${extraSection}${traitsHTML}
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+
+async function submitCharacter() {
+  const msg = document.getElementById('submitMsg');
+  const name = v('f-name');
+  if (!name) { msg.className='submit-msg error'; msg.textContent='Name is required.'; return; }
+
+  const token = getToken();
+  if (!token) return;
+
+  msg.className='submit-msg saving'; msg.textContent='Saving to repository...';
+
+  try {
+    const res = await fetch(
+      `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${GITHUB_FILE}`,
+      { headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' } }
+    );
+    if (!res.ok) throw new Error(`GitHub API error ${res.status}`);
+    const data = await res.json();
+    const sha = data.sha;
+    let html = decodeURIComponent(escape(atob(data.content.replace(/\n/g,''))));
+
+    const newSlide = buildCharSlide();
+    const marker = '    <!-- SLIDE 6 — ADD NEW CHARACTER --><!-- ADD NEW CHARACTER -->';
+    if (!html.includes(marker)) throw new Error('Could not find insertion point in file.');
+    html = html.replace(marker, newSlide + '\n\n    <!-- SLIDE 6 — ADD NEW CHARACTER --><!-- ADD NEW CHARACTER -->');
+
+    const encoded = btoa(unescape(encodeURIComponent(html)));
+    const putRes = await fetch(
+      `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${GITHUB_FILE}`,
+      {
+        method: 'PUT',
+        headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: `Add character: ${name}`, content: encoded, sha })
+      }
+    );
+    if (!putRes.ok) {
+      if (putRes.status === 401) { sessionStorage.removeItem('gh_token'); throw new Error('Token invalid or expired.'); }
+      const err = await putRes.json();
+      throw new Error(err.message || `GitHub API error ${putRes.status}`);
+    }
+
+    // Add slide locally before the add panel
+    const addSlide = track.querySelector('.slide:last-child');
+    addSlide.insertAdjacentHTML('beforebegin', newSlide);
+    rebuildSlider();
+    goTo(track.querySelectorAll('.slide').length - 2); // go to new character
+
+    // Clear form
+    ['f-name','f-title','f-status','f-species','f-sex','f-age','f-appearance',
+     'f-role-title','f-rank','f-allegiance','f-role-extra','f-origin','f-associates',
+     'f-psionic','f-bg-extra','f-profile','f-personality','f-background','f-goals',
+     'f-extra-title','f-extra-content','f-traits'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    });
+    ['f-status-type','f-threat-physical','f-threat-political','f-threat-economic',
+     'f-threat-intelligence','f-threat-overall'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.selectedIndex = 0;
+    });
+
+    msg.className='submit-msg success'; msg.textContent=`"${name}" added — live on next page load.`;
+    setTimeout(() => msg.textContent='', 5000);
+
+  } catch(err) {
+    msg.className='submit-msg error'; msg.textContent=`Save failed: ${err.message}`;
   }
+}
 
-  goTo(0);
-
-  const s = document.getElementById('stars');
-  for (let i = 0; i < 200; i++) {
-    const el = document.createElement('div'); el.className = 'star';
-    const sz = Math.random() * 1.2 + 0.2;
-    el.style.cssText = `width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*100}%;opacity:${Math.random()*0.3+0.05};`;
-    s.appendChild(el);
-  }
+// Stars
+const s = document.getElementById('stars');
+for (let i = 0; i < 200; i++) {
+  const el = document.createElement('div'); el.className = 'star';
+  const sz = Math.random() * 1.2 + 0.2;
+  el.style.cssText = `width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*100}%;opacity:${Math.random()*0.3+0.05};`;
+  s.appendChild(el);
+}
 </script>
 </body>
 </html>
