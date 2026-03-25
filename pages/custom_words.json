@@ -232,5 +232,11 @@
     "e": "seeing",
     "p": "VIR-IMI",
     "c": "custom"
+  },
+  {
+    "v": "thov",
+    "e": "Star",
+    "p": "THOV",
+    "c": "custom"
   }
 ]
