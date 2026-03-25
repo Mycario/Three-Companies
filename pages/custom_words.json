@@ -238,5 +238,11 @@
     "e": "Star",
     "p": "THOV",
     "c": "custom"
+  },
+  {
+    "v": "lvaeas",
+    "e": "Crawler",
+    "p": "LVAEAS",
+    "c": "custom"
   }
 ]
