@@ -250,5 +250,11 @@
     "e": "alliance",
     "p": "STUN-EL",
     "c": "custom"
+  },
+  {
+    "v": "seino",
+    "e": "aligned",
+    "p": "SEIN-O",
+    "c": "custom"
   }
 ]
