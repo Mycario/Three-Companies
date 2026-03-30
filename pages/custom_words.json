@@ -256,5 +256,11 @@
     "e": "aligned",
     "p": "SEIN-O",
     "c": "custom"
+  },
+  {
+    "v": "of",
+    "e": "of",
+    "p": "OV",
+    "c": "custom"
   }
 ]
