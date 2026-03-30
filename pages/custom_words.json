@@ -244,5 +244,11 @@
     "e": "Crawler",
     "p": "LVAEAS",
     "c": "custom"
+  },
+  {
+    "v": "stunel",
+    "e": "alliance",
+    "p": "STUN-EL",
+    "c": "custom"
   }
 ]
