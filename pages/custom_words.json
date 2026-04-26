@@ -268,5 +268,11 @@
     "e": "nations",
     "p": "KHORTH-ETH-AS",
     "c": "custom"
+  },
+  {
+    "v": "lvolv",
+    "e": "Terra",
+    "p": "LVOLV",
+    "c": "custom"
   }
 ]
