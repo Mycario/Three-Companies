@@ -280,5 +280,11 @@
     "e": "Small",
     "p": "NENN-AEV",
     "c": "custom"
+  },
+  {
+    "v": "vnorvrart",
+    "e": "Lizard",
+    "p": "VNORVR-ART",
+    "c": "custom"
   }
 ]
