@@ -286,5 +286,11 @@
     "e": "Lizard",
     "p": "VNORVR-ART",
     "c": "custom"
+  },
+  {
+    "v": "vnakzen",
+    "e": "alcohol",
+    "p": "VNAKZ-EN",
+    "c": "custom"
   }
 ]
