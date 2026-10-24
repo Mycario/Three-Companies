@@ -292,5 +292,11 @@
     "e": "alcohol",
     "p": "VNAKZ-EN",
     "c": "custom"
+  },
+  {
+    "v": "krithuel",
+    "e": "ice",
+    "p": "KRITH-UEL",
+    "c": "custom"
   }
 ]
